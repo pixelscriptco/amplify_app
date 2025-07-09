@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Router from "./Router";
+import "./css/Attributes.css";
+import "./css/index.css";
+import "./css/Global.css";
+import "tippy.js/dist/tippy.css";
+import { AppContextProvider } from "./Contexts/AppContext";
+import Blackout from "./Components/Atoms/Blackout";
+import { useEffect, useState } from "react";
+import { getDateFromTimestamp, jsonToFormalObject } from "./Utility/function";
+import RotateInstruction from "./Components/Atoms/RotateInstruction";
+import HoverInfo from "./Components/Molecules/HoverInfo";
+import FullScreenModeAlert from "./Components/Atoms/FullScreenModeAlert";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AppContextProvider>
+      {/* <FullScreenModeAlert /> */}
+      <RotateInstruction />
+      <Router />
+      <Blackout />
+    </AppContextProvider>
   );
 }
 
