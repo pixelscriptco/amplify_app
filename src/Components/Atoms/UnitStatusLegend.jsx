@@ -23,7 +23,6 @@ function UnitStatusLegend(props) {
 
   return (
     <Style className="overlay-can-fade-out">
-      <div className="title">Unit Status Legend</div>
       <div className="body">
         {legends.map((legend) => (
           <div className="row">
@@ -41,14 +40,14 @@ function UnitStatusLegend(props) {
 
 const Style = styled.div`
   color: var(--color_text);
-  background: var(--panel_background);
+  background: #726a6a75;
   position: absolute;
   padding: 0.5rem 1rem;
   padding-bottom: 1rem;
   padding-right: 2rem;
   border-radius: 8px;
-  top: 6rem;
-  right: 2.1rem;
+  bottom: 2rem;
+  left: 2rem;
   z-index: 99;
   .title {
     color: var(--color_text);
@@ -60,7 +59,7 @@ const Style = styled.div`
   }
   .body {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     margin-top: 0.5rem;
     gap: 0.3rem;
@@ -73,7 +72,6 @@ const Style = styled.div`
     .mark {
       width: 10px;
       height: 10px;
-      border-radius: 50%;
       opacity: 0.8;
     }
     .text {

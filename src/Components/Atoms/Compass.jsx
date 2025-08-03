@@ -4,18 +4,18 @@ import styled from "styled-components";
 function Compass({ angle = 0 }) {
   return (
     <Style angle={angle}>
-      <div className="compass__wrapper svelte-aa5lhs">
+      <div className="compass__wrapper">
         <div
-          className="compass__circle svelte-aa5lhs"
+          className="compass__circle"
           style={{ transform: "rotate(2deg)" }}
         >
           <div
-            className="compass__north svelte-aa5lhs"
+            className="compass__north"
             style={{ transform: "rotate(-2deg)" }}
           >
             N
           </div>
-          <div className="compass__arrow svelte-aa5lhs"></div>
+          <div className="compass__arrow"></div>
         </div>
       </div>
     </Style>
@@ -43,20 +43,25 @@ const Style = styled.div`
   border-radius: 50%;
   background: #5554546d;
 
-  .compass__wrapper.svelte-aa5lhs {
+  .compass__wrapper {
     display: flex;
     flex-direction: column;
     position: relative;
   }
 
-  .compass__circle.svelte-aa5lhs {
+  .compass__circle {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.2);
   }
 
-  .compass__north.svelte-aa5lhs {
+  .compass__north {
     font-size: 10px;
     line-height: 100%;
     font-weight: 400;
@@ -67,7 +72,7 @@ const Style = styled.div`
     transition: var(--transition);
   }
 
-  .compass__arrow.svelte-aa5lhs {
+  .compass__arrow {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -79,25 +84,24 @@ const Style = styled.div`
     background-color: rgba(35, 35, 35, 0.5);
     transition: var(--transition);
   }
-  .compass__arrow.svelte-aa5lhs {
-    ::before {
-      content: "";
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 0 4px 24px 4px;
-      border-color: transparent transparent #fe191a transparent;
-    }
+  .compass__arrow::before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 4px 24px 4px;
+    border-color: transparent transparent #fe191a transparent;
+    margin: 0 auto;
   }
-
-  .compass__arrow.svelte-aa5lhs {
-    ::after {
-      content: "";
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 24px 4px 0 4px;
-      border-color: #fefefe transparent transparent transparent;
-    }
+  .compass__arrow::after {
+    content: "";
+    display: block;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 24px 4px 0 4px;
+    border-color: #fefefe transparent transparent transparent;
+    margin: 0 auto;
   }
 `;
