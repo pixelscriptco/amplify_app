@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Compass from "../Components/Atoms/Compass";
-import IconButton from "../Components/Atoms/IconButton";
+import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon, HideIcon, RadiusIcon } from "../Icons";
 import { toggleFullScreen, toogleHideOverlays } from "../Utility/function";
-import CollapsiblePanel from "../Components/Molecules/CollapsiblePanel";
-import UnitTypeFilter from "../Components/Molecules/UnitTypeFilter";
 import Navigator from "../Components/Molecules/Navigator";
 import { useParams, useNavigate } from "react-router-dom";
-import Amenities from "../Components/Atoms/Amenities";
 import TowerRotateInstruction from "../Components/Atoms/TowerRotateInstruction";
-import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
 import UnitStatusLegend from "../Components/Atoms/UnitStatusLegend";
 import axiosInstance from "../Utility/axios";
 import Tippy from '@tippyjs/react';
@@ -21,7 +17,7 @@ import MediaLibrary from '../Components/Molecules/MediaLibrary';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import CloseIcon from '@mui/icons-material/Close';
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
-import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
+import Sidebar from '../Components/Sidebar';
 
 function Tower(props) {
   const { project, tower } = useParams();
@@ -68,11 +64,12 @@ function Tower(props) {
         setLoading(true);
         const response = await axiosInstance.get(`/app/tower/${project}/${tower}`);                
         // Sort tower plans by order
-        const { id, name, floor_count } = response.data;
+        const { id, name, floor_count, direction } = response.data;
         setTowerData({
           id,
           name,
-          floor_count
+          floor_count,
+          direction
         })
         const sortedPlans = response.data.tower_plans;
 
@@ -205,6 +202,18 @@ function Tower(props) {
     setCurrentIndex((prev) => (prev + 1) % sortedPlans.length);
   };
 
+  // Direction to angle mapping
+  const directionToAngle = {
+    'North': 0,
+    'North-East': 45,
+    'East': 90,
+    'South-East': 135,
+    'South': 180,
+    'South-West': 225,
+    'West': 270,
+    'North-West': 315,
+  };
+
   return (
     <Style>
       <Navigator
@@ -220,16 +229,29 @@ function Tower(props) {
           path: `tower/${tower}`,
         }}
       />
+      <Sidebar />
       <UnitStatusLegend />
-      <div className="left-panels">
+      {/* Compass with direction */}
+      {/* {sortedPlans.length && sortedPlans[currentIndex]?.direction && (        
+        (() => {
+          const currentDirection = sortedPlans[currentIndex].direction;
+          const angle = directionToAngle[currentDirection] ?? 0;
+          return (
+            <div style={{ position: 'absolute', top: 24, right: 32, zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <Compass direction={currentDirection} angle={angle} size={60} />
+            </div>
+          );
+        })()
+      )} */}
+      {/* <div className="left-panels">
         <CollapsiblePanel className="filters" title={"Filters"}>
           <UnitTypeFilter
             Tower={tower.toUpperCase()}
           />
         </CollapsiblePanel>
-      </div>
+      </div> */}
       <div className="right-btn-group absolute right top">
-        <IconButton
+        <StaticIconButton
           className="icon-btn"
           icon={HideIcon}
           tooltip="Hide Overlays"
@@ -238,33 +260,22 @@ function Tower(props) {
         />
       </div>
       <TowerRotateInstruction />
-      <ProjectVideoBtn />
 
       <div className="compass-fullscreen-wrapper absolute bottom right flex row overlay-can-fade-out">
-        <div>
-          <Amenities />
-        </div>
-        <div style={{ marginLeft: 16, display: 'flex', alignItems: 'center',zIndex:1000 }}>
-         <button
-           style={{
-             background: 'var(--background_panel)',
-             color: 'white',
-             border: 'none',
-             borderRadius: 4,
-             padding: '8px 16px',
-             cursor: 'pointer',
-             fontSize: 16,
-             fontWeight: 500,
-             boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-           }}
-           onClick={handleOpenUpdates}
-         >
-           Construction Updates
-         </button>
+        <div className="col flex j-end">
+          {sortedPlans.length && sortedPlans[currentIndex]?.direction && (        
+          (() => {
+            const currentDirection = sortedPlans[currentIndex].direction;
+            const angle = directionToAngle[currentDirection] ?? 0;
+            return (
+              <Compass angle={angle} />
+            );
+          })()
+        )}
         </div>
 
         <div className="col w-space flex j-end overlay-can-fade-out">
-          <IconButton
+          <StaticIconButton
             icon={FullScreenIcon}
             tooltip="Fullscreen"
             activeTooltip="Close Fullscreen"
@@ -356,7 +367,7 @@ function Tower(props) {
                   onClick={handleRotateLeft}
                   style={{
                     position: 'absolute',
-                    left: 0,
+                    left: '25%',
                     top: '50%',
                     transform: 'translate(-50%, -50%)',
                     background: 'rgba(255,255,255,0.7)',
@@ -373,7 +384,7 @@ function Tower(props) {
                   onClick={handleRotateRight}
                   style={{
                     position: 'absolute',
-                    right: 0,
+                    right: '25%',
                     top: '50%',
                     transform: 'translate(50%, -50%)',
                     background: 'rgba(255,255,255,0.7)',
@@ -483,9 +494,9 @@ function Tower(props) {
                 </Typography>
               )} */}
             </Box>
-            <IconButton onClick={handleCloseUpdates} sx={{ color: '#333', ml: 2 }}>
+            <StaticIconButton onClick={handleCloseUpdates} sx={{ color: '#333', ml: 2 }}>
               <CloseIcon sx={{ fontSize: 32 }} />
-            </IconButton>
+            </StaticIconButton>
           </Box>
 
           {/* Toolbar */}
@@ -635,6 +646,7 @@ const Style = styled.div`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
 
   .map-filters,
