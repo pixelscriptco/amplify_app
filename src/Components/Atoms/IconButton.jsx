@@ -3,7 +3,7 @@ import styled from "styled-components";
 import tippy from "tippy.js";
 import "tippy.js/animations/shift-away.css";
 
-function IconButton({
+function StaticIconButton({
   icon,
   activeTooltip = "Hide",
   tooltip = "Activate",
@@ -41,7 +41,7 @@ function IconButton({
   );
 }
 
-export default IconButton;
+export default StaticIconButton;
 
 const Style = styled.div`
   z-index: 1;

@@ -128,7 +128,7 @@ const Style = styled.div`
   .interface--col.svelte-9mhvmf.svelte-9mhvmf {
     position: absolute;
     top: 7rem; // initialy 130px
-    left: 14rem; // initialy 2rem
+    left: 7rem; // initialy 2rem
     z-index: 100;
     display: flex;
     flex-direction: column;

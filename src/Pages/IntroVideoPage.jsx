@@ -43,6 +43,7 @@ const Style = styled.div`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
   .skip-btn {
     position: absolute;

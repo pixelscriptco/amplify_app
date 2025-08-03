@@ -7,7 +7,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import FloorSelector from "../Components/Molecules/FloorSelector";
 import ApartmentsDetails from "../Components/Molecules/ApartmentsDetails";
 import Compass from "../Components/Atoms/Compass";
-import IconButton from "../Components/Atoms/IconButton";
+import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon } from "../Icons";
 import { getCombinedTowerName, toggleFullScreen } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
@@ -16,9 +16,8 @@ import ReturnToPrev from "../Components/Atoms/ReturnToPrev";
 import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
 import { COMPASS_ANGLES } from "../Utility/Constants";
 import axiosInstance from "../Utility/axios";
+import Sidebar from '../Components/Sidebar';
 
-const getFlatIndex = (flatNum = "") =>
-  parseInt(flatNum[flatNum.length - 1]) - 1;
 
 function Unit() {
   const { project,floor, tower, unit:unit_str } = useParams();
@@ -126,11 +125,13 @@ function Unit() {
           path: `/${project}/tower/${tower}/floor/${floor}/apartment/${unit_str}`,
         }}
       />
+
+      <Sidebar />
       <ReturnToPrev
         text="Return To Floor Plan"
-        to={`/${project}/tower/${tower}/floor/${floor}`}
+        to={`${project}/tower/${tower}/floor/${floor}`}
       />
-      <div className="floor-selector">
+      {/* <div className="floor-selector">
         <FloorSelector
           currentFloor={currentFloor}
           selectedFloor={selectedFloor}
@@ -139,7 +140,7 @@ function Unit() {
           selectedTower={selectedTower}
           setSelectedTower={setSelectedTower}
         />
-      </div>
+      </div> */}
       <div className="compass-fullscreen-wrapper absolute bottom right flex row">
         <div className="col flex j-end">
           <Compass
@@ -147,7 +148,7 @@ function Unit() {
           />
         </div>
         <div className="col w-space flex j-end">
-          <IconButton
+          <StaticIconButton
             icon={FullScreenIcon}
             tooltip="Fullscreen"
             activeTooltip="Close Fullscreen"
@@ -201,6 +202,7 @@ const CarouselPageStyle = styled.section`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
   .compass-fullscreen-wrapper {
     padding: 1rem;

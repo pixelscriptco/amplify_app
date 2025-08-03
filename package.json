@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@lexical/react": "^0.33.1",
     "@mui/icons-material": "^7.1.2",
     "@mui/material": "^7.1.1",
     "@testing-library/dom": "^10.4.0",
@@ -15,6 +16,7 @@
     "antd": "^5.26.0",
     "axios": "^1.9.0",
     "cashfree-dropjs": "^1.1.5",
+    "lexical": "^0.33.1",
     "react": "^19.1.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "^19.1.0",

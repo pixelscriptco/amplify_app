@@ -99,6 +99,8 @@ function UnitTypeFilter({ tower, floor }) {
   useEffect(() => {
     const fetchUnitDetails = async () => {
       try {
+        console.log(tower);
+        
         // Adjust the API endpoint as needed
         const response = await fetch(`/api/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
         const data = await response.json();
