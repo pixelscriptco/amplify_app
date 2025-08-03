@@ -8,7 +8,7 @@ import "react-responsive-carousel/lib/styles/carousel.min.css";
 import FloorSelector from "../Components/Molecules/FloorSelector";
 import ApartmentsDetails from "../Components/Molecules/ApartmentsDetails";
 import Compass from "../Components/Atoms/Compass";
-import IconButton from "../Components/Atoms/IconButton";
+import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon } from "../Icons";
 import { getCombinedTowerName, toggleFullScreen } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
@@ -178,7 +178,7 @@ function VRTour() {
           <Compass />
         </div>
         <div className="col w-space flex j-end">
-          <IconButton
+          <StaticIconButton
             icon={FullScreenIcon}
             tooltip="Fullscreen"
             activeTooltip="Close Fullscreen"
@@ -234,6 +234,7 @@ const CarouselPageStyle = styled.section`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
   .compass-fullscreen-wrapper {
     padding: 1rem;

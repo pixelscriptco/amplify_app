@@ -1,5 +1,4 @@
-import React,{useEffect} from "react";
-import { useState } from "react";
+import React,{useEffect, useState} from "react";
 import styled from "styled-components";
 import { useNavigate,useParams } from 'react-router-dom';
 import axiosInstance from '../../Utility/axios';
@@ -13,30 +12,51 @@ function Navigator({
   const [projectData, setProjectData] = useState({
     id: 0,
     logo:'',
-    name:''
+    name:'',
+    registration_number: '',
+    qr_code: ''
   });
+  const [svgSrc, setSvgSrc] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProjectData = async () => {
       if (!project) return;
-      
       try {
         const response = await axiosInstance.get(`/app/project/${project}`);
-        const { id, logo,name } = response.data;
-        
+        const { id, logo, name, registration_number, qr_code } = response.data;
         setProjectData({
           id,
           logo,
-          name
+          name,
+          registration_number,
+          qr_code
         });
       } catch (err) {
         console.error("Error fetching building data:", err);
       }
     };
-
     fetchProjectData();
   }, [project]);
+
+  // Handle SVG QR code as base64
+  useEffect(() => {
+    const fetchSvgAsBase64 = async () => {
+      if (projectData.qr_code && projectData.qr_code.endsWith('.svg')) {
+        try {
+          const res = await fetch(projectData.qr_code);
+          const text = await res.text();
+          const base64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(text)));
+          setSvgSrc(base64);
+        } catch (e) {
+          setSvgSrc('');
+        }
+      } else {
+        setSvgSrc('');
+      }
+    };
+    fetchSvgAsBase64();
+  }, [projectData.qr_code]);
 
   return (
     <Style className={className}>
@@ -49,6 +69,8 @@ function Navigator({
 
       {/* Spacer */}
       <div className="spacer"></div>
+
+      {/* StepBar */}
       <StepBar>
         {prevPages.map((page, index) => (
           <Step key={index} onClick={(e) => navigate(page.path)}>
@@ -62,6 +84,34 @@ function Navigator({
           </Step>
         )}
       </StepBar>
+
+      {/* QR code and registration number at the end of the row */}
+      <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
+        {projectData.registration_number && (
+          <div style={{
+            background: 'rgba(255,255,255,0.95)',
+            borderRadius: 6,
+            padding: '6px 16px',
+            fontWeight: 500,
+            fontSize: 15,
+            color: '#232323',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+          }}>
+            {projectData.registration_number}
+          </div>
+        )}
+        {projectData.qr_code && (
+          projectData.qr_code.endsWith('.svg') ? (
+            <img src={svgSrc} alt="QR Code" style={{ width: 68, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',padding: '2px 5px' }} />
+          ) : (
+            <img
+              src={projectData.qr_code}
+              alt="QR Code"
+              style={{ width: 80, height: 80, objectFit: 'contain', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+            />
+          )
+        )}
+      </div>
     </Style>
   );
 }
@@ -98,8 +148,8 @@ const Style = styled.header`
       justify-content: center;
       
       img {
-        height: 40px;
-        width: auto;
+        height: 75px;
+        width: 75px;
         max-width: 120px;
         object-fit: contain;
         opacity: 0.9;

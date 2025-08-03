@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import Compass from "../Components/Atoms/Compass";
-import IconButton from "../Components/Atoms/IconButton";
+import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon} from "../Icons";
 import { toggleFullScreen } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
-import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
-import { COMPASS_ANGLES } from "../Utility/Constants";
 import { useNavigate,useParams } from 'react-router-dom';
 import axiosInstance from '../Utility/axios';
 import Tippy from '@tippyjs/react';
-import { Modal, Box, Typography } from '@mui/material';
+import { Modal, Box, Typography,Dialog, DialogTitle, DialogContent} from '@mui/material';
+import Sidebar from '../Components/Sidebar';
 
 function Building(props) {
   const { project } = useParams();
@@ -27,38 +25,46 @@ function Building(props) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  // New state for menu dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogContent, setDialogContent] = useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
 
   useEffect(() => {
     const fetchBuildingData = async () => {
       if (!project) return;
-      
       try {
         const response = await axiosInstance.get(`/app/building/${project}`);
-        const { id, name, image_url, svg_url, floors } = response.data;
-        
+        const { id, name, image_url, svg_url, floors} = response.data;
         const svgResp = await fetch(svg_url);
         const svgText = await svgResp.text();
-  
         // Parse the SVG text and extract <path> elements
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
         const paths = Array.from(svgDoc.querySelectorAll('path'));
-        
         setBuildingData({
           id,
           name,
           imageUrl: image_url,
           floors,
-          paths,
+          paths
         });
-
-        setLoading(false);        
-
+        setLoading(false);
       } catch (err) {
         console.error("Error fetching building data:", err);
       }
     };
-
     fetchBuildingData();
   }, [project]);
 
@@ -151,13 +157,11 @@ function Building(props) {
           path: `/${project}`,
         }}
       />
+      <Sidebar/>
 
       <div className="compass-fullscreen-wrapper absolute bottom right flex row">
-        <div className="col flex j-end">
-          <Compass angle={COMPASS_ANGLES.PROJECT_PAGE} />
-        </div>
         <div className="col w-space flex j-end">
-          <IconButton
+          <StaticIconButton
             icon={FullScreenIcon}
             tooltip="Fullscreen"
             activeTooltip="Close Fullscreen"
@@ -270,7 +274,12 @@ function Building(props) {
           </Modal>
         </>
       )}
-      <ProjectVideoBtn />
+      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+        <DialogTitle>Info</DialogTitle>
+        <DialogContent>
+          {dialogContent}
+        </DialogContent>
+      </Dialog>
     </Style>
   );
 }
@@ -293,6 +302,7 @@ const Style = styled.main`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
 
   .right-btn-group {
@@ -351,4 +361,6 @@ const Style = styled.main`
     padding: 12px;
     border-radius: 4px;
   }
+
+
 `;

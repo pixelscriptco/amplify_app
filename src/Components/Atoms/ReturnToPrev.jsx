@@ -2,9 +2,9 @@ import React from "react";
 import { Link, useParams } from "react-router-dom";
 import styled from "styled-components";
 
-function ReturnToPrev({ text = "Return To Tower", to = "" }) {
+function ReturnToPrev({ text = "Return To Tower", to = "" }) {  
   return (
-    <Link to={to} onClick={(e) => e.stopPropagation()}>
+    <Link to={`/${to}`} onClick={(e) => e.stopPropagation()}>
       <Style id="return-to-tower">
         <div>{text}</div>
         <div class="back__icon">

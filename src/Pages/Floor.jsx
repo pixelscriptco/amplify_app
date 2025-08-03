@@ -1,28 +1,24 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Compass from "../Components/Atoms/Compass";
-import IconButton from "../Components/Atoms/IconButton";
+import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon, HideIcon } from "../Icons";
 import {
   getCombinedTowerName,
   toggleFullScreen,
   toogleHideOverlays,
 } from "../Utility/function";
-import CollapsiblePanel from "../Components/Molecules/CollapsiblePanel";
-import UnitTypeFilter from "../Components/Molecules/UnitTypeFilter";
 import Zoomable from "../Components/Molecules/Zoomable";
 import FloorSelector from "../Components/Molecules/FloorSelector";
 import { useParams } from "react-router-dom";
 import Navigator from "../Components/Molecules/Navigator";
 import { useNavigate, useLocation } from "react-router-dom";
-import ApartmentsDetails from "../Components/Molecules/ApartmentsDetails";
-import { useContext } from "react";
-import { AppContext } from "../Contexts/AppContext";
 import ReturnToPrev from "../Components/Atoms/ReturnToPrev";
 import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
 import { COMPASS_ANGLES } from "../Utility/Constants";
 import UnitStatusLegend from "../Components/Atoms/UnitStatusLegend";
 import axiosInstance from "../Utility/axios";
+import Sidebar from '../Components/Sidebar';
 
 function Floor() {
   const [showOverlays, setShowOverlays] = useState(true);
@@ -130,7 +126,7 @@ function Floor() {
         // navigate(project + "/tower/" + tower + "/floor/" + floor);
       }}
     >
-      <ProjectVideoBtn />
+      {/* <ProjectVideoBtn /> */}
 
       <ReturnToPrev
         text="Return To Tower"
@@ -154,9 +150,9 @@ function Floor() {
               path: `/${project}/tower/${tower}/floor/${floor}`,
           }}
         />
-        
+        <Sidebar />
         <>
-          <div className="floor-selector overlay-can-fade-out">
+          {/* <div className="floor-selector overlay-can-fade-out">
             <FloorSelector
               currentFloor={currentFloor}
               selectedFloor={selectedFloor}
@@ -165,16 +161,16 @@ function Floor() {
               selectedTower={selectedTower}
               setSelectedTower={setSelectedTower}
             />
-          </div>
+          </div> */}
 
-          <div className="unit-type-filter overlay-can-fade-out">
+          {/* <div className="unit-type-filter overlay-can-fade-out">
             <CollapsiblePanel title={"Filters"}>
               <UnitTypeFilter firstTower={tower} floor={floor} />
             </CollapsiblePanel>
-          </div>
+          </div> */}
         </>
       <div className="right-btn-group absolute right top">
-        <IconButton
+        <StaticIconButton
           className="icon-btn"
           icon={HideIcon}
           tooltip="Hide Overlays"
@@ -191,7 +187,7 @@ function Floor() {
           />
         </div>
         <div className="col w-space flex j-end">
-          <IconButton
+          <StaticIconButton
             icon={FullScreenIcon}
             tooltip="Fullscreen"
             activeTooltip="Close Fullscreen"
@@ -301,7 +297,8 @@ const Style = styled.main`
 
   .floor-selector {
     position: absolute;
-    left: 14rem;
+    // left: 14rem;
+    left: 3rem;
     top: 8rem;
   }
 
@@ -401,6 +398,7 @@ const Style = styled.main`
     top: 0rem;
     left: 0rem;
     margin: 2rem;
+    width:97%;
   }
 
   .left-interface {
