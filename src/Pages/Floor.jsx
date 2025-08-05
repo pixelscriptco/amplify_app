@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Compass from "../Components/Atoms/Compass";
+import CollapsiblePanel from "../Components/Molecules/CollapsiblePanel";
+import UnitTypeFilter from "../Components/Molecules/UnitTypeFilter"
 import StaticIconButton from "../Components/Atoms/IconButton";
 import { FullScreenIcon, HideIcon } from "../Icons";
 import {
@@ -152,7 +154,7 @@ function Floor() {
         />
         <Sidebar />
         <>
-          {/* <div className="floor-selector overlay-can-fade-out">
+          <div className="floor-selector overlay-can-fade-out">
             <FloorSelector
               currentFloor={currentFloor}
               selectedFloor={selectedFloor}
@@ -161,13 +163,13 @@ function Floor() {
               selectedTower={selectedTower}
               setSelectedTower={setSelectedTower}
             />
-          </div> */}
+          </div>
 
-          {/* <div className="unit-type-filter overlay-can-fade-out">
+          <div className="unit-type-filter overlay-can-fade-out">
             <CollapsiblePanel title={"Filters"}>
               <UnitTypeFilter firstTower={tower} floor={floor} />
             </CollapsiblePanel>
-          </div> */}
+          </div>
         </>
       <div className="right-btn-group absolute right top">
         <StaticIconButton
