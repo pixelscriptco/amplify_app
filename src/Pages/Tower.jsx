@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Compass from "../Components/Atoms/Compass";
 import StaticIconButton from "../Components/Atoms/IconButton";
+import CollapsiblePanel from "../Components/Molecules/CollapsiblePanel";
+import UnitTypeFilter from "../Components/Molecules/UnitTypeFilter"
 import { FullScreenIcon, HideIcon, RadiusIcon } from "../Icons";
 import { toggleFullScreen, toogleHideOverlays } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
@@ -243,13 +245,13 @@ function Tower(props) {
           );
         })()
       )} */}
-      {/* <div className="left-panels">
+      <div className="left-panels">
         <CollapsiblePanel className="filters" title={"Filters"}>
           <UnitTypeFilter
             Tower={tower.toUpperCase()}
           />
         </CollapsiblePanel>
-      </div> */}
+      </div>
       <div className="right-btn-group absolute right top">
         <StaticIconButton
           className="icon-btn"
