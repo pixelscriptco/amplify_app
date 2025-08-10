@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useInventories, useMapFilter } from "../../Hooks";
-import Slider from "rc-slider";
+import Slider,{Range} from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useContext } from "react";
 import { AppContext } from "../../Contexts/AppContext";
-const { Range } = Slider;
+import axiosInstance from "../../Utility/axios";
+import { getFormalCurrencyFromNum } from "../../Utility/function";
 
-function UnitTypeFilter({ tower, floor }) {
+// const { Range } = Slider;
+
+function UnitTypeFilter({ tower, floor }) {  
   const {
     getMinMaxTotalCostInTower,
     getMinMaxSBUInTower,
@@ -21,7 +24,6 @@ function UnitTypeFilter({ tower, floor }) {
     setFlatFilterPriceValues,
     setFlatFilterSizeValues,
   } = useContext(AppContext);
-
   const isFloor = floor !== undefined;
   const minMaxCost = isFloor
     ? getMinMaxTotalCostInTower(tower, floor)
@@ -45,10 +47,7 @@ function UnitTypeFilter({ tower, floor }) {
       ];
 
   const totalUnits = isFloor ? 4 : getAllUnitsInTower(tower).length;
-  const unitTypeFilters = getAllUnitTypesInTower(tower).map((type) => ({
-    title: type,
-    id: type,
-  }));
+  const unitTypeFilters = [{title: '3bhk',id: '3bhk'},{title: '4bhk',id: '4bhk'}]
   const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } =
     useMapFilter();
 
@@ -98,11 +97,9 @@ function UnitTypeFilter({ tower, floor }) {
 
   useEffect(() => {
     const fetchUnitDetails = async () => {
-      try {
-        console.log(tower);
-        
+      try {        
         // Adjust the API endpoint as needed
-        const response = await fetch(`/api/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
+        const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);     
         const data = await response.json();
         setUnitDetails(data.units || []);
       } catch (error) {
@@ -120,7 +117,8 @@ function UnitTypeFilter({ tower, floor }) {
       >
         <div className="main-controls">
           {" "}
-          <div className="available-title">{totalUnits} Units Total</div>{" "}
+          {/* <div className="available-title">{totalUnits} Units Total</div>{" "} */}
+          <div className="available-title">60 Units Total</div>{" "}
           <div className="button-group">
             {unitTypeFilters.map((filter) => (
               <button
@@ -135,6 +133,53 @@ function UnitTypeFilter({ tower, floor }) {
               </button>
             ))}
           </div>{" "}
+          <div className="slider-group">
+            <div className="slider-group__title">Price (INR)</div>
+            <div className="slider-group__body--prices">
+              <div className="input-minprice">2 cr</div>
+              <div className="input-maxprice">3 cr</div>
+            </div>
+            <input
+              type="range"
+              min='2cr'
+              max='3cr'
+              value={flatFilterPriceValues[0]}
+              onChange={e => setFlatFilterPriceValues([Number(e.target.value), flatFilterPriceValues[1]])}
+              style={{ width: "100%" }}
+            />
+            {/* <input
+              type="range"
+              min={minMaxCost[0]}
+              max={minMaxCost[1]}
+              value={flatFilterPriceValues[1]}
+              onChange={e => setFlatFilterPriceValues([flatFilterPriceValues[0], Number(e.target.value)])}
+              style={{ width: "48%" }}
+            /> */}
+          </div>
+
+          <div className="slider-group">
+            <div className="slider-group__title">Size (Sq. Ft)</div>
+            <div className="slider-group__body--prices">
+              <div className="input-minprice">1400</div>
+              <div className="input-maxprice">2500</div>
+            </div>
+            <input
+              type="range"
+              min='1400'
+              max='2500'
+              value='1400'
+              onChange={e => setFlatFilterSizeValues([Number(e.target.value), flatFilterSizeValues[1]])}
+              style={{ width: "100%" }}
+            />
+            {/* <input
+              type="range"
+              min={minMaxSBU[0]}
+              max={minMaxSBU[1]}
+              value={flatFilterSizeValues[1]}
+              onChange={e => setFlatFilterSizeValues([flatFilterSizeValues[0], Number(e.target.value)])}
+              style={{ width: "48%" }}
+            /> */}
+          </div>
         </div>
       </div>
       <div className="el-showall">
@@ -154,6 +199,64 @@ function UnitTypeFilter({ tower, floor }) {
 }
 
 export default UnitTypeFilter;
+
+// export const DoubleSlider = ({
+//   title,
+//   rangeLabel,
+//   start,
+//   end,
+//   handleOnSliderChange,
+//   value,
+//   labelValues,
+// }) => {
+//   return (
+//     <div class="slider-group">
+//       <div class="slider-group__title">{title + " " + rangeLabel}</div>{" "}
+//       <div class="slider-group__body">
+//         <div class="slider-group__body--prices">
+//           <div class="input-minprice">{labelValues[0]}</div>{" "}
+//           <div class="input-maxprice">{labelValues[1]}</div>
+//         </div>{" "}
+//         <div style={{ marginTop: "10px" }}>
+//           <Range
+//             // range
+//             // disabled
+//             min={start}
+//             max={end}
+//             allowCross={false}
+//             value={value}
+//             onChange={handleOnSliderChange}
+//             railStyle={{
+//               height: 2,
+//             }}
+//             // className="background-red"
+//             handleStyle={[
+//               {
+//                 backgroundColor: "var(--blue-theme)",
+//                 border: "1px solid var(--blue-theme)",
+//               },
+//               {
+//                 backgroundColor: "var(--blue-theme)",
+//                 border: "1px solid var(--blue-theme)",
+//               },
+//             ]}
+//             trackStyle={[
+//               {
+//                 background: "var(--blue-theme)",
+//               },
+//             ]}
+//             dotStyle={{
+//               backgroundColor: "var(--blue-theme)",
+//             }}
+//             activeDotStyle={{
+//               backgroundColor: "var(--blue-theme)",
+//             }}
+//           />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 const Style = styled.div`
   .button.active.green {

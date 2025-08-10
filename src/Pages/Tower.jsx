@@ -248,7 +248,7 @@ function Tower(props) {
       <div className="left-panels">
         <CollapsiblePanel className="filters" title={"Filters"}>
           <UnitTypeFilter
-            Tower={tower.toUpperCase()}
+            tower= {tower.toUpperCase()}
           />
         </CollapsiblePanel>
       </div>
