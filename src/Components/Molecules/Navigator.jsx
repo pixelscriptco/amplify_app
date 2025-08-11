@@ -1,22 +1,19 @@
-import React,{useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useNavigate,useParams } from 'react-router-dom';
-import axiosInstance from '../../Utility/axios';
+import { useNavigate, useParams } from "react-router-dom";
+import axiosInstance from "../../Utility/axios";
 
-function Navigator({
-  className,
-  currentPage,
-  prevPages = []
-}) {
+function Navigator({ className, currentPage, prevPages = [] }) {
   const { project } = useParams();
+  console.log(prevPages);
   const [projectData, setProjectData] = useState({
     id: 0,
-    logo:'',
-    name:'',
-    registration_number: '',
-    qr_code: ''
+    logo: "",
+    name: "",
+    registration_number: "",
+    qr_code: "",
   });
-  const [svgSrc, setSvgSrc] = useState('');
+  const [svgSrc, setSvgSrc] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -30,7 +27,7 @@ function Navigator({
           logo,
           name,
           registration_number,
-          qr_code
+          qr_code,
         });
       } catch (err) {
         console.error("Error fetching building data:", err);
@@ -42,77 +39,118 @@ function Navigator({
   // Handle SVG QR code as base64
   useEffect(() => {
     const fetchSvgAsBase64 = async () => {
-      if (projectData.qr_code && projectData.qr_code.endsWith('.svg')) {
+      if (projectData.qr_code && projectData.qr_code.endsWith(".svg")) {
         try {
           const res = await fetch(projectData.qr_code);
           const text = await res.text();
-          const base64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(text)));
+          const base64 =
+            "data:image/svg+xml;base64," +
+            btoa(unescape(encodeURIComponent(text)));
           setSvgSrc(base64);
         } catch (e) {
-          setSvgSrc('');
+          setSvgSrc("");
         }
       } else {
-        setSvgSrc('');
+        setSvgSrc("");
       }
     };
     fetchSvgAsBase64();
   }, [projectData.qr_code]);
 
+  // console.log(currentPage,prevPages);
+
   return (
-    <Style className={className}>
-      {/* Logo Section */}
-      <div className="logo-section">
-        <div className="logo-wrapper">
-          <img src={`${projectData.logo}`} alt="Project Logo" />
+    <>
+      <div className="bread_camp">
+        <div className="logo_outer">
+          <img width="35" src={`${projectData.logo}`} alt="Project Logo" />
         </div>
-      </div>
-
-      {/* Spacer */}
-      <div className="spacer"></div>
-
-      {/* StepBar */}
-      <StepBar>
-        {prevPages.map((page, index) => (
-          <Step key={index} onClick={(e) => navigate(page.path)}>
-            {page.title}
-          </Step>
-        ))}
+        {prevPages.map((page, index) => {
+          return (
+            <>
+              <div className="bred_outer" onClick={(e) => navigate(page.path)}>
+                {page.title}
+              </div>
+              {index < prevPages.length - 1 && (
+                <span className="arrow_qw">
+                  <svg
+                    fill="currentColor"
+                    width="16px"
+                    height="16px"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 640 640"
+                  >
+                    <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+                  </svg>
+                </span>
+              )}
+            </>
+          );
+        })}
 
         {currentPage && (
-          <Step active>
-            {currentPage.title}
-          </Step>
+          <>
+            <span className="arrow_qw">
+              <svg
+                fill="currentColor"
+                width="16px"
+                height="16px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+              >
+                <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+              </svg>
+            </span>
+            <div class="bred_outer ">{currentPage.title}</div>
+          </>
         )}
-      </StepBar>
+      </div>
 
-      {/* QR code and registration number at the end of the row */}
-      <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '0.5rem' }}>
+      <div className="qrcode_sec">
         {projectData.registration_number && (
-          <div style={{
-            background: 'rgba(255,255,255,0.95)',
-            borderRadius: 6,
-            padding: '6px 16px',
-            fontWeight: 500,
-            fontSize: 15,
-            color: '#232323',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-          }}>
+          <div
+            style={{
+              background: "rgba(255,255,255,0.95)",
+              borderRadius: 6,
+              padding: "6px 16px",
+              fontWeight: 500,
+              fontSize: 15,
+              color: "#232323",
+              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            }}
+          >
             {projectData.registration_number}
           </div>
         )}
-        {projectData.qr_code && (
-          projectData.qr_code.endsWith('.svg') ? (
-            <img src={svgSrc} alt="QR Code" style={{ width: 68, background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)',padding: '2px 5px' }} />
+        {projectData.qr_code &&
+          (projectData.qr_code.endsWith(".svg") ? (
+            <img
+              src={svgSrc}
+              alt="QR Code"
+              style={{
+                width: 68,
+                background: "#fff",
+                borderRadius: 8,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                padding: "2px 5px",
+              }}
+            />
           ) : (
             <img
               src={projectData.qr_code}
               alt="QR Code"
-              style={{ width: 80, height: 80, objectFit: 'contain', background: '#fff', borderRadius: 8, boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+              style={{
+                width: 80,
+                height: 80,
+                objectFit: "contain",
+                background: "#fff",
+                borderRadius: 8,
+                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              }}
             />
-          )
-        )}
+          ))}
       </div>
-    </Style>
+    </>
   );
 }
 
@@ -416,7 +454,8 @@ const StepBar = styled.div`
 
 const Step = styled.div`
   position: relative;
-  background: ${({ active }) => (active ? "var(--panel_background)" : "var(--background_panel)")};
+  background: ${({ active }) =>
+    active ? "var(--panel_background)" : "var(--background_panel)"};
   color: white;
   padding: 16px 40px 16px 32px;
   font-size: 1rem;
