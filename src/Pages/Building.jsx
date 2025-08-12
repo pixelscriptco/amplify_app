@@ -169,7 +169,7 @@ function Building(props) {
                 return (
                   <React.Fragment key={ut}>
                     <div className="flors_icons">
-                      <span className="text_blk clr_vilt">{number} </span>
+                      <span className="text_blk clr_primary">{number} </span>
                       {label}
                       {index < array.length - 1 && (
                         <span className="text_sub"> and </span>

@@ -61,49 +61,51 @@ function Navigator({ className, currentPage, prevPages = [] }) {
 
   return (
     <>
-      <div className="bread_camp">
+      <div className="hdr_log_main">
         <div className="logo_outer">
           <img width="35" src={`${projectData.logo}`} alt="Project Logo" />
         </div>
-        {prevPages.map((page, index) => {
-          return (
-            <>
-              <div className="bred_outer" onClick={(e) => navigate(page.path)}>
-                {page.title}
-              </div>
-              {index < prevPages.length - 1 && (
-                <span className="arrow_qw">
-                  <svg
-                    fill="currentColor"
-                    width="16px"
-                    height="16px"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 640 640"
-                  >
-                    <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
-                  </svg>
-                </span>
-              )}
-            </>
-          );
-        })}
+        <div className="bread_camp">
+          {prevPages.map((page, index) => {
+            return (
+              <>
+                <div className="bred_outer" onClick={(e) => navigate(page.path)}>
+                  {page.title}
+                </div>
+                {index < prevPages.length - 1 && (
+                  <span className="arrow_qw">
+                    <svg
+                      fill="currentColor"
+                      width="16px"
+                      height="16px"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 640 640"
+                    >
+                      <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+                    </svg>
+                  </span>
+                )}
+              </>
+            );
+          })}
 
-        {currentPage && (
-          <>
-            <span className="arrow_qw">
-              <svg
-                fill="currentColor"
-                width="16px"
-                height="16px"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
-              >
-                <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
-              </svg>
-            </span>
-            <div class="bred_outer ">{currentPage.title}</div>
-          </>
-        )}
+          {currentPage && (
+            <>
+              <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'block' : 'none' }}>
+                <svg
+                  fill="currentColor"
+                  width="16px"
+                  height="16px"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                >
+                  <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+                </svg>
+              </span>
+              <div class="bred_outer ">{currentPage.title}</div>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="qrcode_sec">

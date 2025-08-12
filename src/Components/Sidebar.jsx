@@ -3,6 +3,7 @@ import styled from "styled-components";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import { LocationIcon } from "../Data/icons";
+import nothing_found from "../Data/images/nothing.jpg";
 import { view_360 } from "../Data/images/AmenitiesSvgs";
 import axiosInstance from "../Utility/axios";
 import { useParams } from "react-router-dom";
@@ -82,6 +83,7 @@ const Sidebar = () => {
   const [showDescription, setShowDescription] = useState(false);
   const [showLocation, setShowLocation] = useState(false);
   const [showAmenities, setShowAmenities] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [showConstructionUpdates, setShowConstructionUpdates] = useState(false);
   const { project } = useParams();
   const [description, setDescription] = useState("");
@@ -114,8 +116,10 @@ const Sidebar = () => {
     axiosInstance
       .get(`/app/project/${project}/details`)
       .then((response) => {
-        const { description, project_url, amenities, project_updates } =
+        let { description, project_url, amenities, project_updates } =
           response.data;
+        console.log(project_url);
+          // project_updates = [];
         setDescription(description || "");
         setProjectUrl(project_url || "");
         setAmenities(amenities || []);
@@ -130,11 +134,13 @@ const Sidebar = () => {
     setShowDescription(false);
     setShowLocation(false);
     setShowAmenities(false);
+    setShowTour(false);
     setShowConstructionUpdates(false);
     if (idx === 0) setShowDescription(true);
     if (idx === 1) setShowLocation(true);
     if (idx === 2) setShowAmenities(true);
     if (idx === 3) setShowConstructionUpdates(true);
+    if (idx === 4) setShowTour(true);
     // Add more handlers for other icons if needed
   };
 
@@ -144,6 +150,7 @@ const Sidebar = () => {
     if (showLocation) return 1;
     if (showAmenities) return 2;
     if (showConstructionUpdates) return 3;
+    if (showTour) return 4;
     return -1;
   };
 
@@ -181,10 +188,19 @@ const Sidebar = () => {
             &times;
           </button>
           {/* <h2>Description</h2> */}
+          { !description ? (
+              <div className="no_data_wrap">
+                <div className="no_data_block">
+                    <img  src={nothing_found} alt="no data" />
+                </div>      
+                <span className="text_amentyies">No description available.</span>
+            </div>
+            ) : (
           <div
-            style={{ marginTop: 50 }}
+            style={{ marginTop: 10 }}
             dangerouslySetInnerHTML={{ __html: description }}
           ></div>
+          )}
         </div>
       </SlidePanel>
       <SlidePanel open={showLocation}>
@@ -227,18 +243,23 @@ const Sidebar = () => {
             }}
           >
             {amenities.length === 0 ? (
-              <div>No amenities available.</div>
+              <div className="no_data_wrap">
+                <div className="no_data_block">
+                    <img  src={nothing_found} alt="no data" />
+                </div>      
+                <span className="text_amentyies">No amenities available.</span>
+            </div>
             ) : (
               amenities.map((a, idx) => (
-                <div className="AMENITIES_OUTER">
+                <div className="AMENITIES_OUTER" 
+                      onClick={() =>
+                        a.vr_url && window.open(a.vr_url, "_blank")
+                      }>
                   <div className="img_blockqe">
                     <img
                       src={a.image}
                       alt={a.name}
                       className="IMG_amenite"
-                      onClick={() =>
-                        a.vr_url && window.open(a.vr_url, "_blank")
-                      }
                     />
                   </div>
 
@@ -322,53 +343,73 @@ const Sidebar = () => {
             }}
           >
             {project_updates.length === 0 ? (
-              <div>No construction updates available.</div>
+              <div className="no_data_wrap">
+                <div className="no_data_block">
+                    <img src={nothing_found} alt="no data" />
+                </div>      
+                <span className="text_amentyies">No construction updates available.</span>
+            </div>
             ) : (
-              project_updates.map((a, idx) => (
-                <div
-                  key={a.id || idx}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    width: 160,
-                  }}
-                >
-                  {a.image && (
-                    <img
-                      src={a.image}
-                      alt={a.name}
-                      style={{
-                        width: 120,
-                        height: 120,
-                        objectFit: "cover",
-                        borderRadius: 8,
-                        cursor: a.vr_url ? "pointer" : "default",
-                        border: "2px solid #219ebc",
-                        background: "#fff",
-                      }}
-                      onClick={() =>
-                        a.vr_url && window.open(a.vr_url, "_blank")
-                      }
-                    />
-                  )}
-                  <div
-                    style={{
-                      marginTop: 8,
-                      color: "white",
-                      fontWeight: 500,
-                      fontSize: 16,
-                      textAlign: "center",
-                    }}
-                  >
-                    {a.name}
+              <div className="construction_uopdated">
+                {project_updates.map((a, idx) => (
+                  <div className="main_tab_img_block" key={a.id || idx}>
+                    <div className="img_block_video">
+                      {a.image_url?.toLowerCase().endsWith(".mp4") ? (
+                        <video
+                          width="100%"
+                          height="240"
+                          controls
+                          // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
+                          style={{ cursor: a.vr_url ? "pointer" : "default" }}
+                        >
+                          <source src={a.image_url} type="video/mp4" />
+                          <source
+                            src={a.image_url.replace(/\.mp4$/, ".ogg")}
+                            type="video/ogg"
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      ) : (
+                        <img
+                          src={a.image_url}
+                          alt={a.name}
+                          // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}                          
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <span className="main_text_blk">{a.name}</span>
+                    </div>
                   </div>
-                </div>
-              ))
+                ))}
+              </div>
             )}
           </div>
         </div>
       </SlidePanel>
+       <div className="wrap_iframe_box" style={{ display: (projectUrl && showTour) ? 'block' : 'none'}}>
+        <div className="main_se_wrap_box">
+          <video width="100%" height="100%" controls >
+            <source src={projectUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <div className="cose_btn" onClick={() => setShowTour(false)} style={{ cursor: "pointer" }}>
+          <svg
+            viewBox="0 0 24 24"
+            height="24"
+            width="24"
+            preserveAspectRatio="xMidYMid meet"
+            fill="none"
+          >
+            <title>close-refreshed</title>
+            <path
+              d="M11.9998 13.4L7.0998 18.3C6.91647 18.4833 6.68314 18.575 6.3998 18.575C6.11647 18.575 5.88314 18.4833 5.6998 18.3C5.51647 18.1167 5.4248 17.8833 5.4248 17.6C5.4248 17.3167 5.51647 17.0833 5.6998 16.9L10.5998 12L5.6998 7.09999C5.51647 6.91665 5.4248 6.68332 5.4248 6.39999C5.4248 6.11665 5.51647 5.88332 5.6998 5.69999C5.88314 5.51665 6.11647 5.42499 6.3998 5.42499C6.68314 5.42499 6.91647 5.51665 7.0998 5.69999L11.9998 10.6L16.8998 5.69999C17.0831 5.51665 17.3165 5.42499 17.5998 5.42499C17.8831 5.42499 18.1165 5.51665 18.2998 5.69999C18.4831 5.88332 18.5748 6.11665 18.5748 6.39999C18.5748 6.68332 18.4831 6.91665 18.2998 7.09999L13.3998 12L18.2998 16.9C18.4831 17.0833 18.5748 17.3167 18.5748 17.6C18.5748 17.8833 18.4831 18.1167 18.2998 18.3C18.1165 18.4833 17.8831 18.575 17.5998 18.575C17.3165 18.575 17.0831 18.4833 16.8998 18.3L11.9998 13.4Z"
+              fill="currentColor"
+            ></path>
+          </svg>
+        </div>
+      </div>
     </>
   );
 };
