@@ -3,20 +3,18 @@ import { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 
-function CollapsiblePanel({ className, children, title, SecondaryBody }) {
+function CollapsiblePanel({ className, children, title, SecondaryBody,show }) {
   const [isOpen, setIsOpen] = useState(true);
   const bodyRef = useRef();
 
   useEffect(() => {
     var body = bodyRef.current;
-    body.style.height = body.scrollHeight + "px";
-
-
+    // body.style.height = body.scrollHeight + "px";
   }, []);
 
   return (
     <Style className={className + " overlay-can-fade-out"}>
-      <div className="panel MapFilters">
+      <div className="panel MapFilters" style={{ display : (show) ? 'flex' : 'none'}}>
         <div className="title">
           <h2 className="filter-title-mob" slot="title">
             {title}
@@ -35,10 +33,10 @@ function CollapsiblePanel({ className, children, title, SecondaryBody }) {
       </div>
 
       {/* {SecondaryBody && <SecondaryBody className={isOpen ? "" : "hidden"} />} */}
-      <CloseBtn
+      {/*<CloseBtn
         isOpen={isOpen}
         onClick={() => setIsOpen((isOpen) => !isOpen)}
-      />
+      />*/}
     </Style>
   );
 }

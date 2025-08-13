@@ -1162,8 +1162,30 @@ body .ioZlNZ .section-title{
         color: rgb(255 255 255);
 }
 body .ioZlNZ .floor__buttons.svelte-6keq0u .floors__group--item.selected.svelte-6keq0u{
-    background-color: #023047 !important;
-    border-color: #023047 !important;
+    background-color: #0f57d0 !important;
+    border-color: #0f57d0 !important;
+}
+.ioZlNZ .button.toggleButton.explore,.dzrmUF .button.active.green{
+  background-color: #0f57d0 !important;
+}
+.dzrmUF .interface--col.svelte-9mhvmf.svelte-9mhvmf .panel__unit-card.svelte-1m6i2pp .panel.unitCard{
+  height: 240px !important;
+}
+.dzrmUF .interface--col.svelte-9mhvmf.svelte-9mhvmf{
+  left: unset !important;
+  right: 20px;
+    top: 9rem !important;
+}
+.biaUgL :hover{
+  background-color: transparent !important;
+  color: #f0f0f0;
+}
+.fxdZrA{
+  top: 6rem !important;
+  background: rgb(29 29 29) !important;
+    opacity: 1 !important;
+    font-size: 12px !important;
+    right: 20px !important;
 }
 body .ioZlNZ .floor__buttons.svelte-6keq0u .floors__group--item.available.svelte-6keq0u{
     background-color: rgb(37 37 37);
@@ -1286,26 +1308,17 @@ body .dzrmUF .features .feature{
     right: 20px;
 }
 .kCjGmD{
-    background: #070505d6;
-    padding: 15px;
-        right: 17rem;
-    width: 120px;
-    z-index: 99;
-    top: 18px;
-        bottom: unset;
-}
-.kCjGmD{
     background: #070505d6 !important;
     padding: 15px !important;
     right: 17px !important;
-    width: 120px;
     z-index: 99;
-    top: 18px;
+    top: 100px;
     bottom: unset !important;
     left: unset !important;
 }
 .kCjGmD .body {
-    flex-direction: column !important;
+  margin-top: 0px !important;
+  gap: 10px !important;
 }
 .ioZlNZ .floor__buttons.svelte-6keq0u .floors__group--numbers.svelte-6keq0u{
   color: #a09797 !important;
@@ -1471,4 +1484,193 @@ body .dzrmUF .features .feature{
     align-items: center;
     background-color: #d5d5d5;
     cursor: pointer;
+}
+.construction_uopdated.mappp{
+  width: 100%;
+  height: 100%;
+}
+.mappp iframe{
+  width: 100%;
+  height: 100%;
+}
+.filter_icon{
+    width: 40px;
+    height: 40px;
+    background-color: #ffffff;
+    color: #030303;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    right: 20px;
+    z-index: 1234;
+    align-items: center;
+    top: 170px;
+    cursor: pointer;
+}
+.filter_icon:hover{
+      background-color: #1a1a1a;
+    color: #fff;
+
+}
+.ihWKbh .button-group{
+    display: flex;
+    GAP: 10PX;
+}
+.ihWKbh .button-group .button {
+        border-radius: 33px;
+}
+.ihWKbh .slider-group{
+    padding: 12px 10px !important;
+    background: #ffffff;
+    background: #ffffff;
+    border-radius: 12px;
+    margin: 0!important;
+    flex: 1;
+}
+.ihWKbh .button.active.green {
+        background: #0f57d0!important;
+}
+.ihWKbh .slider-group__title{
+        color: rgb(0 0 0);
+    font-weight: 600;
+}
+.input-minprice{
+    color: rgb(0 0 0);
+    font-weight: 600;
+}
+.slider-group input {
+        margin: 0 ;
+}
+.slider-group-wrap{
+    display: flex;
+    gap: 10px;
+}
+.jViixs .panel{
+  min-width: 300px !important;
+}
+.ihWKbh .button-group{
+  margin-top: 20px !important;
+}
+.ihWKbh .button-group {
+    margin-top: 11px !important;
+}
+.ihWKbh .button-group :first-child {
+    border-top-left-radius: 12px !important;
+    border-top-right-radius: 12px !important;
+    border-radius: 12px !important;
+}
+.ihWKbh .slider-group__title {
+    font-weight: normal;
+    font-size: 12px;
+    line-height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(0 0 0) !important;
+    font-weight: 600 !important;
+}
+.input-maxprice {
+  color: #000 !important;
+}
+.MapFilters button{
+  background: #525252 !important;
+}
+.jViixs .button.el-showall__button{
+  background: var(--button_background_active) !important;
+  color: #000 !important;
+}
+.win10-thumb{
+  border: none !important;
+}
+input[type="range"].win10-thumb {
+    color: #3a86ff !important;
+  }
+  .fmRtLy .left-panels{
+    right: 75px !important;
+    left: unset !important;
+    top: 40px !important;
+  }
+  input[type="range"] {
+  /* removing default appearance */
+  -webkit-appearance: none;
+  appearance: none; 
+  /* creating a custom design */
+  width: 100%;
+  cursor: pointer;
+  outline: none;
+  /*  slider progress trick  */
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+input[type="range"] {
+  -webkit-appearance: none; /* Remove default styling */
+  width: 100%;
+  height: 10px;
+  background: transparent; /* We'll style the track separately */
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  background: #0f57d0;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -5px; /* Center the thumb vertically */
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: #fff;
+  border-radius: 3px;
+}
+
+input[type="range"]::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  background: white;
+  border: 2px solid blue;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* IE / Edge (legacy) */
+input[type="range"]::-ms-track {
+  height: 6px;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+
+input[type="range"]::-ms-fill-lower {
+  background: blue;
+  border-radius: 3px;
+}
+
+input[type="range"]::-ms-fill-upper {
+  background: blue;
+  border-radius: 3px;
+}
+
+input[type="range"]::-ms-thumb {
+  height: 16px;
+  width: 16px;
+  background: white;
+  border: 2px solid blue;
+  border-radius: 50%;
+  cursor: pointer;
+}
+body .ioZlNZ .body.info.svelte-9mhvmf.svelte-9mhvmf {
+    left: 50px !important;
 }

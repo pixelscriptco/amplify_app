@@ -90,6 +90,7 @@ const Sidebar = () => {
   const [projectUrl, setProjectUrl] = useState("");
   const [amenities, setAmenities] = useState([]);
   const [project_updates, setProjectUpdates] = useState([]);
+  const [location, setLocation] = useState({});
 
   // useEffect(() => {
   //   iconRefs.current.forEach((ref, idx) => {
@@ -118,12 +119,22 @@ const Sidebar = () => {
       .then((response) => {
         let { description, project_url, amenities, project_updates } =
           response.data;
-        console.log(project_url);
-          // project_updates = [];
+        console.log(response.data);
+        // project_updates = [];
         setDescription(description || "");
         setProjectUrl(project_url || "");
         setAmenities(amenities || []);
         setProjectUpdates(project_updates || []);
+        if (
+          response.data &&
+          response.data.latitude &&
+          response.data.longitude
+        ) {
+          setLocation({
+            lat: response.data.latitude,
+            lng: response.data.longitude,
+          });
+        }
       })
       .catch((error) => {
         console.error("API error:", error);
@@ -188,18 +199,18 @@ const Sidebar = () => {
             &times;
           </button>
           {/* <h2>Description</h2> */}
-          { !description ? (
-              <div className="no_data_wrap">
-                <div className="no_data_block">
-                    <img  src={nothing_found} alt="no data" />
-                </div>      
-                <span className="text_amentyies">No description available.</span>
+          {!description ? (
+            <div className="no_data_wrap">
+              <div className="no_data_block">
+                <img src={nothing_found} alt="no data" />
+              </div>
+              <span className="text_amentyies">No description available.</span>
             </div>
-            ) : (
-          <div
-            style={{ marginTop: 10 }}
-            dangerouslySetInnerHTML={{ __html: description }}
-          ></div>
+          ) : (
+            <div
+              style={{ marginTop: 10 }}
+              dangerouslySetInnerHTML={{ __html: description }}
+            ></div>
           )}
         </div>
       </SlidePanel>
@@ -211,20 +222,35 @@ const Sidebar = () => {
           <div
             style={{
               width: "100%",
-              height: "70vh",
+              height: "100%",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
             }}
           >
-            <svg
-              viewBox="0 0 1920 1080"
-              width="100%"
-              height="100%"
-              style={{ maxWidth: "100%", maxHeight: "100%" }}
-            >
-              {smart_world_site_1}
-            </svg>
+            {!location || !location.lat ? (
+              <div className="no_data_wrap">
+                <div className="no_data_block">
+                  <img src={nothing_found} alt="no data" />
+                </div>
+                <span className="text_amentyies">
+                  No location available for the project.
+                </span>
+              </div>
+            ) : (
+              <div className="construction_uopdated mappp">
+                <iframe
+                  src={`https://www.google.com/maps?q=${location.lat},${location.lng}&hl=en&z=14&output=embed`}
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Google Map"
+                ></iframe>
+
+                {/*<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3416.893646136412!2d76.95014987426298!3d8.487050397238326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b05bb3396d78f9f%3A0x96658c7f686832ec!2sTrivandrum%20Central%20Railway%20Station!5e1!3m2!1sen!2sin!4v1755103997087!5m2!1sen!2sin"  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>*/}
+              </div>
+            )}
           </div>
         </div>
       </SlidePanel>
@@ -245,22 +271,18 @@ const Sidebar = () => {
             {amenities.length === 0 ? (
               <div className="no_data_wrap">
                 <div className="no_data_block">
-                    <img  src={nothing_found} alt="no data" />
-                </div>      
+                  <img src={nothing_found} alt="no data" />
+                </div>
                 <span className="text_amentyies">No amenities available.</span>
-            </div>
+              </div>
             ) : (
               amenities.map((a, idx) => (
-                <div className="AMENITIES_OUTER" 
-                      onClick={() =>
-                        a.vr_url && window.open(a.vr_url, "_blank")
-                      }>
+                <div
+                  className="AMENITIES_OUTER"
+                  onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
+                >
                   <div className="img_blockqe">
-                    <img
-                      src={a.image}
-                      alt={a.name}
-                      className="IMG_amenite"
-                    />
+                    <img src={a.image} alt={a.name} className="IMG_amenite" />
                   </div>
 
                   <div className="text_amenties">{a.name}</div>
@@ -345,10 +367,12 @@ const Sidebar = () => {
             {project_updates.length === 0 ? (
               <div className="no_data_wrap">
                 <div className="no_data_block">
-                    <img src={nothing_found} alt="no data" />
-                </div>      
-                <span className="text_amentyies">No construction updates available.</span>
-            </div>
+                  <img src={nothing_found} alt="no data" />
+                </div>
+                <span className="text_amentyies">
+                  No construction updates available.
+                </span>
+              </div>
             ) : (
               <div className="construction_uopdated">
                 {project_updates.map((a, idx) => (
@@ -373,7 +397,7 @@ const Sidebar = () => {
                         <img
                           src={a.image_url}
                           alt={a.name}
-                          // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}                          
+                          // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
                         />
                       )}
                     </div>
@@ -387,14 +411,21 @@ const Sidebar = () => {
           </div>
         </div>
       </SlidePanel>
-       <div className="wrap_iframe_box" style={{ display: (projectUrl && showTour) ? 'block' : 'none'}}>
+      <div
+        className="wrap_iframe_box"
+        style={{ display: projectUrl && showTour ? "block" : "none" }}
+      >
         <div className="main_se_wrap_box">
-          <video width="100%" height="100%" controls >
+          <video width="100%" height="100%" controls>
             <source src={projectUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
-        <div className="cose_btn" onClick={() => setShowTour(false)} style={{ cursor: "pointer" }}>
+        <div
+          className="cose_btn"
+          onClick={() => setShowTour(false)}
+          style={{ cursor: "pointer" }}
+        >
           <svg
             viewBox="0 0 24 24"
             height="24"

@@ -91,7 +91,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
 
           {currentPage && (
             <>
-              <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'block' : 'none' }}>
+              <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'flex' : 'none' }}>
                 <svg
                   fill="currentColor"
                   width="16px"

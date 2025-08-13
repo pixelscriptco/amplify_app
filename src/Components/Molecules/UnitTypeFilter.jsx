@@ -113,7 +113,7 @@ function UnitTypeFilter({ tower, floor }) {
     <Style>
       <div
         className="filters-control align-start"
-        style={{ minHeight: "280px", height: "fit-content" }}
+        style={{ minHeight: "215px", height: "fit-content" }}
       >
         <div className="main-controls">
           {" "}
@@ -133,53 +133,56 @@ function UnitTypeFilter({ tower, floor }) {
               </button>
             ))}
           </div>{" "}
-          <div className="slider-group">
-            <div className="slider-group__title">Price (INR)</div>
-            <div className="slider-group__body--prices">
-              <div className="input-minprice">2 cr</div>
-              <div className="input-maxprice">3 cr</div>
+          <div className="slider-group-wrap">
+            <div className="slider-group">
+              <div className="slider-group__title">Price (INR)</div>
+              <div className="slider-group__body--prices">
+                <div className="input-minprice">2 cr</div>
+                <div className="input-maxprice">3 cr</div>
+              </div>
+              <input
+              className="win10-thumb"
+                type="range"
+                min='2cr'
+                max='3cr'
+                value={flatFilterPriceValues[0]}
+                onChange={e => setFlatFilterPriceValues([Number(e.target.value), flatFilterPriceValues[1]])}
+                style={{ width: "100%" }}
+              />
+              {/* <input
+                type="range"
+                min={minMaxCost[0]}
+                max={minMaxCost[1]}
+                value={flatFilterPriceValues[1]}
+                onChange={e => setFlatFilterPriceValues([flatFilterPriceValues[0], Number(e.target.value)])}
+                style={{ width: "48%" }}
+              /> */}
             </div>
-            <input
-              type="range"
-              min='2cr'
-              max='3cr'
-              value={flatFilterPriceValues[0]}
-              onChange={e => setFlatFilterPriceValues([Number(e.target.value), flatFilterPriceValues[1]])}
-              style={{ width: "100%" }}
-            />
-            {/* <input
-              type="range"
-              min={minMaxCost[0]}
-              max={minMaxCost[1]}
-              value={flatFilterPriceValues[1]}
-              onChange={e => setFlatFilterPriceValues([flatFilterPriceValues[0], Number(e.target.value)])}
-              style={{ width: "48%" }}
-            /> */}
-          </div>
-
-          <div className="slider-group">
-            <div className="slider-group__title">Size (Sq. Ft)</div>
-            <div className="slider-group__body--prices">
-              <div className="input-minprice">1400</div>
-              <div className="input-maxprice">2500</div>
+            <div className="slider-group">
+              <div className="slider-group__title">Size (Sq. Ft)</div>
+              <div className="slider-group__body--prices">
+                <div className="input-minprice">1400</div>
+                <div className="input-maxprice">2500</div>
+              </div>
+              <input
+              className="win10-thumb"
+                type="range"
+                min='1400'
+                max='2500'
+                value='1400'
+                onChange={e => setFlatFilterSizeValues([Number(e.target.value), flatFilterSizeValues[1]])}
+                style={{ width: "100%" }}
+              />
+              {/* <input
+                type="range"
+                min={minMaxSBU[0]}
+                max={minMaxSBU[1]}
+                value={flatFilterSizeValues[1]}
+                onChange={e => setFlatFilterSizeValues([flatFilterSizeValues[0], Number(e.target.value)])}
+                style={{ width: "48%" }}
+              /> */}
             </div>
-            <input
-              type="range"
-              min='1400'
-              max='2500'
-              value='1400'
-              onChange={e => setFlatFilterSizeValues([Number(e.target.value), flatFilterSizeValues[1]])}
-              style={{ width: "100%" }}
-            />
-            {/* <input
-              type="range"
-              min={minMaxSBU[0]}
-              max={minMaxSBU[1]}
-              value={flatFilterSizeValues[1]}
-              onChange={e => setFlatFilterSizeValues([flatFilterSizeValues[0], Number(e.target.value)])}
-              style={{ width: "48%" }}
-            /> */}
-          </div>
+            </div>
         </div>
       </div>
       <div className="el-showall">
