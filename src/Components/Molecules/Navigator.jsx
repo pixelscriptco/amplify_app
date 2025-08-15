@@ -5,7 +5,6 @@ import axiosInstance from "../../Utility/axios";
 
 function Navigator({ className, currentPage, prevPages = [] }) {
   const { project } = useParams();
-  console.log(prevPages);
   const [projectData, setProjectData] = useState({
     id: 0,
     logo: "",
