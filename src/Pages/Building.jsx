@@ -136,7 +136,7 @@ function Building(props) {
           <div className="main_tab_block jusT_spacebtw">
             <div className="flors_icons">
               <span className="text_blk">{tower.stats.floor_count}</span>
-              <span className="text_sub"> floors</span>
+              <span className="text_sub"> Floors</span>
             </div>
             <div className="flors_icons">
               <span className="text_blk bg_available">
@@ -161,45 +161,65 @@ function Building(props) {
             </div>
           </div>
 
-          {tower.stats.unit_types &&
-          Object.keys(tower.stats.unit_types).length ? (
-            <div className="main_tab_block pad_btnwq">
-              {Object.keys(tower.stats.unit_types).map((ut, index, array) => {
-                const [number, label] = ut.split(" ");
-                return (
-                  <React.Fragment key={ut}>
-                    <div className="flors_icons">
-                      <span className="text_blk clr_primary">{number} </span>
-                      {label}
-                      {index < array.length - 1 && (
-                        <span className="text_sub"> and </span>
-                      )}
-                    </div>
-                  </React.Fragment>
-                );
-              })}
-            </div>
-          ) : (
-            ""
-          )}
+          {
+            (
+              (tower.stats.unit_types && Object.keys(tower.stats.unit_types).length) ||
+              (areas && areas.length)
+            ) ? (
+              <div className="main_tab_block pad_btnwq grid_block">
+                {Object.keys(tower.stats.unit_types).length ? (
+                  <>
+                    {Object.keys(tower.stats.unit_types).map((ut, index, array) => {
+                      // const [number, label] = ut.split(" ");
+                      return (
+                        <React.Fragment key={ut}>
+                        <div className="flors_icons">
+                            <span className="dd_flex">
+                              <svg
+                                width="16px"
+                                height="16px"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 640 640"
+                              >
+                                <path d="M64 96C81.7 96 96 110.3 96 128L96 352L320 352L320 224C320 206.3 334.3 192 352 192L512 192C565 192 608 235 608 288L608 512C608 529.7 593.7 544 576 544C558.3 544 544 529.7 544 512L544 448L96 448L96 512C96 529.7 81.7 544 64 544C46.3 544 32 529.7 32 512L32 128C32 110.3 46.3 96 64 96zM144 256C144 220.7 172.7 192 208 192C243.3 192 272 220.7 272 256C272 291.3 243.3 320 208 320C172.7 320 144 291.3 144 256z" />
+                              </svg>
+                            </span>
+                            {ut}
+                          </div>
+                        </React.Fragment>
+                      );
+                    })}
+                  </>
+                ) : null}
 
-          {areas && areas.length ? (
-            <div className="main_tab_block">
-              {areas.map((ut, index, array) => (
-                <React.Fragment key={ut}>
-                  <div className="flors_icons">
-                    <span className="text_blk clr_primary">{ut}</span>
-                  </div>
-                  {index < array.length - 1 && (
-                    <span className="text_sub"> - </span>
-                  )}
-                </React.Fragment>
-              ))}
-              <span className="text_sub"> Sqft </span>
-            </div>
-          ) : (
-            ""
-          )}
+                {areas && areas.length ? (
+                  <>
+                    {areas.map((ut, index, array) => (
+                      <React.Fragment key={ut}>
+                      <div className="flors_icons">
+                          <span className="dd_flex">
+                            <svg
+                              width="16px"
+                              height="16px"
+                              fill="currentColor"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 640 640"
+                            >
+                              <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
+                            </svg>
+                          </span>
+                          {ut} SqFt
+                        </div>
+                      </React.Fragment>
+                    ))}
+                  </>
+                ) : null}
+              </div>
+            ) : null
+          }
+          
+          
         </div>
       </div>
     );

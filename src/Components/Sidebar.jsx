@@ -90,6 +90,7 @@ const Sidebar = () => {
   const [projectUrl, setProjectUrl] = useState("");
   const [amenities, setAmenities] = useState([]);
   const [project_updates, setProjectUpdates] = useState([]);
+  const [resorcetype, setResorcetype] = useState("image");
   const [location, setLocation] = useState({});
 
   // useEffect(() => {
@@ -261,9 +262,8 @@ const Sidebar = () => {
           </button>
           <h2>Amenities</h2>
           <div
+          className="grid_amen"
             style={{
-              display: "flex",
-              flexWrap: "wrap",
               gap: 24,
               marginTop: 24,
             }}
@@ -375,8 +375,51 @@ const Sidebar = () => {
               </div>
             ) : (
               <div className="construction_uopdated">
+              <div className="videO_block">
+                  <div 
+                  onClick={() => setResorcetype('image')}
+                   className={`img_vid_wrap ${resorcetype === "image" ? "Aciver_btn" : ""}`}>
+                    <span className="dd_flex">
+                      <svg
+                        width="20px"
+                        height="20px"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <path d="M160 144C151.2 144 144 151.2 144 160L144 480C144 488.8 151.2 496 160 496L480 496C488.8 496 496 488.8 496 480L496 160C496 151.2 488.8 144 480 144L160 144zM96 160C96 124.7 124.7 96 160 96L480 96C515.3 96 544 124.7 544 160L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 160zM224 192C241.7 192 256 206.3 256 224C256 241.7 241.7 256 224 256C206.3 256 192 241.7 192 224C192 206.3 206.3 192 224 192zM360 264C368.5 264 376.4 268.5 380.7 275.8L460.7 411.8C465.1 419.2 465.1 428.4 460.8 435.9C456.5 443.4 448.6 448 440 448L200 448C191.1 448 182.8 443 178.7 435.1C174.6 427.2 175.2 417.6 180.3 410.3L236.3 330.3C240.8 323.9 248.1 320.1 256 320.1C263.9 320.1 271.2 323.9 275.7 330.3L292.9 354.9L339.4 275.9C343.7 268.6 351.6 264.1 360.1 264.1z" />
+                      </svg>
+                    </span>
+                    <span className="text_ft">Images</span>
+                  </div>
+
+                  <div 
+                  onClick={() => setResorcetype('video')}                  
+                  className={`img_vid_wrap ${resorcetype === "video" ? "Aciver_btn" : ""}`}>
+                    <span className="dd_flex">
+                      <svg
+                        width="20px"
+                        height="20px"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <path d="M320 112C434.9 112 528 205.1 528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320C112 205.1 205.1 112 320 112zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM276.5 211.5C269.1 207 259.8 206.8 252.2 211C244.6 215.2 240 223.3 240 232L240 408C240 416.7 244.7 424.7 252.3 428.9C259.9 433.1 269.1 433 276.6 428.4L420.6 340.4C427.7 336 432.1 328.3 432.1 319.9C432.1 311.5 427.7 303.8 420.6 299.4L276.6 211.4zM362 320L288 365.2L288 274.8L362 320z" />
+                      </svg>
+                    </span>
+                    <span className="text_ft">Videos</span>
+                  </div>
+                </div>
+                <div className="grid_block-wrapper">
                 {project_updates.map((a, idx) => (
-                  <div className="main_tab_img_block" key={a.id || idx}>
+                  <div 
+                  style={{
+                    display : (
+                      (resorcetype == 'image' && !a.image_url?.toLowerCase().endsWith(".mp4")) ||
+                      (resorcetype == 'video' && a.image_url?.toLowerCase().endsWith(".mp4"))
+                    ) ? 'block' : 'none'
+                  }}
+                  className="main_tab_img_block" key={a.id || idx}>
                     <div className="img_block_video">
                       {a.image_url?.toLowerCase().endsWith(".mp4") ? (
                         <video
@@ -401,11 +444,12 @@ const Sidebar = () => {
                         />
                       )}
                     </div>
-                    <div>
+                    <div style={{ display: 'none'}}>
                       <span className="main_text_blk">{a.name}</span>
                     </div>
                   </div>
                 ))}
+                </div>
               </div>
             )}
           </div>
