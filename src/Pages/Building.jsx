@@ -336,8 +336,10 @@ function Building(props) {
             <Box
               sx={{
                 position: "fixed",
-                top: modalPosition.y,
-                left: modalPosition.x,
+                // top: modalPosition.y,
+                // left: modalPosition.x,
+                left : '20px',
+                bottom: '20px',
                 width: 300,
                 bgcolor: "#ffffff",
                 borderRadius: "12px",

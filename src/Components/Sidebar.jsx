@@ -8,6 +8,7 @@ import { view_360 } from "../Data/images/AmenitiesSvgs";
 import axiosInstance from "../Utility/axios";
 import { useParams } from "react-router-dom";
 import { smart_world_site_1 } from "../Data/Screen1PageSvg";
+import Err from "./Atoms/Error";
 
 // Simple SVG placeholders for Description and Construction Updates
 const DescriptionIcon = () => (
@@ -118,14 +119,15 @@ const Sidebar = () => {
     axiosInstance
       .get(`/app/project/${project}/details`)
       .then((response) => {
-        let { description, project_url, amenities, project_updates } =
+        let { description, vr_url , amenities, project_updates } =
           response.data;
         console.log(response.data);
         // project_updates = [];
         setDescription(description || "");
-        setProjectUrl(project_url || "");
+        setProjectUrl(vr_url  || "");
         setAmenities(amenities || []);
         setProjectUpdates(project_updates || []);
+        // console.log(project_url);
         if (
           response.data &&
           response.data.latitude &&
@@ -444,7 +446,7 @@ const Sidebar = () => {
                         />
                       )}
                     </div>
-                    <div style={{ display: 'none'}}>
+                    <div style={{ display: 'none' }}>
                       <span className="main_text_blk">{a.name}</span>
                     </div>
                   </div>
@@ -457,14 +459,17 @@ const Sidebar = () => {
       </SlidePanel>
       <div
         className="wrap_iframe_box"
-        style={{ display: projectUrl && showTour ? "block" : "none" }}
+        style={{ display: showTour ? "block" : "none" }}
       >
+      {
+        projectUrl ? (
         <div className="main_se_wrap_box">
           <video width="100%" height="100%" controls>
             <source src={projectUrl} type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-        </div>
+        </div>) : (<Err msg="Couldn't find Project tour details." />)
+      }
         <div
           className="cose_btn"
           onClick={() => setShowTour(false)}
