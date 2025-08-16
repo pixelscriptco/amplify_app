@@ -218,7 +218,8 @@ function Tower(props) {
     );
   };
 
-  const handleFloorHover = async (floorName, event) => {
+  const handleFloorHover = async (floorName, event) => {    
+    floorName = /^floor-/i.test(floorName)?floorName: `Floor-${floorName}`;
     const floorId = floorName.replace(/floor-/i, "");
     setHoveredFloor(floorId);
 
@@ -231,7 +232,7 @@ function Tower(props) {
     const modalX = x < windowWidth / 2 ? x + 20 : x - 420; // 400px modal width + 20px offset
 
     setModalPosition({ x: modalX, y: y - 100 }); // Offset Y by half modal height
-
+    
     // Fetch tower data if not already fetched
     if (!floorData[floorId]) {
       try {
@@ -254,6 +255,8 @@ function Tower(props) {
 
   // Sort plans by order
   const sortedPlans = [...towerSvg].sort((a, b) => a.order - b.order);
+  console.log('sorted plans', sortedPlans);
+  
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleRotateLeft = () => {
@@ -294,18 +297,6 @@ function Tower(props) {
       />
       <Sidebar />
       <UnitStatusLegend />
-      {/* Compass with direction */}
-      {/* {sortedPlans.length && sortedPlans[currentIndex]?.direction && (        
-        (() => {
-          const currentDirection = sortedPlans[currentIndex].direction;
-          const angle = directionToAngle[currentDirection] ?? 0;
-          return (
-            <div style={{ position: 'absolute', top: 24, right: 32, zIndex: 20, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Compass direction={currentDirection} angle={angle} size={60} />
-            </div>
-          );
-        })()
-      )} */}
       <div className="svg_block_filter">
         <div className="filter_icon" onClick={() => setShowFilter((showFilter) => !showFilter)}>
           <svg
@@ -323,7 +314,7 @@ function Tower(props) {
       
       <div className="left-panels">
         <CollapsiblePanel className="filters" title={"Filters"} show={showFilter}>
-          <UnitTypeFilter Tower={tower.toUpperCase()} />
+          <UnitTypeFilter tower={tower.toUpperCase()} />
         </CollapsiblePanel>
       </div>
       <div className="right-btn-group absolute right top">
@@ -336,7 +327,7 @@ function Tower(props) {
         />
       </div>
 
-      <TowerRotateInstruction />
+      {/* <TowerRotateInstruction /> */}
 
       <div className="compass-fullscreen-wrapper absolute bottom right flex row overlay-can-fade-out">
         <div className="col flex j-end">
@@ -387,16 +378,16 @@ function Tower(props) {
                 height="100%"
                 style={{ objectFit: "contain", backdropFilter: "opacity(10%)" }}
               />
-              {sortedPlans[currentIndex].paths.map((pathEl, index) => {
+              {sortedPlans[currentIndex].paths.map((pathEl, index) => {                
                 if (pathEl.getAttribute("id") !== tower) {
-                  const id = pathEl.getAttribute("id") || `path-${index}`;
+                  const id = pathEl.getAttribute("id") || `path-${index}`;                  
                   const d = pathEl.getAttribute("d");
                   const fill = "#5CE459";
                   const fillOpacity = hoveredFloor === id ? "0" : "0.3";
                   const stroke = "rgba(0, 0, 0, 1)";
                   const strokeWidth = "0.1";
                   const className = pathEl.getAttribute("class") || "Available";
-                  const floor = id.replace(/floor-/i, "");
+                  const floor = /^floor-/i.test(id)?id.replace(/floor-/i, ""):id;
                   return (
                     <Tippy
                       key={id}

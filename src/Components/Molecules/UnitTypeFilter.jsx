@@ -11,6 +11,8 @@ import { getFormalCurrencyFromNum } from "../../Utility/function";
 // const { Range } = Slider;
 
 function UnitTypeFilter({ tower, floor }) {  
+  console.log('.........',tower);
+  
   const {
     getMinMaxTotalCostInTower,
     getMinMaxSBUInTower,
@@ -202,64 +204,6 @@ function UnitTypeFilter({ tower, floor }) {
 }
 
 export default UnitTypeFilter;
-
-// export const DoubleSlider = ({
-//   title,
-//   rangeLabel,
-//   start,
-//   end,
-//   handleOnSliderChange,
-//   value,
-//   labelValues,
-// }) => {
-//   return (
-//     <div class="slider-group">
-//       <div class="slider-group__title">{title + " " + rangeLabel}</div>{" "}
-//       <div class="slider-group__body">
-//         <div class="slider-group__body--prices">
-//           <div class="input-minprice">{labelValues[0]}</div>{" "}
-//           <div class="input-maxprice">{labelValues[1]}</div>
-//         </div>{" "}
-//         <div style={{ marginTop: "10px" }}>
-//           <Range
-//             // range
-//             // disabled
-//             min={start}
-//             max={end}
-//             allowCross={false}
-//             value={value}
-//             onChange={handleOnSliderChange}
-//             railStyle={{
-//               height: 2,
-//             }}
-//             // className="background-red"
-//             handleStyle={[
-//               {
-//                 backgroundColor: "var(--blue-theme)",
-//                 border: "1px solid var(--blue-theme)",
-//               },
-//               {
-//                 backgroundColor: "var(--blue-theme)",
-//                 border: "1px solid var(--blue-theme)",
-//               },
-//             ]}
-//             trackStyle={[
-//               {
-//                 background: "var(--blue-theme)",
-//               },
-//             ]}
-//             dotStyle={{
-//               backgroundColor: "var(--blue-theme)",
-//             }}
-//             activeDotStyle={{
-//               backgroundColor: "var(--blue-theme)",
-//             }}
-//           />
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
 
 const Style = styled.div`
   .button.active.green {

@@ -167,7 +167,7 @@ function Floor() {
 
           <div className="unit-type-filter overlay-can-fade-out">
             <CollapsiblePanel title={"Filters"}>
-              <UnitTypeFilter firstTower={tower} floor={floor} />
+              <UnitTypeFilter tower={tower} floor={floor} />
             </CollapsiblePanel>
           </div>
         </>
