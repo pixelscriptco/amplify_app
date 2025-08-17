@@ -17,6 +17,7 @@ import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
 import { COMPASS_ANGLES } from "../Utility/Constants";
 import axiosInstance from "../Utility/axios";
 import Sidebar from '../Components/Sidebar';
+import Err from "../Components/Atoms/Error";
 
 
 function Unit() {
@@ -169,10 +170,17 @@ function Unit() {
           style={{
             width: "100vw",
           }}
-          className="img-wrapper"
+          className="img-wrapper untt"
         >
           {/* <div className="flat-number">{flatNumber}</div> */}
-          <img src={unitData.image_url} />
+        {
+          unitData.image_url ? (
+              <img src={unitData.image_url} />
+            ) : (
+              <Err msg="Couldn't find unit details" type='found' />
+            )
+        }
+        }
         </div>
       </FlatStyle>
     </CarouselPageStyle>
