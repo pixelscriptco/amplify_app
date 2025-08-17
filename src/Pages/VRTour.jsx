@@ -52,25 +52,10 @@ function VRTour() {
       const { mobile: phone, firstName, lastName, email } = userDetails;
 
       const user_id = await saveUserToDB(userDetails);
-
-    //   const order_response = await createOrder(flatId, {
-    //     name: firstName + " " + lastName,
-    //     email,
-    //     customer_id: user_id,
-    //     phone,
-    //   });
-
-    //   if (!order_response) {
-    //     setLoading(false);
-    //     return;
-    //   }
-
       setShowPaymentsPopup(true);
-      // window.location.replace(order_response.payment_link);
 
       await saveUserToDB(userDetails);
 
-    //   const { orderToken } = order_response;
 
       let testCashfree = new cashfreeSandbox.Cashfree();
 
@@ -96,7 +81,6 @@ function VRTour() {
             `/smart-world/tower/${tower}/floor/${floor}/unit/${flatId}/payment-success/${orderId}/${paymentId}`
           );
 
-          //on payment flow complete
         },
         onFailure: function (data) {
           console.log("onFailure", data);
