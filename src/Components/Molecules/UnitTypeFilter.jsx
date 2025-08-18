@@ -171,7 +171,7 @@ function UnitTypeFilter({ tower, floor }) {
         <button
         onClick={() => setActiveMapFilterIds([])}
          className="button el-showall__button">Reset</button>
-        }
+        
         <button
           className={`button syubmt_flter ${
             isAllFiltersActive() ? "active" : ""
