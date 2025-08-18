@@ -935,7 +935,7 @@ body{
     display: flex;
     align-items: center;
     gap: 10px;
-
+    min-width: 130px;
 }
 .text_blk{
     min-width: 40px;
@@ -1052,6 +1052,7 @@ body{
     font-size: 15px;
     font-weight: 600;
     padding: 3px 10px;
+    text-transform: capitalize;
 }
 .bred_outer:hover{
     background: #121212;
@@ -1708,7 +1709,7 @@ body .ioZlNZ .body.info.svelte-9mhvmf.svelte-9mhvmf {
 .grid_block {
      display: grid;
   grid-template-columns: auto auto ;
-  padding-bottom: 15px;
+/*  padding-bottom: 15px;*/
 }
 .grid_amen{
   grid-template-columns: repeat(3,1fr);
@@ -1778,3 +1779,14 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
   height: 22px;
 }
 .floor-selector{top: 8rem !important;}
+.booknow_unt{
+  position: absolute;
+    top: 85px !important;
+    right: 15px !important;
+    left: unset !important;
+}
+.booknow_unt .panel__unit-card{background-color: #1d1d1d!important;}
+.booknow_unt button{background: #dc730e !important;}
+.el-showall{display: flex;gap: 10px;}
+.MapFilters  .syubmt_flter{background: #dc730e !important;color: white !important;}
+.towers-container .tower.active{background: #dc730e !important;color: white !important;}

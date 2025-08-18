@@ -160,7 +160,8 @@ function Unit() {
       <ApartmentsDetails
         onVRClick={() => {
           // setShowVRTour(true)
-          navigate("VR-tour");
+          // navigate("VR-tour");
+          window.open(window.location.href + '/VR-tour', '_blank');
         }}
         selectedUnit={unitData}
         handleBooking={handleBooking}

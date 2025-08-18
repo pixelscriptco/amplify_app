@@ -8,7 +8,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
   
   return (
     <Style>
-      <div class="interface--col svelte-9mhvmf">
+      <div class="interface--col svelte-9mhvmf booknow_unt">
         <div
           class="panel panel__unit-card svelte-1m6i2pp"
           style={{ maxHeight: "none" }}
@@ -59,7 +59,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                     </div>
                   </div>
                   
-                  <div class="buttons svelte-1m6i2pp">
+                  <div class="buttons svelte-1m6i2pp" style={{ gap : '10px'}}>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -72,7 +72,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                           : "button green svelte-ynf51n"
                       }
                       value=""
-                      style={{ padding: "8px 0px", margin: "0 0.3rem" }}
+                      style={{ padding: "8px 0px" }}
                       disabled={unitDetails?.status != 1}
                     >
                       Book Now
@@ -80,7 +80,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                     <button
                       class="button active green svelte-ynf51n"
                       value=""
-                      style={{ padding: "8px 0px", margin: "0 0.3rem" }}
+                      style={{ padding: "8px 0px" }}
                       onClick={onVRClick}
                     >
                       VR Tour

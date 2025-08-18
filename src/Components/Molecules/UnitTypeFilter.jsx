@@ -169,14 +169,18 @@ function UnitTypeFilter({ tower, floor }) {
       </div>
       <div className="el-showall">
         <button
-          className={`button el-showall__button ${
+        onClick={() => setActiveMapFilterIds([])}
+         className="button el-showall__button">Reset</button>
+        }
+        <button
+          className={`button syubmt_flter ${
             isAllFiltersActive() ? "active" : ""
           }`}
           onClick={onShowAllClicked}
           value=""
           style={{ "--paddings": "5px 8px" }}
         >
-          Show All
+          Submit
         </button>
       </div>
     </Style>
