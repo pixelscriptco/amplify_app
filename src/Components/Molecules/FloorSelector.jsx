@@ -28,7 +28,7 @@ function FloorSelector({
     const fetchProjectData = async () => {
       try {        
         setLoading(true);
-        const response = await axiosInstance.get(`/app/project/${project}`);
+        const response = await axiosInstance.get(`/app/project/${project}/data`);
 
         const { id, name,status } = response.data;
         // const {plan,area,type,cost} = response.data.unit_plans;
@@ -133,22 +133,6 @@ function FloorSelector({
                       </label>
                     </div>
                   </div>{" "}
-                  <div class="notBack">
-                    {/* <div class="input-group">
-                      <label class="fake-checkbox-label">
-                        <input name="available" type="checkbox" />{" "}
-                        <div
-                          onClick={handleAvailableFloorsToggle}
-                          class={`fake-checkbox toggle-button ${
-                            availableFloorsToggle
-                              ? "toggle-button--checked"
-                              : ""
-                          }`}
-                        ></div>{" "}
-                        <span>Only available</span>
-                      </label>
-                    </div> */}
-                  </div>
                   <div className="towers-container">
                     <div className="section-title">Towers</div>
                     <div className="towers">
@@ -175,11 +159,6 @@ function FloorSelector({
                       availableFloorsToggle ? "hide-ground-floor" : ""
                     }`}
                   >
-                    {/* <div
-                      class={`floors__group--item ground-floor color_retails available svelte-6keq0u`}
-                    >
-                      <button class="button__gf">GF</button>
-                    </div> */}
                   </div>{" "}
                   <div class="floors__group svelte-6keq0u">
                     <div class="floors__group--numbers svelte-6keq0u">

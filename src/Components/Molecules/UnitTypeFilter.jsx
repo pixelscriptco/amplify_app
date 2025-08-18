@@ -1,18 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useInventories, useMapFilter } from "../../Hooks";
-import Slider,{Range} from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useContext } from "react";
 import { AppContext } from "../../Contexts/AppContext";
 import axiosInstance from "../../Utility/axios";
-import { getFormalCurrencyFromNum } from "../../Utility/function";
 
-// const { Range } = Slider;
-
-function UnitTypeFilter({ tower, floor }) {  
-  console.log('.........',tower);
-  
+function UnitTypeFilter({ tower, floor }) {    
   const {
     getMinMaxTotalCostInTower,
     getMinMaxSBUInTower,
@@ -26,6 +20,7 @@ function UnitTypeFilter({ tower, floor }) {
     setFlatFilterPriceValues,
     setFlatFilterSizeValues,
   } = useContext(AppContext);
+
   const isFloor = floor !== undefined;
   const minMaxCost = isFloor
     ? getMinMaxTotalCostInTower(tower, floor)
@@ -47,8 +42,9 @@ function UnitTypeFilter({ tower, floor }) {
           ...getMinMaxSBUInTower(tower),
         ),
       ];
+  const [totalUnits, setTotalUnits] = useState(0);
 
-  const totalUnits = isFloor ? 4 : getAllUnitsInTower(tower).length;
+  // const totalUnits = isFloor ? 4 : getAllUnitsInTower(tower).length;
   const unitTypeFilters = [{title: '3bhk',id: '3bhk'},{title: '4bhk',id: '4bhk'}]
   const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } =
     useMapFilter();
@@ -101,7 +97,8 @@ function UnitTypeFilter({ tower, floor }) {
     const fetchUnitDetails = async () => {
       try {        
         // Adjust the API endpoint as needed
-        const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);     
+        const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
+        setTotalUnits(response.data.units.length || 0);             
         const data = await response.json();
         setUnitDetails(data.units || []);
       } catch (error) {
@@ -119,8 +116,7 @@ function UnitTypeFilter({ tower, floor }) {
       >
         <div className="main-controls">
           {" "}
-          {/* <div className="available-title">{totalUnits} Units Total</div>{" "} */}
-          <div className="available-title">60 Units Total</div>{" "}
+          <div className="available-title">{totalUnits} Units Total</div>{" "}
           <div className="button-group">
             {unitTypeFilters.map((filter) => (
               <button
@@ -151,14 +147,6 @@ function UnitTypeFilter({ tower, floor }) {
                 onChange={e => setFlatFilterPriceValues([Number(e.target.value), flatFilterPriceValues[1]])}
                 style={{ width: "100%" }}
               />
-              {/* <input
-                type="range"
-                min={minMaxCost[0]}
-                max={minMaxCost[1]}
-                value={flatFilterPriceValues[1]}
-                onChange={e => setFlatFilterPriceValues([flatFilterPriceValues[0], Number(e.target.value)])}
-                style={{ width: "48%" }}
-              /> */}
             </div>
             <div className="slider-group">
               <div className="slider-group__title">Size (Sq. Ft)</div>
@@ -175,14 +163,6 @@ function UnitTypeFilter({ tower, floor }) {
                 onChange={e => setFlatFilterSizeValues([Number(e.target.value), flatFilterSizeValues[1]])}
                 style={{ width: "100%" }}
               />
-              {/* <input
-                type="range"
-                min={minMaxSBU[0]}
-                max={minMaxSBU[1]}
-                value={flatFilterSizeValues[1]}
-                onChange={e => setFlatFilterSizeValues([flatFilterSizeValues[0], Number(e.target.value)])}
-                style={{ width: "48%" }}
-              /> */}
             </div>
             </div>
         </div>

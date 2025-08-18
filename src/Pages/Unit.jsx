@@ -180,7 +180,7 @@ function Unit() {
               <Err msg="Couldn't find unit details" type='found' />
             )
         }
-        }
+        
         </div>
       </FlatStyle>
     </CarouselPageStyle>
