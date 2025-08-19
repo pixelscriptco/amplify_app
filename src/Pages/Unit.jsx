@@ -13,7 +13,6 @@ import { getCombinedTowerName, toggleFullScreen } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
 import Loading from "../Components/Atoms/Loading";
 import ReturnToPrev from "../Components/Atoms/ReturnToPrev";
-import ProjectVideoBtn from "../Components/Molecules/ProjectVideoBtn";
 import { COMPASS_ANGLES } from "../Utility/Constants";
 import axiosInstance from "../Utility/axios";
 import Sidebar from '../Components/Sidebar';
@@ -103,7 +102,6 @@ function Unit() {
   return (
     <CarouselPageStyle>
       {loading && <Loading />}
-      <ProjectVideoBtn />
 
       <Navigator
         className="navigator"

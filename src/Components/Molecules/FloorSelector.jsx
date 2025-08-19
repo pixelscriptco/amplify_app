@@ -19,33 +19,26 @@ function FloorSelector({
   const [loading, setLoading] = useState(false);
   const [availableFloorsToggle, setAvailableFloorsToggle] = useState(false);
   const [projectData, setProjectData] = useState({});
+  const [towerData, setTowerData] = useState([]);
+  const [floorData, setFloorData] = useState([]);
   const floorsOneToTen = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
   const floorsElevenToTwenty = [11, 12, 14, 15, 16, 17, 18, 19, 20];
   const floors21To30 = [21, 22, 23, 24, 25, 26, 27, 28, 29];
 
 
-  useEffect(() => {
+  useEffect(() => {    
     const fetchProjectData = async () => {
       try {        
         setLoading(true);
         const response = await axiosInstance.get(`/app/project/${project}/data`);
 
-        const { id, name,status } = response.data;
-        // const {plan,area,type,cost} = response.data.unit_plans;
-        
-        setProjectData({
-          id,
-          name,
-          status,
-          // area,
-          // type,
-          // cost,
-          // image_url:plan
-        })
+        setTowerData(response.data);
+        const selectedTowerData = response.data.find(tower => tower.name === selectedTower);        
+        setFloorData(selectedTowerData ? selectedTowerData.floors : []);        
 
         setLoading(false);  
       }catch(err){
-        console.error('Error fetching floor SVG:', err);
+        console.error('Error fetching floor data:', err);
         setError('Failed to load floor visualization');
       } finally {
         setLoading(false);
@@ -136,17 +129,17 @@ function FloorSelector({
                   <div className="towers-container">
                     <div className="section-title">Towers</div>
                     <div className="towers">
-                      {TOWERS_LIST.map((tower) => (
+                      {towerData.map((tower) => (
                         <div
                           className={`tower ${
-                            tower === selectedTower ? " active" : ""
+                            tower.name === selectedTower ? " active" : ""
                           }`}
                           onClick={(e) => {
                             e.stopPropagation();
                             setSelectedTower(tower);
                           }}
                         >
-                          {TOWERS[tower].title}
+                          {tower.name}
                         </div>
                       ))}
                     </div>
@@ -160,74 +153,30 @@ function FloorSelector({
                     }`}
                   >
                   </div>{" "}
-                  <div class="floors__group svelte-6keq0u">
-                    <div class="floors__group--numbers svelte-6keq0u">
+                  <div class="floors__group svelte-6keq0u" >
+                    {/* <div class="floors__group--numbers svelte-6keq0u">
                       1 - 10
-                    </div>
-                    {floorsOneToTen.map((floor) => {
+                    </div> */}
+                    {floorData.map((floor) => {
                       return (
                         <div
-                          onClick={(e) => handleSelectedFloor(e, floor)}
+                          onClick={(e) => handleSelectedFloor(e, floor.name.split("-")[1])}
                           class={`floors__group--item notBack svelte-6keq0u available ${
-                            selectedFloor == floor ? "selected" : ""
+                            selectedFloor == floor.name.split("-")[1] ? "selected" : ""
                           }`}
                         >
                           <button
-                            value={floor}
+                            value={floor.name.split("-")[1]}
                             class={`floors__group--button notBack svelte-6keq0u ${
-                              selectedFloor == floor ? "selected" : ""
+                              selectedFloor == floor.name.split("-")[1] ? "selected" : ""
                             }`}
                           >
-                            {floor}
+                            {floor.name.split("-")[1]}
                           </button>{" "}
                         </div>
                       );
                     })}{" "}
                   </div>{" "}
-                  <div class="floors__group svelte-6keq0u">
-                    <div class="floors__group--numbers svelte-6keq0u">
-                      11 - 20
-                    </div>{" "}
-                    {floorsElevenToTwenty.map((floor) => {
-                      return (
-                        <div
-                          onClick={(e) => handleSelectedFloor(e, floor)}
-                          class={`floors__group--item notBack svelte-6keq0u available ${
-                            selectedFloor == floor ? "selected" : ""
-                          }`}
-                        >
-                          <button
-                            value={floor}
-                            class="floors__group--button notBack svelte-6keq0u"
-                          >
-                            {floor}
-                          </button>{" "}
-                        </div>
-                      );
-                    })}{" "}
-                  </div>
-                  <div class="floors__group svelte-6keq0u">
-                    <div class="floors__group--numbers svelte-6keq0u">
-                      21 - 30
-                    </div>{" "}
-                    {floors21To30.map((floor) => {
-                      return (
-                        <div
-                          onClick={(e) => handleSelectedFloor(e, floor)}
-                          class={`floors__group--item notBack svelte-6keq0u available ${
-                            selectedFloor == floor ? "selected" : ""
-                          }`}
-                        >
-                          <button
-                            value={floor}
-                            class="floors__group--button notBack svelte-6keq0u"
-                          >
-                            {floor}
-                          </button>{" "}
-                        </div>
-                      );
-                    })}
-                  </div>
                 </div>
               </div>
             </div>

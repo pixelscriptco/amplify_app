@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useInventories, useMapFilter } from "../../Hooks";
+import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import { useContext } from "react";
 import { AppContext } from "../../Contexts/AppContext";
@@ -8,49 +9,19 @@ import axiosInstance from "../../Utility/axios";
 
 function UnitTypeFilter({ tower, floor }) {    
   const {
-    getMinMaxTotalCostInTower,
-    getMinMaxSBUInTower,
-    getAllUnitTypesInTower,
     getAllUnitsInTower,
     getAllAvailableUnitsInFloor,
   } = useInventories();
-  const {
-    flatFilterPriceValues,
-    flatFilterSizeValues,
-    setFlatFilterPriceValues,
-    setFlatFilterSizeValues,
-  } = useContext(AppContext);
-
+  
   const isFloor = floor !== undefined;
-  const minMaxCost = isFloor
-    ? getMinMaxTotalCostInTower(tower, floor)
-    : [
-        Math.min(
-          ...getMinMaxTotalCostInTower(tower),
-        ),
-        Math.max(
-          ...getMinMaxTotalCostInTower(tower),
-        ),
-      ];
-  const minMaxSBU = isFloor
-    ? getMinMaxSBUInTower(tower, floor)
-    : [
-        Math.min(
-          ...getMinMaxSBUInTower(tower),
-        ),
-        Math.max(
-          ...getMinMaxSBUInTower(tower),
-        ),
-      ];
   const [totalUnits, setTotalUnits] = useState(0);
+  const [flatFilterPriceValues, setFlatFilterPriceValues] = useState([]);
+  const [flatFilterSizeValues, setFlatFilterSizeValues] = useState([]);
+  const [unitTypeFilters,setFlatFilterTypeValues] = useState([]);
+  const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } = useMapFilter();
+  const [unitDetails, setUnitDetails] = useState([]);
 
-  // const totalUnits = isFloor ? 4 : getAllUnitsInTower(tower).length;
-  const unitTypeFilters = [{title: '3bhk',id: '3bhk'},{title: '4bhk',id: '4bhk'}]
-  const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } =
-    useMapFilter();
-
-  const isAllFiltersActive = () =>
-    activeMapFilterIds.length == unitTypeFilters.length;
+  const isAllFiltersActive = () => activeMapFilterIds.length == unitTypeFilters.length;
 
   const onShowAllClicked = () => {
     if (isAllFiltersActive()) {
@@ -75,32 +46,69 @@ function UnitTypeFilter({ tower, floor }) {
     }
   };
 
+  const getMinMaxTotalCostInTower = (units) => {
+    const totalCosts = units.map((unit) => unit["TotalCost"]);    
+    const minTotalCost = Math.min(...totalCosts);
+    const maxTotalCost = Math.max(...totalCosts);
+    return [minTotalCost, maxTotalCost];
+  };
+
+  const getMinMaxSBUInTower = (units) => {
+    const sbus = units.map((unit) => unit["SBU"]);        
+    const minSBU = Math.min(...sbus);
+    const maxSBU = Math.max(...sbus);
+    return [minSBU, maxSBU];
+  };
+
+  const getAllUnitTypesInTower = (units) => [
+    ...new Set(
+      units.map((unit) => unit["UnitType"])
+        .sort((a, b) => parseInt(a) - parseInt(b))
+    ),
+  ];
+
   // Price handler
+  // const handlePriceOnSliderChange = (value) => {
+  //   setFlatFilterPriceValues(value);
+  // };
+
+  // //size handler
+  // const handleSizeOnSliderChange = (value) => {
+  //   setFlatFilterSizeValues(value);
+  // };
+
+  function formatPrice(value) {
+    if (!value || isNaN(value)) return "";
+
+    if (value >= 10000000) {
+      // 1 Crore = 1,00,00,000
+      return (value / 10000000).toFixed(2).replace(/\.00$/, "") + " Cr";
+    } else if (value >= 100000) {
+      // 1 Lakh = 1,00,000
+      return (value / 100000).toFixed(2).replace(/\.00$/, "") + " L";
+    } else {
+      return value.toString();
+    }
+  }
+
+   // Price handler
   const handlePriceOnSliderChange = (value) => {
     setFlatFilterPriceValues(value);
   };
-
-  //size handler
-  const handleSizeOnSliderChange = (value) => {
-    setFlatFilterSizeValues(value);
-  };
-
-  const [unitDetails, setUnitDetails] = useState([]);
-
-  useEffect(() => {
-    setFlatFilterPriceValues(minMaxCost);
-    setFlatFilterSizeValues(minMaxSBU);
-    setActiveMapFilterIds([...unitTypeFilters.map((filter) => filter.id)]);
-  }, [tower, floor]);
 
   useEffect(() => {
     const fetchUnitDetails = async () => {
       try {        
         // Adjust the API endpoint as needed
         const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
+        setFlatFilterPriceValues(getMinMaxTotalCostInTower(response.data.units));
+        setFlatFilterSizeValues(getMinMaxSBUInTower(response.data.units));
+        setFlatFilterTypeValues(getAllUnitTypesInTower(response.data.units));
+       
         setTotalUnits(response.data.units.length || 0);             
-        const data = await response.json();
-        setUnitDetails(data.units || []);
+        // const data = await response.json();
+        setUnitDetails(response.data.units || []);
+                
       } catch (error) {
         setUnitDetails([]);
       }
@@ -122,49 +130,47 @@ function UnitTypeFilter({ tower, floor }) {
               <button
                 onClick={() => handleFilterClick(filter.id)}
                 className={`button green ${
-                  isFilterActive(filter.id) ? "active" : ""
+                  isFilterActive(filter) ? "active" : ""
                 }`}
                 value=""
+                key={filter.id}
                 style={{ "--paddings": "5px 8px" }}
               >
-                {filter.title}
+                {filter}
               </button>
             ))}
           </div>{" "}
+
           <div className="slider-group-wrap">
             <div className="slider-group">
-              <div className="slider-group__title">Price (INR)</div>
-              <div className="slider-group__body--prices">
-                <div className="input-minprice">2 cr</div>
-                <div className="input-maxprice">3 cr</div>
-              </div>
-              <input
-              className="win10-thumb"
-                type="range"
-                min='2cr'
-                max='3cr'
-                value={flatFilterPriceValues[0]}
-                onChange={e => setFlatFilterPriceValues([Number(e.target.value), flatFilterPriceValues[1]])}
-                style={{ width: "100%" }}
+              <DoubleSlider
+                title={"Price"}
+                rangeLabel="INR"
+                value={flatFilterPriceValues}
+                labelValues={[
+                  formatPrice(flatFilterPriceValues[0]),
+                  formatPrice(flatFilterPriceValues[1]),
+                ]}
+                start={flatFilterPriceValues[0]}
+                end={flatFilterPriceValues[1]}
+                handleOnSliderChange={handlePriceOnSliderChange}
               />
             </div>
             <div className="slider-group">
-              <div className="slider-group__title">Size (Sq. Ft)</div>
-              <div className="slider-group__body--prices">
-                <div className="input-minprice">1400</div>
-                <div className="input-maxprice">2500</div>
-              </div>
-              <input
-              className="win10-thumb"
-                type="range"
-                min='1400'
-                max='2500'
-                value='1400'
-                onChange={e => setFlatFilterSizeValues([Number(e.target.value), flatFilterSizeValues[1]])}
-                style={{ width: "100%" }}
+              <DoubleSlider
+                title={"Area"}
+                rangeLabel="Sq.Ft"
+                value={flatFilterSizeValues}
+                labelValues={[
+                  formatPrice(flatFilterSizeValues[0]),
+                  formatPrice(flatFilterSizeValues[1]),
+                ]}
+                start={flatFilterSizeValues[0]}
+                end={flatFilterSizeValues[1]}
+                handleOnSliderChange={handlePriceOnSliderChange}
               />
             </div>
-            </div>
+          </div>
         </div>
       </div>
       <div className="el-showall">
@@ -188,6 +194,56 @@ function UnitTypeFilter({ tower, floor }) {
 }
 
 export default UnitTypeFilter;
+
+export const DoubleSlider = ({
+  title,
+  rangeLabel,
+  start,
+  end,
+  handleOnSliderChange,
+  value,
+  labelValues,
+}) => {
+  return (
+    <div class="slider-group">
+      <div class="slider-group__title">{title + " " + rangeLabel}</div>{" "}
+      <div class="slider-group__body">
+        <div class="slider-group__body--prices">
+          <div class="input-minprice">{labelValues[0]}</div>{" "}
+          <div class="input-maxprice">{labelValues[1]}</div>
+        </div>{" "}
+        <div style={{ marginTop: "10px" }}>
+          <Slider
+            min={start}
+            max={end}
+            allowCross={false}
+            value={value}
+            onChange={handleOnSliderChange}
+            railStyle={{ height: 2 }}
+            handleStyle={[
+              {
+                backgroundColor: "var(--blue-theme)",
+                border: "1px solid var(--blue-theme)",
+              },
+              {
+                backgroundColor: "var(--blue-theme)",
+                border: "1px solid var(--blue-theme)",
+              },
+            ]}
+            trackStyle={[
+              {
+                background: "var(--blue-theme)",
+              },
+            ]}
+            dotStyle={{ backgroundColor: "var(--blue-theme)" }}
+            activeDotStyle={{ backgroundColor: "var(--blue-theme)" }}
+          />
+
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Style = styled.div`
   .button.active.green {

@@ -121,7 +121,6 @@ const Sidebar = () => {
       .then((response) => {
         let { description, vr_url , amenities, project_updates } =
           response.data;
-        console.log(response.data);
         // project_updates = [];
         setDescription(description || "");
         setProjectUrl(vr_url  || "");
