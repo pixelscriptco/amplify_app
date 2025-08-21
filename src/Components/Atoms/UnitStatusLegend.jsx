@@ -22,7 +22,7 @@ function UnitStatusLegend(props) {
   ];
 
   return (
-    <Style className="overlay-can-fade-out">
+    <Style className="overlay-can-fade-out unit_status_legend">
       <div className="body">
         {legends.map((legend) => (
           <div className="row">

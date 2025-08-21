@@ -906,12 +906,13 @@ body{
     border-radius: 12px;
     box-shadow: 0px 15px 50px 0px rgba(27, 32, 50, 0.1);
     width: 300px;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 
 }
 .cap_text{
     font-size: 20px;
     font-weight: 600;
-    color: #000000;
+    color: #ffffff;
     line-height: 25px;
 }
 .main_wrap_title{
@@ -931,11 +932,16 @@ body{
 .flors_icons{
     font-size: 15px;
     font-weight: 600;
-    color: #0e0e0e;
+    color: #fff;
     display: flex;
     align-items: center;
     gap: 10px;
     min-width: 130px;
+}
+.flors_icons svg{
+  color: #29a77f !important;
+  width: 19px !important;
+  height: 19px !important;
 }
 .text_blk{
     min-width: 40px;
@@ -986,30 +992,30 @@ body{
 
 
 .arrow_qw{
-    width: 22px;
-    height: 22px;
+   background-color: #2e2e2e33;
     border-radius: 50%;
-    background-color: #000000;
-    color: #a3a3a3;
-    min-width: 22px;
-    display: flex;
+    color: #ffffff;
+    height: 22px;
     justify-content: center;
     align-items: center;
+    min-width: 22px;
+    width: 22px;
 }
 .bread_camp{
-    background-color: #ffffff4a;
-    border-radius: 12px;
+   
+        border-radius: 41px;
     cursor: pointer;
     gap: 10px;
     padding: 10px 20px;
     z-index: 11;
     display: flex;
     align-items: center;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 }
 
 
 .clr_white{
-    color: #000000;
+    color: #fff;
 }
 .nav_icon{
     width: 30px;
@@ -1021,6 +1027,7 @@ body{
     align-items: center;
     overflow: hidden;
     cursor: pointer;
+    color: #ffffff;
 }
 
 .nav_outer_boxx{
@@ -1033,7 +1040,8 @@ body{
     flex-direction: column;
     gap: 15px;
     padding: 10px;
-    background: #ffffff4a;
+  padding: 10px;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%);
     border-radius: 36px;
 }
 
@@ -1045,13 +1053,13 @@ body{
 }
 
 .bred_outer {
-    background: #fffffffc;
+    /* background: #fffffffc; */
     border-radius: 24px;
-    color: #000000;
+    color: #ffffff;
     cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    padding: 3px 10px;
+     font-size: 14px;
+    font-weight: 400;
+    padding: 2px 10px;
     text-transform: capitalize;
 }
 .bred_outer:hover{
@@ -1075,7 +1083,7 @@ body{
 
 .label_tip{
     position: absolute;
-    background: aliceblue;
+   background: #045352;
     left: 75px;
     padding: 10px;
     border-radius: 12px;
@@ -1087,7 +1095,7 @@ body{
 }
 .nav_icon:hover .label_tip{display: block; }
 .nav_icon:hover{
-    background-color: rgb(255, 255, 255);
+     background-color: #ffffff2b;
 }
 
 .filter_main_block{
@@ -1134,11 +1142,11 @@ body{
 
 .pad_btm_15px_brd{
     padding: 10px 15px;
-    border-bottom: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e0e0e061;
     margin-bottom: 15px;
 }
 .pad_btnwq{
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e0e061;
     padding-top: 15px;
 }
 
@@ -1259,8 +1267,8 @@ body .dzrmUF .features .feature{
      cursor: pointer;
     pointer-events: all;
     width: 100%;
-    height: 125px;
-    border-radius: 8px;
+    height: 100px;
+/*    border-radius: 8px;*/
     position: relative;
 }
 .IMG_amenite{
@@ -1273,11 +1281,22 @@ body .dzrmUF .features .feature{
     background: rgb(255, 255, 255);
 }
 .text_amenties{
-    margin-top: 8px; color: white; font-weight: 500; font-size: 16px; text-align: center;
+    bottom: -29px;
+    color: #fff;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 400;
+    /* left: 10px; */
+    line-height: 15px;
+    position: absolute;
+    transition: opacity .3s;
+    z-index: 2;
+    width: 100%;
+    border-radius: 0px 0px 12px 12px;
+    padding: 7px 10px;
+    background: #023047;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 }
-
-
-
 .outer_grad{
         position: absolute;
     opacity: 0;
@@ -1292,17 +1311,6 @@ body .dzrmUF .features .feature{
     box-shadow: white 0px 0px 0px 2px inset;
     border-radius: 8px;
     padding: 20px;
-}
-.text_amenties{
-    position: absolute;
-    bottom: 15px;
-    left: 10px;
-    color: white;
-    z-index: 2;
-    font-size: 21px;
-    font-weight: 500;
-    line-height: 15px;
-    transition: opacity 0.3s;;
 }
 .shadow_outer{
         background: linear-gradient(0deg, rgb(0, 0, 0) 17.38%, rgba(0, 0, 0, 0.44) 30.18%, rgba(0, 0, 0, 0) 42.3%);
@@ -1325,8 +1333,8 @@ body .dzrmUF .features .feature{
     bottom: 20px;
     right: 20px;
 }
-.kCjGmD{
-    background: #070505d6 !important;
+.unit_status_legend{
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
     padding: 15px !important;
     right: 17px !important;
     z-index: 99;
@@ -1334,7 +1342,7 @@ body .dzrmUF .features .feature{
     bottom: unset !important;
     left: unset !important;
 }
-.kCjGmD .body {
+.unit_status_legend .body {
   margin-top: 0px !important;
   gap: 10px !important;
 }
@@ -1393,8 +1401,8 @@ body .dzrmUF .features .feature{
 }
 .gDDtvv,.ilTkJM,.gWyCvP,.iMALGa,.iFYmkG{
     width: 460px !important;
-    background: #ffffff !important;
-    color: #0b0b0b !important;
+    /*background: #ffffff !important;
+    color: #0b0b0b !important;*/
     box-shadow: -4px 0 24px 0 rgba(0, 0, 0, 0.25);
     border-radius: 12px 0 0 12px !important;
 }
@@ -1447,7 +1455,7 @@ body .dzrmUF .features .feature{
 }
 .text_amentyies{
     font-size: 16px;
-    color: #000;
+    color: #fff;
     margin-top: 20px;
 }
 .img_block_video{
@@ -1528,8 +1536,8 @@ body .dzrmUF .features .feature{
 .filter_icon{
     width: 40px;
     height: 40px;
-    background-color: #ffffff;
-    color: #030303;
+  
+    color: #ffffff;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -1539,6 +1547,7 @@ body .dzrmUF .features .feature{
     align-items: center;
     top: 170px;
     cursor: pointer;
+        background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 }
 .filter_icon:hover{
       background-color: #1a1a1a;
@@ -1761,6 +1770,7 @@ body .ioZlNZ .body.info.svelte-9mhvmf.svelte-9mhvmf {
     z-index: 100;
     min-width: 60px;
     text-align: center;
+    color: #fff;
 }
 body .eSdljY .zoom-control,body .flOtUU .zoom-control {
     bottom: 25px !important;
@@ -1790,3 +1800,26 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
 .el-showall{display: flex;gap: 10px;}
 .MapFilters  .syubmt_flter{background: #dc730e !important;color: white !important;}
 .towers-container .tower.active{background: #dc730e !important;color: white !important;}
+.descContr{height: calc(100vh - 100px)}
+.active_bread{
+    background-color:#29a77f;
+}
+.view_desc{
+  color: white;
+  background: #29a77f;
+  position: absolute;
+    bottom: 10px;
+    left: 20px;
+    width: auto;
+    padding: 8px 10px;
+}
+.compass_coys{
+      width: 50px !important;
+    height: 50px !important;
+    padding: 9px;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
+}
+.Mappp_cnhs{
+  width: 100%;
+  height: 100%;
+}
