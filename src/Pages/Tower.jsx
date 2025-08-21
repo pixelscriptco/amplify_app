@@ -299,7 +299,6 @@ function Tower(props) {
 
   // Sort plans by order
   const sortedPlans = [...towerSvg].sort((a, b) => a.order - b.order);
-  console.log('sorted plans', sortedPlans);
   
   const [currentIndex, setCurrentIndex] = useState(0);
 
