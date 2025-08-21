@@ -209,10 +209,13 @@ const Sidebar = () => {
               <span className="text_amentyies">No description available.</span>
             </div>
           ) : (
-            <div
-              style={{ marginTop: 10 }}
-              dangerouslySetInnerHTML={{ __html: description }}
-            ></div>
+            <div className="descContr">
+              <div
+                style={{ marginTop: 10 }}
+                dangerouslySetInnerHTML={{ __html: description }}
+              ></div>
+              <button className="view_desc button">View Details</button>
+            </div>
           )}
         </div>
       </SlidePanel>
@@ -240,17 +243,25 @@ const Sidebar = () => {
                 </span>
               </div>
             ) : (
-              <div className="construction_uopdated mappp">
-                <iframe
-                  src={`https://www.google.com/maps?q=${location.lat},${location.lng}&hl=en&z=14&output=embed`}
-                  style={{ border: 0 }}
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Google Map"
-                ></iframe>
-
-                {/*<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3416.893646136412!2d76.95014987426298!3d8.487050397238326!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b05bb3396d78f9f%3A0x96658c7f686832ec!2sTrivandrum%20Central%20Railway%20Station!5e1!3m2!1sen!2sin!4v1755103997087!5m2!1sen!2sin"  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>*/}
+              <div className="Mappp_cnhs">
+                <div className="construction_uopdated mappp">
+                  <iframe
+                    src={`https://www.google.com/maps?q=${location.lat},${location.lng}&hl=en&z=14&output=embed`}
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    title="Google Map"
+                  ></iframe>
+                </div>
+                {
+                  description && (                    
+                    <div
+                      style={{ marginTop: 20 }}
+                      dangerouslySetInnerHTML={{ __html: description }}
+                    ></div>
+                  )
+                }
               </div>
             )}
           </div>
