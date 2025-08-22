@@ -338,7 +338,7 @@ function Tower(props) {
           path: `tower/${tower}`,
         }}
       />
-      <Sidebar />
+      {/*<Sidebar />*/}
       <UnitStatusLegend />
       <div className="svg_block_filter">
         <div className="filter_icon" onClick={() => setShowFilter((showFilter) => !showFilter)}>
@@ -390,7 +390,7 @@ function Tower(props) {
 
       {/* <TowerRotateInstruction /> */}
 
-      <div className="compass-fullscreen-wrapper absolute bottom right flex row overlay-can-fade-out">
+      <div className="compass-fullscreen-wrapper absolute bottom left flex row overlay-can-fade-out">
         <div className="col flex j-end">
           {sortedPlans.length &&
             sortedPlans[currentIndex]?.direction &&
@@ -565,8 +565,8 @@ function Tower(props) {
             position: "fixed",
             // top: modalPosition.y,
             // left: modalPosition.x,
-            left : '20px',
-            bottom: '20px',
+            right : '30px',
+            bottom: '30px',
             width: 400,
             borderRadius: 2,
             color: "white",

@@ -191,7 +191,7 @@ function Floor() {
         </div>
 
 
-          <div className="main_tab_block grid_block  jusT_spacebtw" style={{ paddingBottom: '3px'}}>
+          <div className="main_tab_block grid_block  jusT_spacebtw" style={{ paddingBottom: '15px'}}>
           <div className="flors_icons">
               <span className="dd_flex">
                 <svg
@@ -222,29 +222,29 @@ function Floor() {
             </div>
             <div className="flors_icons">
               <span className="dd_flex">
-                <svg
-                  width="16px"
-                  height="16px"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                >
-                  <path d="M320 112C434.9 112 528 205.1 528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320C112 205.1 205.1 112 320 112zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM404.4 276.7C411.4 265.5 408 250.7 396.8 243.6C385.6 236.5 370.8 240 363.7 251.2L302.3 349.5L275.3 313.5C267.3 302.9 252.3 300.7 241.7 308.7C231.1 316.7 228.9 331.7 236.9 342.3L284.9 406.3C289.6 412.6 297.2 416.2 305.1 415.9C313 415.6 320.2 411.4 324.4 404.6L404.4 276.6z"></path>
-                </svg>
+              <svg
+                fill="currentColor"
+                width="19px"
+                height="19px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+              >
+                <path d="M480 144C488.8 144 496 151.2 496 160L496 480C496 488.8 488.8 496 480 496L160 496C151.2 496 144 488.8 144 480L144 160C144 151.2 151.2 144 160 144L480 144zM160 96C124.7 96 96 124.7 96 160L96 480C96 515.3 124.7 544 160 544L480 544C515.3 544 544 515.3 544 480L544 160C544 124.7 515.3 96 480 96L160 96z" />
+              </svg>
               </span>
-              {unit.unit_plans?unit.unit_plans.area:''} sqft
+              {unit.unit_plans?unit.unit_plans.area:''} Sqft
             </div>
             <div className="flors_icons">
               <span className="dd_flex">
-                <svg
-                  width="16px"
-                  height="16px"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                >
-                  <path d="M320 112C434.9 112 528 205.1 528 320C528 434.9 434.9 528 320 528C205.1 528 112 434.9 112 320C112 205.1 205.1 112 320 112zM320 576C461.4 576 576 461.4 576 320C576 178.6 461.4 64 320 64C178.6 64 64 178.6 64 320C64 461.4 178.6 576 320 576zM404.4 276.7C411.4 265.5 408 250.7 396.8 243.6C385.6 236.5 370.8 240 363.7 251.2L302.3 349.5L275.3 313.5C267.3 302.9 252.3 300.7 241.7 308.7C231.1 316.7 228.9 331.7 236.9 342.3L284.9 406.3C289.6 412.6 297.2 416.2 305.1 415.9C313 415.6 320.2 411.4 324.4 404.6L404.4 276.6z"></path>
-                </svg>
+                  <svg
+                      fill="currentColor"
+                      width="19px"
+                      height="19px"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 640 640"
+                    >
+                      <path d="M160 128C160 110.3 174.3 96 192 96L456 96C469.3 96 480 106.7 480 120C480 133.3 469.3 144 456 144L379.3 144C397 163.8 409.4 188.6 414 216L456 216C469.3 216 480 226.7 480 240C480 253.3 469.3 264 456 264L414 264C403.6 326.2 353.2 374.9 290.2 382.9L434.6 486C449 496.3 452.3 516.3 442 530.6C431.7 544.9 411.7 548.3 397.4 538L173.4 378C162.1 370 157.3 355.5 161.5 342.2C165.7 328.9 178.1 320 192 320L272 320C307.8 320 338.1 296.5 348.3 264L184 264C170.7 264 160 253.3 160 240C160 226.7 170.7 216 184 216L348.3 216C338.1 183.5 307.8 160 272 160L192 160C174.3 160 160 145.7 160 128z" />
+                    </svg>
               </span>
               {formatPrice(unit.cost??(unit.unit_plans?unit.unit_plans.cost:''))}
             </div>
@@ -288,9 +288,9 @@ function Floor() {
               path: `/${project}/tower/${tower}/floor/${floor}`,
           }}
         />
-        <Sidebar />
+        {/*<Sidebar />*/}
         <>
-          <div className="floor-selector overlay-can-fade-out">
+          <div className="floor-selector overlay-can-fade-out" style={{ display: 'none' }}>
             <FloorSelector
               currentFloor={currentFloor}
               selectedFloor={selectedFloor}
@@ -351,7 +351,7 @@ function Floor() {
       </div>
       <UnitStatusLegend />
 
-      <div className="compass-fullscreen-wrapper absolute bottom right flex row overlay-can-fade-out">
+      <div className="compass-fullscreen-wrapper absolute bottom left flex row overlay-can-fade-out">
         <div className="col flex j-end">
           <Compass
             angle={COMPASS_ANGLES.TOWERS[getCombinedTowerName(tower)] - 25}
@@ -455,8 +455,8 @@ function Floor() {
       <Box
           sx={{
             position: "fixed",
-            left : '20px',
-            bottom: '20px',
+            right : '-70px',
+            bottom: '30px',
             width: 400,
             borderRadius: 2,
             color: "white",

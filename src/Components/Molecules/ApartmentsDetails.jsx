@@ -7,7 +7,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
   const unitDetails = selectedUnit;
   
   return (
-    <Style>
+    <Style className="sdyuo">
       <div class="interface--col svelte-9mhvmf booknow_unt">
         <div
           class="panel panel__unit-card svelte-1m6i2pp"
@@ -29,7 +29,7 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                   style={{ maxHeight: "182px" }}
                 >
                   <div class="unit-row svelte-1m6i2pp">
-                    <div class="type svelte-1m6i2pp">Apartment Details</div>
+                    <div class="type f-500 svelte-1m6i2pp">Apartment Details</div>
                   </div>
                   <div className="features">
                     <div className="feature">
@@ -68,19 +68,19 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                       }}
                       class={
                         unitDetails?.status == 1
-                          ? "button green active svelte-ynf51n"
-                          : "button green svelte-ynf51n"
+                          ? "button bhy green active svelte-ynf51n"
+                          : "button  bhy green svelte-ynf51n"
                       }
                       value=""
-                      style={{ padding: "8px 0px" }}
+                      style={{ padding: "8px 0px", borderRadius: '6px',marginTop: '0.3rem !important' }}
                       disabled={unitDetails?.status != 1}
                     >
                       Book Now
                     </button>
                     <button
-                      class="button active green svelte-ynf51n"
+                      class="button bhy active green svelte-ynf51n"
                       value=""
-                      style={{ padding: "8px 0px" }}
+                      style={{ padding: "8px 0px", borderRadius: '6px',marginTop: '0.3rem !important' }}
                       onClick={onVRClick}
                     >
                       VR Tour
