@@ -147,7 +147,7 @@ function Tower(props) {
             </svg>
           </span>
           <span className="cap_text">
-            {tower} Tower | {floor.name}{" "}
+            Tower {tower} | {floor.name}{" "}
           </span>
         </div>
 

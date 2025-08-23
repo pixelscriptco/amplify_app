@@ -140,7 +140,7 @@ function Unit() {
           setSelectedTower={setSelectedTower}
         />
       </div> */}
-      <div className="compass-fullscreen-wrapper absolute bottom right flex row">
+      <div className="compass-fullscreen-wrapper absolute bottom left flex row">
         <div className="col flex j-end">
           <Compass
             angle={COMPASS_ANGLES.TOWERS[getCombinedTowerName(tower)] - 25}
@@ -155,7 +155,7 @@ function Unit() {
           />
         </div>
       </div>
-      {!unitData.image_url && (<ApartmentsDetails
+      {unitData.image_url && (<ApartmentsDetails
         onVRClick={() => {
           // setShowVRTour(true)
           // navigate("VR-tour");

@@ -3,13 +3,13 @@ import styled from "styled-components";
 import tippy from "tippy.js";
 import "tippy.js/dist/tippy.css";
 import { LocationIcon } from "../Data/icons";
-import nothing_found from "../Data/images/nothing.jpg";
+import nothing_found from "../Data/images/haha.png";
 import { view_360 } from "../Data/images/AmenitiesSvgs";
 import axiosInstance from "../Utility/axios";
 import { useParams } from "react-router-dom";
 import { smart_world_site_1 } from "../Data/Screen1PageSvg";
 import Err from "./Atoms/Error";
-import { Pannellum } from "pannellum-react";
+import ReactPannellum, { getConfig } from "react-pannellum";
 
 // Simple SVG placeholders for Description and Construction Updates
 const DescriptionIcon = () => (
@@ -170,8 +170,8 @@ const Sidebar = () => {
   };
 
   const load_360_view = async (url) => {
-    // set_360(url);
-    // return false;
+    set_360(url);
+    return false;
     url = 'https://cdn.pickyassist.com/media_gallery/image/500005_1755608394_1755608391672_0.png';
     try {
         const response = await fetch(url);
@@ -260,6 +260,15 @@ const Sidebar = () => {
               </div>
             ) : (
               <div className="Mappp_cnhs">
+                {
+                  description && (                    
+                    <div
+                      className="ghtyu"
+                      style={{ marginTop: 20 }}
+                      dangerouslySetInnerHTML={{ __html: description }}
+                    ></div>
+                  )
+                }
                 <div className="construction_uopdated mappp">
                   <iframe
                     src={`https://www.google.com/maps?q=${location.lat},${location.lng}&hl=en&z=14&output=embed`}
@@ -270,14 +279,6 @@ const Sidebar = () => {
                     title="Google Map"
                   ></iframe>
                 </div>
-                {
-                  description && (                    
-                    <div
-                      style={{ marginTop: 20 }}
-                      dangerouslySetInnerHTML={{ __html: description }}
-                    ></div>
-                  )
-                }
               </div>
             )}
           </div>
@@ -501,19 +502,12 @@ const Sidebar = () => {
                   />
                 </svg>
               </div>
-              <Pannellum
-                  width="100%"
-                  height="100%"
-                  image={nothing_found}
-                  pitch={10}
-                  yaw={180}
-                  hfov={110}
-                  autoLoad
-                  showZoomCtrl={false}
-                  onLoad={() => {
-                    console.log("panorama loaded");
-                  }}
-                />
+              <ReactPannellum
+                  id="1"
+                  sceneId="firstScene"
+                  imageSource={do_360}
+                  config={{autoLoad: true }}
+                />              
             </div>
         )
       }
