@@ -9,6 +9,7 @@ import axiosInstance from "../Utility/axios";
 import { useParams } from "react-router-dom";
 import { smart_world_site_1 } from "../Data/Screen1PageSvg";
 import Err from "./Atoms/Error";
+import { Pannellum } from "pannellum-react";
 
 // Simple SVG placeholders for Description and Construction Updates
 const DescriptionIcon = () => (
@@ -93,6 +94,7 @@ const Sidebar = () => {
   const [project_updates, setProjectUpdates] = useState([]);
   const [resorcetype, setResorcetype] = useState("image");
   const [location, setLocation] = useState({});
+  const [do_360, set_360] = useState("");
 
   // useEffect(() => {
   //   iconRefs.current.forEach((ref, idx) => {
@@ -126,7 +128,7 @@ const Sidebar = () => {
         setProjectUrl(vr_url  || "");
         setAmenities(amenities || []);
         setProjectUpdates(project_updates || []);
-        // console.log(project_url);
+        // console.log(amenities);
         if (
           response.data &&
           response.data.latitude &&
@@ -167,9 +169,23 @@ const Sidebar = () => {
     return -1;
   };
 
+  const load_360_view = async (url) => {
+    // set_360(url);
+    // return false;
+    url = 'https://cdn.pickyassist.com/media_gallery/image/500005_1755608394_1755608391672_0.png';
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+        set_360(objectUrl);
+      } catch (error) {
+        // console.error("Error fetching image:", error);
+      }
+  }
+
   return (
     <>
-      <SidebarContainer className="sidebar">
+      <SidebarContainer className="sidebar" >
         <div className="nav_outer_boxx_ui">
           <div className="main_block_nav">
             {iconData.map(({ Icon, label }, idx) => (
@@ -192,7 +208,7 @@ const Sidebar = () => {
           </div>
         </div>
       </SidebarContainer>
-      <SlidePanel open={showDescription}>
+      <SlidePanel open={showDescription} className="slide_panell">
         <div className="slide-panel-content">
           <button
             className="close-btn"
@@ -219,7 +235,7 @@ const Sidebar = () => {
           )}
         </div>
       </SlidePanel>
-      <SlidePanel open={showLocation}>
+      <SlidePanel open={showLocation} className="slide_panell">
         <div className="slide-panel-content">
           <button className="close-btn" onClick={() => setShowLocation(false)}>
             &times;
@@ -267,7 +283,7 @@ const Sidebar = () => {
           </div>
         </div>
       </SlidePanel>
-      <SlidePanel open={showAmenities}>
+      <SlidePanel open={showAmenities} className="slide_panell">
         <div className="slide-panel-content">
           <button className="close-btn" onClick={() => setShowAmenities(false)}>
             &times;
@@ -291,7 +307,7 @@ const Sidebar = () => {
               amenities.map((a, idx) => (
                 <div
                   className="AMENITIES_OUTER"
-                  onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
+                  onClick={() => a.image && load_360_view(a.image)}
                 >
                   <div className="img_blockqe">
                     <img src={a.image} alt={a.name} className="IMG_amenite" />
@@ -359,7 +375,7 @@ const Sidebar = () => {
           </div>
         </div>
       </SlidePanel>
-      <SlidePanel open={showConstructionUpdates}>
+      <SlidePanel open={showConstructionUpdates} className="slide_panell">
         <div className="slide-panel-content">
           <button
             className="close-btn"
@@ -467,6 +483,40 @@ const Sidebar = () => {
           </div>
         </div>
       </SlidePanel>
+      {
+        do_360 && (
+          <div className="wrap_iframe_box pan_view_360" age={do_360} style={{ display: "block" }}>              
+              <div className="cose_btn" onClick={() => set_360(false)} style={{ cursor: "pointer" }}>
+                <svg
+                  viewBox="0 0 24 24"
+                  height="24"
+                  width="24"
+                  preserveAspectRatio="xMidYMid meet"
+                  fill="none"
+                >
+                  <title>close-refreshed</title>
+                  <path
+                    d="M11.9998 13.4L7.0998 18.3C6.91647 18.4833 6.68314 18.575 6.3998 18.575C6.11647 18.575 5.88314 18.4833 5.6998 18.3C5.51647 18.1167 5.4248 17.8833 5.4248 17.6C5.4248 17.3167 5.51647 17.0833 5.6998 16.9L10.5998 12L5.6998 7.09999C5.51647 6.91665 5.4248 6.68332 5.4248 6.39999C5.4248 6.11665 5.51647 5.88332 5.6998 5.69999C5.88314 5.51665 6.11647 5.42499 6.3998 5.42499C6.68314 5.42499 6.91647 5.51665 7.0998 5.69999L11.9998 10.6L16.8998 5.69999C17.0831 5.51665 17.3165 5.42499 17.5998 5.42499C17.8831 5.42499 18.1165 5.51665 18.2998 5.69999C18.4831 5.88332 18.5748 6.11665 18.5748 6.39999C18.5748 6.68332 18.4831 6.91665 18.2998 7.09999L13.3998 12L18.2998 16.9C18.4831 17.0833 18.5748 17.3167 18.5748 17.6C18.5748 17.8833 18.4831 18.1167 18.2998 18.3C18.1165 18.4833 17.8831 18.575 17.5998 18.575C17.3165 18.575 17.0831 18.4833 16.8998 18.3L11.9998 13.4Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              <Pannellum
+                  width="100%"
+                  height="100%"
+                  image={nothing_found}
+                  pitch={10}
+                  yaw={180}
+                  hfov={110}
+                  autoLoad
+                  showZoomCtrl={false}
+                  onLoad={() => {
+                    console.log("panorama loaded");
+                  }}
+                />
+            </div>
+        )
+      }
       <div
         className="wrap_iframe_box"
         style={{ display: showTour ? "block" : "none" }}

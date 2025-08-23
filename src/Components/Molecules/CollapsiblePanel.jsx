@@ -16,7 +16,7 @@ function CollapsiblePanel({ className, children, title, SecondaryBody,show }) {
     <Style className={className + " overlay-can-fade-out"}>
       <div className="panel MapFilters" style={{ display : (show) ? 'flex' : 'none'}}>
         <div className="title">
-          <h2 className="filter-title-mob" slot="title">
+          <h2 className="filter-title-mob" slot="title" style={{ display: 'none'}}>
             {title}
           </h2>
         </div>

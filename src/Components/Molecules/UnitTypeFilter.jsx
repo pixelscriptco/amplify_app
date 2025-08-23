@@ -136,20 +136,18 @@ function UnitTypeFilter({ tower, floor }) {
       >
         <div className="main-controls">
           {" "}
-          <div className="available-title">{totalUnits} Units Total</div>{" "}
-          <div className="button-group">
+          <div className="d_flex_main_wrap">
             {unitTypeFilters.map((filter) => (
-              <button
+              <div
                 onClick={() => handleFilterClick(filter.id)}
-                className={`button green ${
-                  isFilterActive(filter) ? "active" : ""
+                className={`btn_small  ${
+                  isFilterActive(filter) ? "active_bread" : ""
                 }`}
                 value=""
                 key={filter.id}
-                style={{ "--paddings": "5px 8px" }}
               >
                 {filter}
-              </button>
+              </div>
             ))}
           </div>{" "}
 
@@ -218,12 +216,12 @@ function UnitTypeFilter({ tower, floor }) {
         </div>
       </div>
       <div className="el-showall">
-        <button
+        <button style={{ display: 'none' }}
         onClick={() => setActiveMapFilterIds([])}
          className="button el-showall__button">Reset</button>
         
         <button
-          className={`button syubmt_flter ${
+          className={`button syubmt_flter active_bread ${
             isAllFiltersActive() ? "active" : ""
           }`}
           onClick={onShowAllClicked}

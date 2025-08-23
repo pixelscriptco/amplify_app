@@ -125,7 +125,7 @@ function Unit() {
         }}
       />
 
-      <Sidebar />
+      {/*<Sidebar />*/}
       <ReturnToPrev
         text="Return To Floor Plan"
         to={`${project}/tower/${tower}/floor/${floor}`}
@@ -155,7 +155,7 @@ function Unit() {
           />
         </div>
       </div>
-      <ApartmentsDetails
+      {!unitData.image_url && (<ApartmentsDetails
         onVRClick={() => {
           // setShowVRTour(true)
           // navigate("VR-tour");
@@ -163,7 +163,8 @@ function Unit() {
         }}
         selectedUnit={unitData}
         handleBooking={handleBooking}
-      />
+      />)}
+      
       <FlatStyle className="no-select">
         <div
           style={{

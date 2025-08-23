@@ -1003,7 +1003,7 @@ body{
 }
 .bread_camp{
    
-        border-radius: 41px;
+        border-radius: 12px;
     cursor: pointer;
     gap: 10px;
     padding: 10px 20px;
@@ -1042,7 +1042,7 @@ body{
     padding: 10px;
   padding: 10px;
     background: radial-gradient(circle, #066f5b 0%, #023047 100%);
-    border-radius: 36px;
+    border-radius: 12px;
 }
 
 /* setting cssc start  */
@@ -1054,7 +1054,7 @@ body{
 
 .bred_outer {
     /* background: #fffffffc; */
-    border-radius: 24px;
+    border-radius: 6px;
     color: #ffffff;
     cursor: pointer;
      font-size: 14px;
@@ -1077,7 +1077,7 @@ body{
     align-items: center;
     gap: 20px;
     pointer-events: all;
-    margin-left: 20px;
+    margin-left: 30px;
     margin-top: -40px;
 }
 
@@ -1251,8 +1251,8 @@ body .dzrmUF .features .feature{
     align-items: center;
     gap: 0.5rem;
     position: absolute;
-    top: 15px;
-    right: 15px;
+    top: 30px;
+    right: 30px;
     z-index: 11;
 }
 .sc-hjsuWn{display:none;}
@@ -1334,13 +1334,13 @@ body .dzrmUF .features .feature{
     right: 20px;
 }
 .unit_status_legend{
-    background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
+        background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
     padding: 15px !important;
-    right: 17px !important;
+    left: 30px;
     z-index: 99;
-    top: 100px;
-    bottom: unset !important;
-    left: unset !important;
+    top: unsetr;
+    bottom: 30px !important;
+    left: 30px !important;
 }
 .unit_status_legend .body {
   margin-top: 0px !important;
@@ -1349,8 +1349,8 @@ body .dzrmUF .features .feature{
 .ioZlNZ .floor__buttons.svelte-6keq0u .floors__group--numbers.svelte-6keq0u{
   color: #a09797 !important;
 }
-.jViixs .panel{
-        background-color: #1d1d1dc9 !important;
+.fltrr .panel{
+        background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
 }
 .floor-switcher input{color: #fff !important; }
 .css-pusj2w{
@@ -1375,7 +1375,7 @@ body .dzrmUF .features .feature{
   border-radius: 12px;
 }
 .logo_outer img {
-    max-width: 120px;
+    max-width: 100px;
     width: auto;
     border-radius: 6px;
     object-fit : cover;
@@ -1392,12 +1392,13 @@ body .dzrmUF .features .feature{
 }
 .hdr_log_main{
   display: flex;
-    gap: 10px;
+    gap: 15px;
     left: 30px;
     position: absolute;
     top: 30px;
     z-index: 105;
-    align-items: center;
+    align-items: start;
+    flex-direction: column;
 }
 .gDDtvv,.ilTkJM,.gWyCvP,.iMALGa,.iFYmkG{
     width: 460px !important;
@@ -1457,6 +1458,9 @@ body .dzrmUF .features .feature{
     font-size: 16px;
     color: #fff;
     margin-top: 20px;
+}
+.wrap_iframe_box .text_amentyies{
+  color: #000;
 }
 .img_block_video{
     width: 100%;
@@ -1534,18 +1538,17 @@ body .dzrmUF .features .feature{
   height: 100%;
 }
 .filter_icon{
-    width: 40px;
-    height: 40px;
-  
+    width: 50px;
+    height: 50px;  
     color: #ffffff;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     position: absolute;
-    right: 20px;
+    left: 30px;
     z-index: 1234;
     align-items: center;
-    top: 170px;
+    top: 180px;
     cursor: pointer;
         background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 }
@@ -1628,9 +1631,9 @@ input[type="range"].win10-thumb {
     color: #3a86ff !important;
   }
   .fltrr.left-panels{
-    right: 75px !important;
-    left: unset !important;
-    top: 40px !important;
+    right: unset !important;
+    left: 95px !important;
+    top: 52px !important;
   }
   input[type="range"] {
   /* removing default appearance */
@@ -1764,13 +1767,13 @@ body .ioZlNZ .body.info.svelte-9mhvmf.svelte-9mhvmf {
   height: 125px;
 }
 .svg_block_filter .label_tip{
-    left: unset !important;
-    right: 65px;
-    top: 173px;
+    left: 75px;
+    top: 183px;
     z-index: 100;
     min-width: 60px;
     text-align: center;
     color: #fff;
+    display: none !important;
 }
 body .eSdljY .zoom-control,body .flOtUU .zoom-control {
     bottom: 25px !important;
@@ -1791,12 +1794,12 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
 .floor-selector{top: 8rem !important;}
 .booknow_unt{
   position: absolute;
-    top: 85px !important;
-    right: 15px !important;
+    top: 120px !important;
+    right: 30px !important;
     left: unset !important;
 }
 .booknow_unt .panel__unit-card{background-color: #1d1d1d!important;}
-.booknow_unt button{background: #dc730e !important;}
+.booknow_unt button{background: #29a77f !important; }
 .el-showall{display: flex;gap: 10px;}
 .MapFilters  .syubmt_flter{background: #dc730e !important;color: white !important;}
 .towers-container .tower.active{background: #dc730e !important;color: white !important;}
@@ -1818,8 +1821,62 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
     height: 50px !important;
     padding: 9px;
     background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
+    right: unset !important;
+    left: 30px;
+    bottom: 100px !important;
 }
 .Mappp_cnhs{
   width: 100%;
   height: 100%;
 }
+.slide_panell{width:450px !important; }
+.pan_view_360{z-index: 2000;}
+.btn_small{
+    padding: 3px 8px;
+    border: 1px solid rgb(174, 174, 174);
+    font-size: 13px;
+    border-radius: 4px;
+    color: #fff;
+}
+.d_flex_main_wrap{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.btn_small:hover{
+    background-color: #1f1f1f;
+    cursor: pointer;
+}
+.available-title{
+      border-radius: 4px;
+    padding: 4px 0px;
+    background: #b1b1b129;
+    margin-top: 20px !important;
+}
+.list_gopw{
+    display: flex;
+padding: 5px;
+    /* background-color: #121212; */
+    border: 1px solid rgb(240, 240, 240);
+    border-radius: 6px;
+    color: #fff;
+    width: 48%;
+    justify-content: center;
+}
+.grid_htyu{
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.txt_er{
+    font-size: 13px;
+    font-weight: 500;
+}
+.MapFilters .syubmt_flter {background: #29a77f !important;}
+.img-wrapper{ background:#18534b !important;padding:50px !important; }
+.booknow_unt .panel__unit-card{background: radial-gradient(circle, #066f5b 0, #023047 100%);}
+.f-500{font-weight: 500 !important;}
+.img-wrapper.untt{padding-left: 20% !important;}
+body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !important;}

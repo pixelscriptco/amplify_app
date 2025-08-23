@@ -118,6 +118,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
               fontSize: 15,
               color: "#fff",
               boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+              display: 'none'
             }}
           >
             {projectData.registration_number}
