@@ -53,11 +53,23 @@ function UnitTypeFilter({ tower, floor }) {
     return [minTotalCost, maxTotalCost];
   };
 
+  const getUniqueTotalCostInTower = (units) => {
+    const totalCosts = units.map((unit) => unit["TotalCost"]);    
+    const uniqueCosts = [...new Set(totalCosts)].sort((a, b) => a - b);
+    return uniqueCosts;
+  };
+
   const getMinMaxSBUInTower = (units) => {
     const sbus = units.map((unit) => unit["SBU"]);        
     const minSBU = Math.min(...sbus);
     const maxSBU = Math.max(...sbus);
     return [minSBU, maxSBU];
+  };
+
+  const getUniqueSBUInTower = (units) => {
+    const totalCosts = units.map((unit) => unit["SBU"]);    
+    const uniqueCosts = [...new Set(totalCosts)].sort((a, b) => a - b);
+    return uniqueCosts;
   };
 
   const getAllUnitTypesInTower = (units) => [
@@ -101,8 +113,8 @@ function UnitTypeFilter({ tower, floor }) {
       try {        
         // Adjust the API endpoint as needed
         const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
-        setFlatFilterPriceValues(getMinMaxTotalCostInTower(response.data.units));
-        setFlatFilterSizeValues(getMinMaxSBUInTower(response.data.units));
+        setFlatFilterPriceValues(getUniqueTotalCostInTower(response.data.units));
+        setFlatFilterSizeValues(getUniqueSBUInTower(response.data.units));
         setFlatFilterTypeValues(getAllUnitTypesInTower(response.data.units));
        
         setTotalUnits(response.data.units.length || 0);             
@@ -141,7 +153,39 @@ function UnitTypeFilter({ tower, floor }) {
             ))}
           </div>{" "}
 
-          <div className="slider-group-wrap">
+          <div className="button-group">
+            {flatFilterPriceValues.map((price) => (
+              <button
+                onClick={() => handleFilterClick(price)}
+                className={`button green ${
+                  isFilterActive(price) ? "active" : ""
+                }`}
+                value=""
+                key={price}
+                style={{ "--paddings": "5px 8px" }}
+              >
+                {formatPrice(price)}
+              </button>
+            ))}
+          </div>{" "}
+
+          <div className="button-group">
+            {flatFilterSizeValues.map((size) => (
+              <button
+                onClick={() => handleFilterClick(size)}
+                className={`button green ${
+                  isFilterActive(size) ? "active" : ""
+                }`}
+                value=""
+                key={size}
+                style={{ "--paddings": "5px 8px" }}
+              >
+                {size}  Sq.Ft   
+              </button>
+            ))}
+          </div>{" "}
+
+          {/* <div className="slider-group-wrap">
             <div className="slider-group">
               <DoubleSlider
                 title={"Price"}
@@ -170,7 +214,7 @@ function UnitTypeFilter({ tower, floor }) {
                 handleOnSliderChange={handlePriceOnSliderChange}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="el-showall">

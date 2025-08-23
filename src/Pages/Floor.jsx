@@ -290,7 +290,7 @@ function Floor() {
         />
         <Sidebar />
         <>
-          <div className="floor-selector overlay-can-fade-out">
+          {/* <div className="floor-selector overlay-can-fade-out">
             <FloorSelector
               currentFloor={currentFloor}
               selectedFloor={selectedFloor}
@@ -299,7 +299,7 @@ function Floor() {
               selectedTower={selectedTower}
               setSelectedTower={setSelectedTower}
             />
-          </div>
+          </div> */}
 
           <div className="svg_block_filter">
             <div className="filter_icon" onClick={() => setShowFilter((showFilter) => !showFilter)}>

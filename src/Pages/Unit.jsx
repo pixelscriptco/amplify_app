@@ -130,7 +130,7 @@ function Unit() {
         text="Return To Floor Plan"
         to={`${project}/tower/${tower}/floor/${floor}`}
       />
-      <div className="floor-selector">
+      {/* <div className="floor-selector">
         <FloorSelector
           currentFloor={currentFloor}
           selectedFloor={selectedFloor}
@@ -139,7 +139,7 @@ function Unit() {
           selectedTower={selectedTower}
           setSelectedTower={setSelectedTower}
         />
-      </div>
+      </div> */}
       <div className="compass-fullscreen-wrapper absolute bottom right flex row">
         <div className="col flex j-end">
           <Compass
