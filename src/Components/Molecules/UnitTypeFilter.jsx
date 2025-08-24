@@ -1,126 +1,60 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useInventories, useMapFilter } from "../../Hooks";
+import { useMapFilter } from "../../Hooks";
 import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
-import { useContext } from "react";
-import { AppContext } from "../../Contexts/AppContext";
 import axiosInstance from "../../Utility/axios";
 
-function UnitTypeFilter({ tower, floor }) {    
-  const {
-    getAllUnitsInTower,
-    getAllAvailableUnitsInFloor,
-  } = useInventories();
-  
-  const isFloor = floor !== undefined;
+function UnitTypeFilter({ tower, floor }) {
   const [totalUnits, setTotalUnits] = useState(0);
   const [flatFilterPriceValues, setFlatFilterPriceValues] = useState([]);
   const [flatFilterSizeValues, setFlatFilterSizeValues] = useState([]);
-  const [unitTypeFilters,setFlatFilterTypeValues] = useState([]);
+  const [unitTypeFilters, setFlatFilterTypeValues] = useState([]);
   const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } = useMapFilter();
   const [unitDetails, setUnitDetails] = useState([]);
 
-  const isAllFiltersActive = () => activeMapFilterIds.length == unitTypeFilters.length;
+  const isAllFiltersActive = () => activeMapFilterIds.length === unitTypeFilters.length;
 
   const onShowAllClicked = () => {
     if (isAllFiltersActive()) {
       setActiveMapFilterIds([]);
-    } else
-      setActiveMapFilterIds([...unitTypeFilters.map((filter) => filter.id)]);
+    } else setActiveMapFilterIds([...unitTypeFilters.map((filter) => filter)]);
   };
 
-  const handleFilterClick = (id) => {
-    if (isFilterActive(id)) {
-      // should be deactivated
-      if (isAllFiltersActive()) {
-        setActiveMapFilterIds([
-          ...unitTypeFilters
-            .map((filter) => filter.id)
-            .filter((_id) => _id !== id),
-        ]);
-      } else setActiveMapFilterIds((old) => old.filter((_id) => _id !== id));
+  const handleFilterClick = (value) => {
+    if (isFilterActive(value)) {
+      setActiveMapFilterIds((old) => old.filter((_id) => _id !== value));
     } else {
-      // if (activeMapFilterIds.length == unitTypeFilters.length - 1)
-      setActiveMapFilterIds((old) => [...old, id]);
+      setActiveMapFilterIds((old) => [...old, value]);
     }
   };
 
-  const getMinMaxTotalCostInTower = (units) => {
-    const totalCosts = units.map((unit) => unit["TotalCost"]);    
-    const minTotalCost = Math.min(...totalCosts);
-    const maxTotalCost = Math.max(...totalCosts);
-    return [minTotalCost, maxTotalCost];
-  };
-
-  const getUniqueTotalCostInTower = (units) => {
-    const totalCosts = units.map((unit) => unit["TotalCost"]);    
-    const uniqueCosts = [...new Set(totalCosts)].sort((a, b) => a - b);
-    return uniqueCosts;
-  };
-
-  const getMinMaxSBUInTower = (units) => {
-    const sbus = units.map((unit) => unit["SBU"]);        
-    const minSBU = Math.min(...sbus);
-    const maxSBU = Math.max(...sbus);
-    return [minSBU, maxSBU];
-  };
-
-  const getUniqueSBUInTower = (units) => {
-    const totalCosts = units.map((unit) => unit["SBU"]);    
-    const uniqueCosts = [...new Set(totalCosts)].sort((a, b) => a - b);
-    return uniqueCosts;
-  };
-
   const getAllUnitTypesInTower = (units) => [
-    ...new Set(
-      units.map((unit) => unit["UnitType"])
-        .sort((a, b) => parseInt(a) - parseInt(b))
-    ),
+    ...new Set(units.map((unit) => unit["UnitType"]).sort((a, b) => parseInt(a) - parseInt(b))),
   ];
-
-  // Price handler
-  // const handlePriceOnSliderChange = (value) => {
-  //   setFlatFilterPriceValues(value);
-  // };
-
-  // //size handler
-  // const handleSizeOnSliderChange = (value) => {
-  //   setFlatFilterSizeValues(value);
-  // };
 
   function formatPrice(value) {
     if (!value || isNaN(value)) return "";
 
     if (value >= 10000000) {
-      // 1 Crore = 1,00,00,000
       return (value / 10000000).toFixed(2).replace(/\.00$/, "") + " Cr";
     } else if (value >= 100000) {
-      // 1 Lakh = 1,00,000
       return (value / 100000).toFixed(2).replace(/\.00$/, "") + " L";
     } else {
       return value.toString();
     }
   }
 
-   // Price handler
-  const handlePriceOnSliderChange = (value) => {
-    setFlatFilterPriceValues(value);
-  };
-
   useEffect(() => {
     const fetchUnitDetails = async () => {
-      try {        
-        // Adjust the API endpoint as needed
-        const response = await axiosInstance.get(`/app/units?tower=${tower}${floor ? `&floor=${floor}` : ''}`);
-        setFlatFilterPriceValues(getUniqueTotalCostInTower(response.data.units));
-        setFlatFilterSizeValues(getUniqueSBUInTower(response.data.units));
+      try {
+        const response = await axiosInstance.get(
+          `/app/units/filter?tower=${tower}${floor ? `&floor=${floor}` : ""}`
+        );
+
         setFlatFilterTypeValues(getAllUnitTypesInTower(response.data.units));
-       
-        setTotalUnits(response.data.units.length || 0);             
-        // const data = await response.json();
+        setTotalUnits(response.data.units.length || 0);
         setUnitDetails(response.data.units || []);
-                
       } catch (error) {
         setUnitDetails([]);
       }
@@ -128,104 +62,48 @@ function UnitTypeFilter({ tower, floor }) {
     fetchUnitDetails();
   }, [tower, floor]);
 
+  const filteredUnits = activeMapFilterIds.length
+    ? unitDetails.filter((unit) => activeMapFilterIds.includes(unit.UnitType))
+    : [];
+
   return (
     <Style>
-      <div
-        className="filters-control align-start"
-        style={{ minHeight: "215px", height: "fit-content" }}
-      >
+      <div className="filters-control align-start" style={{ minHeight: "215px", height: "fit-content", overflow: "scroll" }}>
         <div className="main-controls">
-          {" "}
           <div className="d_flex_main_wrap">
             {unitTypeFilters.map((filter) => (
               <div
-                onClick={() => handleFilterClick(filter.id)}
-                className={`btn_small  ${
-                  isFilterActive(filter) ? "active_bread" : ""
-                }`}
-                value=""
-                key={filter.id}
+                onClick={() => handleFilterClick(filter)}
+                className={`btn_small  ${isFilterActive(filter) ? "active_bread" : ""}`}
+                key={filter}
               >
                 {filter}
               </div>
             ))}
-          </div>{" "}
+          </div>
 
-          <div className="button-group">
-            {flatFilterPriceValues.map((price) => (
-              <button
-                onClick={() => handleFilterClick(price)}
-                className={`button green ${
-                  isFilterActive(price) ? "active" : ""
-                }`}
-                value=""
-                key={price}
-                style={{ "--paddings": "5px 8px" }}
-              >
-                {formatPrice(price)}
-              </button>
+          <div className="unit-details-list">
+            {filteredUnits.map((unit, index) => (
+              <div key={index} className="unit-card">
+                <div style={{ display: "flex", justifyContent: "space-around"}}><span>{unit.UnitType}</span> - <span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
+              </div>
             ))}
-          </div>{" "}
-
-          <div className="button-group">
-            {flatFilterSizeValues.map((size) => (
-              <button
-                onClick={() => handleFilterClick(size)}
-                className={`button green ${
-                  isFilterActive(size) ? "active" : ""
-                }`}
-                value=""
-                key={size}
-                style={{ "--paddings": "5px 8px" }}
-              >
-                {size}  Sq.Ft   
-              </button>
-            ))}
-          </div>{" "}
-
-          {/* <div className="slider-group-wrap">
-            <div className="slider-group">
-              <DoubleSlider
-                title={"Price"}
-                rangeLabel="INR"
-                value={flatFilterPriceValues}
-                labelValues={[
-                  formatPrice(flatFilterPriceValues[0]),
-                  formatPrice(flatFilterPriceValues[1]),
-                ]}
-                start={flatFilterPriceValues[0]}
-                end={flatFilterPriceValues[1]}
-                handleOnSliderChange={handlePriceOnSliderChange}
-              />
-            </div>
-            <div className="slider-group">
-              <DoubleSlider
-                title={"Area"}
-                rangeLabel="Sq.Ft"
-                value={flatFilterSizeValues}
-                labelValues={[
-                  formatPrice(flatFilterSizeValues[0]),
-                  formatPrice(flatFilterSizeValues[1]),
-                ]}
-                start={flatFilterSizeValues[0]}
-                end={flatFilterSizeValues[1]}
-                handleOnSliderChange={handlePriceOnSliderChange}
-              />
-            </div>
-          </div> */}
+          </div>
         </div>
       </div>
+
       <div className="el-showall">
-        <button style={{ display: 'none' }}
-        onClick={() => setActiveMapFilterIds([])}
-         className="button el-showall__button">Reset</button>
-        
         <button
-          className={`button syubmt_flter active_bread ${
-            isAllFiltersActive() ? "active" : ""
-          }`}
+          style={{ display: "none" }}
+          onClick={() => setActiveMapFilterIds([])}
+          className="button el-showall__button"
+        >
+          Reset
+        </button>
+
+        <button
+          className={`button syubmt_flter active_bread ${isAllFiltersActive() ? "active" : ""}`}
           onClick={onShowAllClicked}
-          value=""
           style={{ "--paddings": "5px 8px" }}
         >
           Submit
@@ -236,56 +114,6 @@ function UnitTypeFilter({ tower, floor }) {
 }
 
 export default UnitTypeFilter;
-
-export const DoubleSlider = ({
-  title,
-  rangeLabel,
-  start,
-  end,
-  handleOnSliderChange,
-  value,
-  labelValues,
-}) => {
-  return (
-    <div class="slider-group">
-      <div class="slider-group__title">{title + " " + rangeLabel}</div>{" "}
-      <div class="slider-group__body">
-        <div class="slider-group__body--prices">
-          <div class="input-minprice">{labelValues[0]}</div>{" "}
-          <div class="input-maxprice">{labelValues[1]}</div>
-        </div>{" "}
-        <div style={{ marginTop: "10px" }}>
-          <Slider
-            min={start}
-            max={end}
-            allowCross={false}
-            value={value}
-            onChange={handleOnSliderChange}
-            railStyle={{ height: 2 }}
-            handleStyle={[
-              {
-                backgroundColor: "var(--blue-theme)",
-                border: "1px solid var(--blue-theme)",
-              },
-              {
-                backgroundColor: "var(--blue-theme)",
-                border: "1px solid var(--blue-theme)",
-              },
-            ]}
-            trackStyle={[
-              {
-                background: "var(--blue-theme)",
-              },
-            ]}
-            dotStyle={{ backgroundColor: "var(--blue-theme)" }}
-            activeDotStyle={{ backgroundColor: "var(--blue-theme)" }}
-          />
-
-        </div>
-      </div>
-    </div>
-  );
-};
 
 const Style = styled.div`
   .button.active.green {
@@ -467,5 +295,25 @@ const Style = styled.div`
     justify-content: space-between;
     flex-direction: row;
     color: #bdbdbd;
+  }
+
+  .unit-details-list {
+    margin-top: 15px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .unit-card {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f9f9f9;
+    font-size: 14px;
+  }
+
+  .unit-type,
+  .unit-area,
+  .unit-price {
+    margin: 4px 0;
   }
 `;
