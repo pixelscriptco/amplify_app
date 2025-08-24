@@ -81,7 +81,7 @@ function BookNow({ isOpen, setIsOpen, unitDetails, handleBooking }) {
               }}
             >
               <div class="description svelte-tipeeb">
-                <div class="description-secondary svelte-tipeeb">
+                <div class="description-secondary boookkkk svelte-tipeeb">
                   <span class="svelte-tipeeb">
                     <span class="title svelte-tipeeb">Unit Number:</span>{" "}
                     {unitDetails?.name}
@@ -178,7 +178,7 @@ function BookNow({ isOpen, setIsOpen, unitDetails, handleBooking }) {
               </div>{" "}
               <div class="submit-btn svelte-tipeeb">
                 <button
-                  class={`button submit svelte-ynf51n ${
+                  class={`button submit brook_now svelte-ynf51n ${
                     validateName(firstName) &&(lastName) &&
                     validateEmail(email) &&
                     phoneNumber.length === 10

@@ -15,8 +15,7 @@ import FullScreenModeAlert from "./Components/Atoms/FullScreenModeAlert";
 function App() {
   return (
     <AppContextProvider>
-      {/* <FullScreenModeAlert /> */}
-      <RotateInstruction />
+      {/* <FullScreenModeAlert /> <RotateInstruction /> */}      
       <Router />
       <Blackout />
     </AppContextProvider>

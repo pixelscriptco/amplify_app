@@ -68,8 +68,12 @@ function UnitTypeFilter({ tower, floor }) {
 
   return (
     <Style>
-      <div className="filters-control align-start" style={{ minHeight: "215px", height: "fit-content", overflow: "scroll" }}>
-        <div className="main-controls">
+      <div
+        className="filters-control align-start"
+        style={{ minHeight: "215px", height: "fit-content" }}
+      >
+        <div className="main-controls" style={{position: 'relative' }}>
+          {" "}
           <div className="d_flex_main_wrap">
             {unitTypeFilters.map((filter) => (
               <div
@@ -82,17 +86,87 @@ function UnitTypeFilter({ tower, floor }) {
             ))}
           </div>
 
-          <div className="unit-details-list">
+          <div className="available-title">{totalUnits} Units Available</div>{" "}
+
+          <div className="grid_htyu">
             {filteredUnits.map((unit, index) => (
-              <div key={index} className="unit-card">
-                <div style={{ display: "flex", justifyContent: "space-around"}}><span>{unit.UnitType}</span> - <span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
+              <div key={index} className="list_gopw">
+                <div style={{ display: "flex", justifyContent: "space-around"}} className="txt_er"><span>{unit.UnitType}</span> - <span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
               </div>
             ))}
           </div>
+
+          <div className="pric_ind">Price ₹ 70L Onwards.</div>
+
+          <div className="button-group" style={{display: 'none'}}>
+            {flatFilterPriceValues.map((price) => (
+              <button
+                onClick={() => handleFilterClick(price)}
+                className={`button green ${
+                  isFilterActive(price) ? "active" : ""
+                }`}
+                value=""
+                key={price}
+                style={{ "--paddings": "5px 8px" }}
+              >
+                {formatPrice(price)}
+              </button>
+            ))}
+          </div>{" "}
+
+          <div className="button-group" style={{ display: 'none' }}>
+            {flatFilterSizeValues.map((size) => (
+              <button
+                onClick={() => handleFilterClick(size)}
+                className={`button green ${
+                  isFilterActive(size) ? "active" : ""
+                }`}
+                value=""
+                key={size}
+                style={{ "--paddings": "5px 8px" }}
+              >
+                {size}  Sq.Ft   
+              </button>
+            ))}
+          </div>{" "}
+
+          {/* <div className="slider-group-wrap">
+            <div className="slider-group">
+              <DoubleSlider
+                title={"Price"}
+                rangeLabel="INR"
+                value={flatFilterPriceValues}
+                labelValues={[
+                  formatPrice(flatFilterPriceValues[0]),
+                  formatPrice(flatFilterPriceValues[1]),
+                ]}
+                start={flatFilterPriceValues[0]}
+                end={flatFilterPriceValues[1]}
+                handleOnSliderChange={handlePriceOnSliderChange}
+              />
+            </div>
+            <div className="slider-group">
+              <DoubleSlider
+                title={"Area"}
+                rangeLabel="Sq.Ft"
+                value={flatFilterSizeValues}
+                labelValues={[
+                  formatPrice(flatFilterSizeValues[0]),
+                  formatPrice(flatFilterSizeValues[1]),
+                ]}
+                start={flatFilterSizeValues[0]}
+                end={flatFilterSizeValues[1]}
+                handleOnSliderChange={handlePriceOnSliderChange}
+              />
+            </div>
+          </div> */}
         </div>
       </div>
-
-      <div className="el-showall">
+      <div className="el-showall" style={{ display: 'none' }}>
+        <button style={{ display: 'none' }}
+        onClick={() => setActiveMapFilterIds([])}
+         className="button el-showall__button">Reset</button>
+        
         <button
           style={{ display: "none" }}
           onClick={() => setActiveMapFilterIds([])}

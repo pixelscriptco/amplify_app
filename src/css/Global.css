@@ -1420,7 +1420,7 @@ body .dzrmUF .features .feature{
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #e8e8e8f0 !important;
+    background: #00000000 !important;
     font-size: 22px !important;
 }
 .slide-panel-content .close-btn:hover{
@@ -1491,6 +1491,7 @@ body .dzrmUF .features .feature{
     display: flex;
     flex-direction: column;
     gap: 20px;
+    flex: 1;
 }
 .main_text_blk {
     font-size: 16px;
@@ -1591,7 +1592,7 @@ body .dzrmUF .features .feature{
     gap: 10px;
 }
 .jViixs .panel{
-  min-width: 300px !important;
+  min-width: 18rem !important;
 }
 .ihWKbh .button-group{
   margin-top: 20px !important;
@@ -1726,6 +1727,8 @@ body .ioZlNZ .body.info.svelte-9mhvmf.svelte-9mhvmf {
 .grid_amen{
   grid-template-columns: repeat(3,1fr);
   display: grid;
+    row-gap: 50px !important;
+    column-gap: 20px;
 }
 .img_vid_wrap{
     display: inline-flex;
@@ -1797,6 +1800,7 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
     top: 120px !important;
     right: 30px !important;
     left: unset !important;
+    z-index: 2000 !important;
 }
 .booknow_unt .panel__unit-card{background-color: #1d1d1d!important;}
 .booknow_unt button{background: #29a77f !important; }
@@ -1827,7 +1831,13 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
 }
 .Mappp_cnhs{
   width: 100%;
-  height: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.ghtyu{
+  flex: 1;
+  overflow-y: auto;
 }
 .slide_panell{width:450px !important; }
 .pan_view_360{z-index: 2000;}
@@ -1860,7 +1870,7 @@ padding: 5px;
     border: 1px solid rgb(240, 240, 240);
     border-radius: 6px;
     color: #fff;
-    width: 48%;
+    width: 100%;
     justify-content: center;
 }
 .grid_htyu{
@@ -1880,3 +1890,49 @@ padding: 5px;
 .f-500{font-weight: 500 !important;}
 .img-wrapper.untt{padding-left: 20% !important;}
 body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !important;}
+.pnlm-container{width: 100% !important;height: 100% !important;}
+.grid_htyu::-webkit-scrollbar {
+    display: none;
+}
+.grid_htyu{overflow: auto;max-height: 135px;}
+.pric_ind{
+      color: white;
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 500;
+}
+.enquiry-form{
+  z-index: 2000;
+}
+.input-group label {
+    color: #ffffff !important;
+    position: relative;
+}
+.description .boookkkk .title{
+    color: #29a77f !important;
+    padding-right: 5px;
+    font-weight: 500;
+}
+.booknow_unt .brook_now.disabled{
+  background: #2a2a2a !important;
+}
+@media screen and (max-width: 600px) {
+.slide_panell{width: 100% !important;}
+.grid_amen{
+display: grid;
+  grid-template-columns: repeat(2,1fr);
+    row-gap: 50px !important;
+    column-gap: 20px; }
+    #return-to-tower{display:none;}
+    .fltrr.left-panels{
+        left: 0px !important;
+    right: auto !important;
+    top: 115px !important;
+    width: 100%;
+    z-index: 200;
+    }
+    .filters{width: 100% !important; }
+    .bread_camp{flex-wrap: wrap;}
+    .hdr_log_main{right: 30px;}
+}
