@@ -96,7 +96,7 @@ function UnitTypeFilter({ tower, floor }) {
             ))}
           </div>
 
-          <div className="pric_ind">Price ₹ 70L Onwards.</div>
+          {/*<div className="pric_ind">Price ₹ 70L Onwards.</div>*/}
 
           <div className="button-group" style={{display: 'none'}}>
             {flatFilterPriceValues.map((price) => (
