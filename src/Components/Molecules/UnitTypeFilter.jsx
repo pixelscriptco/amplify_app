@@ -129,37 +129,6 @@ function UnitTypeFilter({ tower, floor }) {
               </button>
             ))}
           </div>{" "}
-
-          {/* <div className="slider-group-wrap">
-            <div className="slider-group">
-              <DoubleSlider
-                title={"Price"}
-                rangeLabel="INR"
-                value={flatFilterPriceValues}
-                labelValues={[
-                  formatPrice(flatFilterPriceValues[0]),
-                  formatPrice(flatFilterPriceValues[1]),
-                ]}
-                start={flatFilterPriceValues[0]}
-                end={flatFilterPriceValues[1]}
-                handleOnSliderChange={handlePriceOnSliderChange}
-              />
-            </div>
-            <div className="slider-group">
-              <DoubleSlider
-                title={"Area"}
-                rangeLabel="Sq.Ft"
-                value={flatFilterSizeValues}
-                labelValues={[
-                  formatPrice(flatFilterSizeValues[0]),
-                  formatPrice(flatFilterSizeValues[1]),
-                ]}
-                start={flatFilterSizeValues[0]}
-                end={flatFilterSizeValues[1]}
-                handleOnSliderChange={handlePriceOnSliderChange}
-              />
-            </div>
-          </div> */}
         </div>
       </div>
       <div className="el-showall" style={{ display: 'none' }}>
