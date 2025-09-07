@@ -50,34 +50,35 @@ function ClientMap(props) {
 
           // Circular marker with logo
           const customIcon = {
-  url: 'https://static.vecteezy.com/system/resources/previews/015/553/968/non_2x/resort-icon-free-vector.jpg',
-  scaledSize: new window.google.maps.Size(50, 50),
-};
+            url: 'https://static.vecteezy.com/system/resources/previews/015/553/968/non_2x/resort-icon-free-vector.jpg',
+            scaledSize: new window.google.maps.Size(50, 50),
+          };
 
-const marker = new window.google.maps.Marker({
-  position: { lat, lng },
-  map,
-  icon: customIcon,
-  title: client.name,
-});
+          const marker = new window.google.maps.Marker({
+            position: { lat, lng },
+            map,
+            icon: customIcon,
+            title: client.name,
+          });
 
           // Info window
           const infoWindow = new window.google.maps.InfoWindow({
             content: `<div class="main_popover_wrap">
                  <div class="pos_relye">
                       <div>
-                          <h4 class="cap_map">CUBIX RESIDENCES </h4>
+                          <h4 class="cap_map">${client.location_title}</h4>
                       </div>
                       <div class="img_wrapw_map">
-                          <img class="img_blockqwe" height="auto" width="204" src=" https://fra1.digitaloceanspaces.com/evometa-backend-production/cubix.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=DO00G84QRB9ZBP6JJJZX%2F20250823%2Ffra1%2Fs3%2Faws4_request&X-Amz-Date=20250823T132501Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0d3ac0f240135c442b6c2962761590bf259687265a5f5ded3ef61f294b82df9b" alt="">
+                          <img class="img_blockqwe" height="auto" width="204" src="${client.location_image}" alt="">
                       </div>
                       <div>
-                          <p class="par_textqw">Welcome to CUBIX Residences, an innovative development that mixes comfort with convenience. The building features a unique L shaped design that maximizes natural light, creating bright and inviting spaces throughout Experience life lived in refinement and substance.</p>
+                          <p class="par_textqw">${client.location_description}</p>
                       </div>
                       <div>
-                          <div role="button" class="button_block">
-                              Explore Projects
-                          </div>
+                          <a href="${client.url}" target="_blank" rel="noopener noreferrer" 
+                            role="button" class="button_block">
+                            Explore Projects
+                          </a>
                       </div>
                   </div> 
               </div>`,
