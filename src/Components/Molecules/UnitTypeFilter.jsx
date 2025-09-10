@@ -70,7 +70,7 @@ function UnitTypeFilter({ tower, floor }) {
     <Style>
       <div
         className="filters-control align-start"
-        style={{ minHeight: "215px", height: "fit-content" }}
+        style={{ minHeight: "auto", height: "fit-content" }}
       >
         <div className="main-controls" style={{position: 'relative' }}>
           {" "}

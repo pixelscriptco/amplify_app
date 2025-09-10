@@ -35,7 +35,7 @@ function ClientMap(props) {
       const initMap = () => {
         const map = new window.google.maps.Map(mapRef.current, {
           center: { lat: 20.5937, lng: 78.9629 }, // Default India center
-          zoom: 5,
+          zoom: 2,
         });
 
         const bounds = new window.google.maps.LatLngBounds();

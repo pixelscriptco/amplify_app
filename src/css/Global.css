@@ -2025,6 +2025,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
 .gm-style-iw-chr button span{margin: 3px !important;width: 20px !important;height: 20px !important;z-index: 1000;}
 .gm-style .gm-style-iw-c{padding-left: 0px !important;}
 .gm-style-iw-d{overflow: auto !important; }
+.burger_menu{display: none}
 @media screen and (max-width: 600px) {
 .slide_panell{width: 100% !important;}
 .grid_amen{
@@ -2042,5 +2043,41 @@ display: grid;
     }
     .filters{width: 100% !important; }
     .bread_camp{flex-wrap: wrap;}
-    .hdr_log_main{right: 30px;}
+    .hdr_log_main {
+        right: 0px;
+        background: #fff;
+        flex-direction: row;
+        align-items: center;
+        left: 0px;
+        top: 0px;
+    }
+    .sidebar { align-items: flex-end !important; }
+    .nav_outer_boxx_ui{
+      display: flex;
+    width: 100%;
+    }
+    .main_block_nav{flex-direction: row;}
+    .nav_outer_boxx_ui{margin-left: 0px;}
+    .slice{
+      height: calc(100vh - 115px);
+    width: 100%;
+    margin-top: 65px;
+    }
+    .qrcode_sec{
+      right: 12px;
+    top: 5px;
+    z-index: 1123;
+    }
+    .bread_camp{display: none;
+    position: absolute;
+        top: 75px;
+        left: 10px;}
+    .burger_menu{
+      width: 22px;
+      height: 22px;
+      background: #fff;
+      display: block;
+        margin-left: 15px;
+    }
+    .booknow_unt{top: 160px !important;}
 }

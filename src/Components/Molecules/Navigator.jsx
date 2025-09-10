@@ -13,6 +13,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
     qr_code: "",
   });
   const [svgSrc, setSvgSrc] = useState("");
+  const [burger, setburger] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -61,10 +62,31 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   return (
     <>
       <div className="hdr_log_main">
+        <div>
+          <span
+            className={`burger_menu`.trim()}
+            role="button"
+            onClick={() => setburger(!burger)}
+
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 448 512"
+              focusable="false"
+              aria-hidden="true"
+            >
+              <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/>
+            </svg>
+          </span>
+        </div>
         <div className="logo_outer">
           <img width="35" src={`${projectData.logo}`} alt="Project Logo" />
         </div>
-        <div className="bread_camp">
+        <div
+        style={{
+          display : (burger || window.innerWidth > 600) ? 'flex' : 'none'
+        }} 
+        className="bread_camp">
           {prevPages.map((page, index) => {
             return (
               <>
