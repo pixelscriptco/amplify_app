@@ -164,8 +164,8 @@ function Navigator({ className, currentPage, prevPages = [] }) {
               src={projectData.qr_code}
               alt="QR Code"
               style={{
-                width: 80,
-                height: 80,
+                width: 60,
+                height: 60,
                 objectFit: "contain",
                 background: "#fff",
                 borderRadius: 8,

@@ -1379,6 +1379,7 @@ body .dzrmUF .features .feature{
     width: auto;
     border-radius: 6px;
     object-fit : cover;
+    max-height: 66px;
 }
 .slide-panel-content h2{
   font-size: 21px;
@@ -2080,4 +2081,13 @@ display: grid;
         margin-left: 15px;
     }
     .booknow_unt{top: 160px !important;}
+}
+.view_desc svg{
+  width: 16px !important;
+  height: 16px !important;
+}
+.view_desc{
+      display: flex;
+    align-items: center;
+    gap: 6px;
 }
