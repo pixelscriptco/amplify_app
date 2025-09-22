@@ -2093,3 +2093,6 @@ display: grid;
 }
 #rotate-instructions{z-index: 999997 !important;}
 #rotate-instructions .img-wrapper{background-color: inherit !important;}
+#client-page-map{    z-index: 10000000000;
+    position: absolute;
+    background: white;}

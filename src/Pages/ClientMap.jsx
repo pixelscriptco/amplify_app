@@ -108,7 +108,7 @@ const marker = new window.google.maps.Marker({
   }, [loading, clients]);
 
   return (
-    <Style id="client-page">
+    <Style id="client-page-map">
       {loading ? (
         <div className="loading">Loading...</div>
       ) : error ? (

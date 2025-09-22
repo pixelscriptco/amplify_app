@@ -499,7 +499,7 @@ function Tower(props) {
                 return null;
               })}
             </svg>
-            {sortedPlans.length > 1 && (
+            {sortedPlans.length > 0 && (
               <>
                 <div className="triggers">
                   <button
@@ -515,6 +515,9 @@ function Tower(props) {
                       padding: 8,
                       cursor: "pointer",
                       zIndex: 10,
+                      width: 40,
+                      height: 40,
+                      paddingLeft : 13
                     }}
                   >
                     <ArrowBackIosIcon />
@@ -523,7 +526,7 @@ function Tower(props) {
                     onClick={handleRotateRight}
                     style={{
                       position: "absolute",
-                      right: "25%",
+                      right: "20%",
                       top: "50%",
                       transform: "translate(50%, -50%)",
                       background: "rgba(255,255,255,0.7)",
@@ -532,6 +535,9 @@ function Tower(props) {
                       padding: 8,
                       cursor: "pointer",
                       zIndex: 10,
+                      width: 40,
+                      height: 40,
+                      paddingRight : 13
                     }}
                   >
                     <ArrowForwardIosIcon />
