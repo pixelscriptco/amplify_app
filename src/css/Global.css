@@ -2066,7 +2066,7 @@ display: grid;
     }
     .qrcode_sec{
       right: 12px;
-    top: 5px;
+    top: 0px;
     z-index: 1123;
     }
     .bread_camp{display: none;
@@ -2091,3 +2091,5 @@ display: grid;
     align-items: center;
     gap: 6px;
 }
+#rotate-instructions{z-index: 999997 !important;}
+#rotate-instructions .img-wrapper{background-color: inherit !important;}

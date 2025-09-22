@@ -84,6 +84,7 @@ const marker = new window.google.maps.Marker({
           });
 
           marker.addListener("click", () => {
+            infoWindow.close();
             infoWindow.open(map, marker);
           });
 
