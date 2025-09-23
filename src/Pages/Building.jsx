@@ -56,9 +56,11 @@ function Building(props) {
         const { id, name, image_url, svg_url, floors } = response.data;
         const svgResp = await fetch(svg_url);
         const svgText = await svgResp.text();
+        
         // Parse the SVG text and extract <path> elements
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+        
         const paths = Array.from(svgDoc.querySelectorAll("path"));
         setBuildingData({
           id,
