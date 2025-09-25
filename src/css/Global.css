@@ -1396,7 +1396,7 @@ body .dzrmUF .features .feature{
     gap: 15px;
     left: 30px;
     position: absolute;
-    top: 30px;
+    top: 15px;
     z-index: 105;
     align-items: start;
     flex-direction: column;
