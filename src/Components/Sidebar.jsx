@@ -95,6 +95,7 @@ const Sidebar = () => {
   const [resorcetype, setResorcetype] = useState("image");
   const [location, setLocation] = useState({});
   const [do_360, set_360] = useState("");
+  const [fclick, setfclick] = useState(false);
 
   // useEffect(() => {
   //   iconRefs.current.forEach((ref, idx) => {
@@ -151,6 +152,7 @@ const Sidebar = () => {
     setShowAmenities(false);
     setShowTour(false);
     setShowConstructionUpdates(false);
+    setfclick(true);
     if (idx === 0) setShowDescription(true);
     if (idx === 1) setShowLocation(true);
     if (idx === 2) setShowAmenities(true);
@@ -186,7 +188,7 @@ const Sidebar = () => {
   return (
     <>
       <SidebarContainer className="sidebar" >
-        <div className="nav_outer_boxx_ui">
+        <div className={`nav_outer_boxx_ui ${!fclick ? "show_desc" : ""}`}>
           <div className="main_block_nav">
             {iconData.map(({ Icon, label }, idx) => (
               <div
