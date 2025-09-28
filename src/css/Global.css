@@ -1093,6 +1093,7 @@ body{
     min-width: max-content;
     display:none;
 }
+.show_desc .label_tip{display: block;left: 87px;}
 .nav_icon:hover .label_tip{display: block; }
 .nav_icon:hover{
      background-color: #ffffff2b;
@@ -1396,7 +1397,7 @@ body .dzrmUF .features .feature{
     gap: 15px;
     left: 30px;
     position: absolute;
-    top: 30px;
+    top: 15px;
     z-index: 105;
     align-items: start;
     flex-direction: column;
@@ -2096,3 +2097,16 @@ display: grid;
 #client-page-map{    z-index: 10000000000;
     position: absolute;
     background: white;}
+@media screen and (max-width: 900px) {
+  .sidebar{
+    bottom: 12px;
+    top: unset !important;
+    align-items: end !important;
+    justify-content: center;
+  }
+  .main_block_nav{
+    flex-direction: row;
+  }
+  .no_data_block img{height: 145px !important;}
+  .label_tip{display: none !important;}
+}
