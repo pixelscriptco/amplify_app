@@ -31,6 +31,7 @@ function Tower(props) {
   const [floorData, setFloorData] = useState({});
   const [hoveredFloor, setHoveredFloor] = useState(null);
   const [towerData, setTowerData] = useState(null);
+  const [units, setUnits] = useState([]);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showFilter, setShowFilter] = useState(false);
 
@@ -70,14 +71,16 @@ function Tower(props) {
         const response = await axiosInstance.get(
           `/app/tower/${project}/${tower}`
         );
+        
         // Sort tower plans by order
-        const { id, name, floor_count, direction } = response.data;
+        const { id, name, floor_count, direction, units } = response.data;
         setTowerData({
           id,
           name,
           floor_count,
           direction,
         });
+        setUnits(units || []);
         const sortedPlans = response.data.tower_plans;
 
         const updatedPaths = await Promise.all(
@@ -88,8 +91,8 @@ function Tower(props) {
               const svgText = await svgResp.text();
               const parser = new DOMParser();
               const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-              const paths = Array.from(svgDoc.querySelectorAll("path"));
-
+              const paths = Array.from(svgDoc.querySelectorAll("path")).reverse();
+              
               return {
                 ...plan,
                 paths: paths,
@@ -153,7 +156,7 @@ function Tower(props) {
 
 
           <div className="main_tab_block grid_block  jusT_spacebtw" style={{ paddingBottom: '3px'}}>
-          <div className="flors_icons">
+            <div className="flors_icons">
               <span className="dd_flex">
                 <svg
                   width="16px"
@@ -443,10 +446,35 @@ function Tower(props) {
                 if (pathEl.getAttribute("id") !== tower) {
                   const id = pathEl.getAttribute("id") || `path-${index}`;                  
                   const d = pathEl.getAttribute("d");
-                  const fill = "#5CE459";
-                  const fillOpacity = hoveredFloor === id ? "0" : "0.3";
-                  const stroke = "rgba(0, 0, 0, 1)";
-                  const strokeWidth = "0.1";
+                  
+                  // Check if ID starts with "U-" (unit paths)
+                  const shouldShowColor = id.startsWith('U-');
+                  
+                  // Check unit status for color determination
+                  let fill = "transparent";
+                  let fillOpacity = "0";
+                  let stroke = "transparent";
+                  let strokeWidth = "0";
+                  
+                  if (shouldShowColor) {
+                    // Extract unit ID from path ID (remove "U-" prefix)
+                    const unitId = id.replace('U-', '');
+                    const unit = units.find(u => u.unit_id.toString() === unitId);
+                    
+                    if (unit && unit.status === 2) {
+                      // Unit is confirmed/booked - red color
+                      fill = "#f86262";
+                      fillOpacity = "0.3";
+                      stroke = "rgba(248, 98, 98, 1)";
+                      strokeWidth = "0.1";
+                    } else {
+                      // Unit is available/pending - green color
+                      fill = "#5CE459";
+                      fillOpacity = "0.3";
+                      stroke = "rgba(0, 0, 0, 1)";
+                      strokeWidth = "0.1";
+                    }
+                  }
                   const className = pathEl.getAttribute("class") || "Available";
                   const floor = /^floor-/i.test(id)?id.replace(/floor-/i, ""):id;
                   return (
@@ -460,8 +488,22 @@ function Tower(props) {
                     >
                       <g
                         className="sc-bZkfAO dKrtbD"
-                        onMouseEnter={(event) => handleFloorHover(id, event)}
-                        onMouseLeave={handleTowerLeave}
+                        onMouseEnter={(event) => {
+                          handleFloorHover(id, event);
+                          // Also apply no color on hover to the path
+                          const pathElement = event.currentTarget.querySelector('path');
+                          if (pathElement) {
+                            pathElement.style.fillOpacity = "0";
+                          }
+                        }}
+                        onMouseLeave={(event) => {
+                          handleTowerLeave();
+                          // Restore original color after hover
+                          const pathElement = event.currentTarget.querySelector('path');
+                          if (pathElement) {
+                            pathElement.style.fillOpacity = shouldShowColor ? "0.3" : "0";
+                          }
+                        }}
                         onClick={() =>
                           navigate(`/${project}/tower/${tower}/floor/${floor}`)
                         }
@@ -482,13 +524,14 @@ function Tower(props) {
                               style={{
                                 transition: "fill-opacity 0.3s ease",
                                 cursor: "pointer",
+                                pointerEvents: "auto", // Ensure all paths can receive hover events
                               }}
-                              onMouseEnter={(e) => {
-                                e.target.style.fillOpacity = "0";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.target.style.fillOpacity = "0.3";
-                              }}
+                               onMouseEnter={(e) => {
+                                 e.target.style.fillOpacity = "0";
+                               }}
+                               onMouseLeave={(e) => {
+                                 e.target.style.fillOpacity = shouldShowColor ? "0.3" : "0";
+                               }}
                             />
                           </g>
                         </g>
