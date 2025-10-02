@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utility/axios"; // adjust path
 import styled from "styled-components";
+import { REACT_APP_GOOGLE_MAPS_API_KEY } from '../config';
 
 function ClientMap(props) {
   const { project } = useParams();
@@ -113,7 +114,7 @@ function ClientMap(props) {
       };
 
       if (!window.google) {
-        const apiKey = "AIzaSyABTBMLtdgrZhfDYpv1skj1WS54pcQLfdY"; // replace with your key
+        const apiKey = REACT_APP_GOOGLE_MAPS_API_KEY; // replace with your key
         const script = document.createElement("script");
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
         script.async = true;
