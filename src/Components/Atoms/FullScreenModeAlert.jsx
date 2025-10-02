@@ -18,7 +18,9 @@ export function toggleFullscreen() {
 }
 
 function FullScreenModeAlert() {
-  const [show, setShow] = React.useState(true);
+  let fulscr = localStorage.getItem("fullscr");
+  console.log(fulscr);
+  const [show, setShow] = React.useState(!fulscr);
 
   const handleYes = () => {
     toggleFullscreen();
@@ -27,6 +29,7 @@ function FullScreenModeAlert() {
 
   const handleNo = () => {
     setShow(false);
+    localStorage.setItem("fullscr", "no");
   };
 
   return show ? (

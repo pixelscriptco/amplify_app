@@ -2109,6 +2109,12 @@ display: grid;
   }
   .no_data_block img{height: 145px !important;}
   .label_tip{display: none !important;}
+  .qube-card{
+    width: 100% !important;
+    max-width: 450px;
+    height: calc(100vh - 80px);
+    overflow-y: scroll;
+  }
 }
 @media screen and (min-width: 900px) {
 .nav_outer_boxx_ui.show_desc{
@@ -2138,3 +2144,66 @@ display: grid;
 .nav_outer_boxx_ui{ position:relative; }
 }
 .icon_aerow{display: none;}
+.qube-card {
+/*      background-color: #152624; Dark greenish background */
+      color: #ffffff;
+      width: 320px;
+      padding: 25px;
+      border-radius: 10px;
+      position: relative;
+      background: radial-gradient(circle,#066f5b 0,#023047 100%);
+    }
+
+    .qube-close-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      width: 20px !important;
+      height: 20px !important;
+      cursor: pointer;
+      fill: #ffffff;
+      transition: fill 0.2s ease;
+    }
+
+    .qube-close-btn:hover {
+      fill: #f9b84a; /* Highlight on hover */
+    }
+
+    .qube-logo {
+      display: block;
+    margin-bottom: 15px;
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    }
+
+    .qube-text {
+      margin: 15px 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #d6d6d6;
+    }
+
+    .qube-highlight {
+      color: #f9b84a;
+      font-weight: bold;
+    }
+    .infoWindow{
+    position: absolute;
+    left: 10px;
+    z-index: 100;
+    top: 65px;
+    }
+    .infobtnnn{
+      position: absolute;
+    z-index: 100;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    background: radial-gradient(circle,#066f5b 0,#023047 100%);
+    color: white;
+    border-radius: 8px;
+    left: 10px;
+    top: 65px;
+    cursor: pointer;
+    }
