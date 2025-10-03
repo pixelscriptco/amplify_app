@@ -11,7 +11,7 @@ function ClientMap(props) {
   const [error, setError] = useState(null);
   const { url } = useParams();
   const mapRef = useRef(null);
-  const [infow, setinfow] = useState(false);
+  const [infow, setinfow] = useState(true);
 
   const [client, setClient] = useState([]);
   const [projects, setProjects] = useState([]);
