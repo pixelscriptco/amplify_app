@@ -10,8 +10,7 @@ function ClientMap(props) {
   const [error, setError] = useState(null);
   const { url } = useParams();
   const mapRef = useRef(null);
-  const [infow, setinfow] = useState(false);
-
+  const [infow, setinfow] = useState(true);
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
@@ -24,8 +23,9 @@ function ClientMap(props) {
         const response = await axiosInstance.get(
           `/app/user?url=${currentOrigin}`
         );
-        console.log(response.data);
-        setClients(response.data); // API returns an array
+        // console.log(response.data);
+        let projs = (response.data && response.data.projects) ? response.data.projects : [];
+        setClients(projs); // API returns an array
         setLoading(false);
       } catch (err) {
         console.error("Error fetching client data:", err);
@@ -37,6 +37,7 @@ function ClientMap(props) {
   }, []);
 
   useEffect(() => {
+    console.log(loading,clients)
     if (!loading && clients.length > 0) {
       const initMap = () => {
         const KERALA_BOUNDS = {
