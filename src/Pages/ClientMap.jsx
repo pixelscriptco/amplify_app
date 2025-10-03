@@ -13,20 +13,21 @@ function ClientMap(props) {
   const mapRef = useRef(null);
   const [infow, setinfow] = useState(false);
 
-  const [clients, setClients] = useState([]);
+  const [client, setClient] = useState([]);
+  const [projects, setProjects] = useState([]);
 
   useEffect(() => {
     const fetchClientData = async () => {
       try {
         let currentOrigin = window.location.origin;
-        if (currentOrigin.includes("localhost")) {
-          currentOrigin = "https://moon.proptour.live";
-        }
+        // if (currentOrigin.includes("localhost")) {
+        //   currentOrigin = "https://moon.proptour.live";
+        // }
         const response = await axiosInstance.get(
           `/app/user?url=${currentOrigin}`
         );
-        console.log(response.data);
-        setClients(response.data); // API returns an array
+        setClient(response.data.user);
+        setProjects(response.data.projects); // API returns an array
         setLoading(false);
       } catch (err) {
         console.error("Error fetching client data:", err);
@@ -38,7 +39,7 @@ function ClientMap(props) {
   }, []);
 
   useEffect(() => {
-    if (!loading && clients.length > 0) {
+    if (!loading && projects.length > 0) {
       const initMap = () => {
         const KERALA_BOUNDS = {
           north: 12.80,   // ~12°47'40" N
@@ -57,22 +58,22 @@ function ClientMap(props) {
 
         const bounds = new window.google.maps.LatLngBounds();
 
-        clients.forEach((client) => {
-          const lat = parseFloat(client.latitude);
-          const lng = parseFloat(client.longitude);
+        projects.forEach((project) => {
+          const lat = parseFloat(project.latitude);
+          const lng = parseFloat(project.longitude);
 
           if (!lat || !lng) return; // skip invalid coords
           // Circular marker with logo
-          const customIcon = {
-  url: client.logo,
-  scaledSize: new window.google.maps.Size(50, 50),
-};
+            const customIcon = {
+              url: project.location_logo,
+              scaledSize: new window.google.maps.Size(50, 50),
+            };
 
           const marker = new window.google.maps.Marker({
             position: { lat, lng },
             map,
             icon: customIcon,
-            title: client.name,
+            title: project.name,
           });
 
           // Info window
@@ -80,16 +81,16 @@ function ClientMap(props) {
             content: `<div class="main_popover_wrap">
                  <div class="pos_relye">
                       <div>
-                          <h4 class="cap_map">${client.title || 'Location'} </h4>
+                          <h4 class="cap_map">${project.title || 'Location'} </h4>
                       </div>
                       <div class="img_wrapw_map">
-                          <img class="img_blockqwe" height="auto" width="204" src="${client.location_image}" alt="">
+                          <img class="img_blockqwe" height="auto" width="204" src="${project.location_image}" alt="">
                       </div>
                       <div>
-                          <p class="par_textqw">${client.location_description || 'No description available'}</p>
+                          <p class="par_textqw">${project.location_description || 'No description available'}</p>
                       </div>
                       <div>
-                          <button class="button_block" onclick="window.open('${client.url}', '_blank')">
+                          <button class="button_block" onclick="window.open('${project.url}', '_blank')">
                               Explore Project
                           </button>
                       </div>
@@ -126,7 +127,7 @@ function ClientMap(props) {
         initMap();
       }
     }
-  }, [loading, clients]);
+  }, [loading, projects]);
 
   return (
     <Style id="client-page-map">
@@ -162,19 +163,9 @@ function ClientMap(props) {
               >
                 <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
               </svg>
-              <img src="https://propbuilding.s3.ap-south-1.amazonaws.com/location/1758824117267-507106187.jpg" alt="QUBE Development Logo" className="qube-logo" />
-              <p className="qube-text">
-                QUBE focus is delivering high-quality residential and commercial spaces,
-                quick project completion, reliability, durability, and lasting value.
-              </p>
-              <p className="qube-text">
-                <span className="qube-highlight">30-year</span> legacy of expertise
-                <br />
-                <span className="qube-highlight">15,000+</span> satisfied clients
-                <br />
-                <span className="qube-highlight">Prime locations:</span> JVC, Business
-                Bay, Studio City, and Meydan
-              </p>
+              <img src={client.logo || "https://propbuilding.s3.ap-south-1.amazonaws.com/location/1758824117267-507106187.jpg"} alt="Client Logo" className="qube-logo" />
+              <p className="qube-text" dangerouslySetInnerHTML={{ __html: client.description || "" }}></p>
+            
             </div>
           </div>
           <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
