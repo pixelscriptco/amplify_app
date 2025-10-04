@@ -15,6 +15,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   const [svgSrc, setSvgSrc] = useState("");
   const [burger, setburger] = useState(false);
   const navigate = useNavigate();
+  const [expand, setexpand] = useState((window.innerWidth < 900) ? true : false);
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -86,7 +87,8 @@ function Navigator({ className, currentPage, prevPages = [] }) {
         style={{
           display : (burger || window.innerWidth > 600) ? 'flex' : 'none'
         }} 
-        className="bread_camp">
+        className={`bread_camp ${ expand ? "expandddd" : ""}`}
+      >
           {prevPages.map((page, index) => {
             return (
               <>
@@ -110,7 +112,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
             );
           })}
 
-          {currentPage && (
+          {currentPage ? (
             <>
               <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'flex' : 'none' }}>
                 <svg
@@ -123,9 +125,27 @@ function Navigator({ className, currentPage, prevPages = [] }) {
                   <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
                 </svg>
               </span>
-              <div class="bred_outer active_bread">{currentPage.title}</div>
+              <div className="bred_outer active_bread">{currentPage.title}</div>
             </>
-          )}
+          ) : ""}
+
+          {(prevPages && prevPages.length) ? (
+              <span 
+                className="icon_aerows"
+                onClick={() => setexpand(!expand)}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                  width="18"
+                  height="18"
+                  fill="currentColor"
+                >
+                  <path d="M535.1 342.6C547.6 330.1 547.6 309.8 535.1 297.3L375.1 137.3C362.6 124.8 342.3 124.8 329.8 137.3C317.3 149.8 317.3 170.1 329.8 182.6L467.2 320L329.9 457.4C317.4 469.9 317.4 490.2 329.9 502.7C342.4 515.2 362.7 515.2 375.2 502.7L535.2 342.7zM183.1 502.6L343.1 342.6C355.6 330.1 355.6 309.8 343.1 297.3L183.1 137.3C170.6 124.8 150.3 124.8 137.8 137.3C125.3 149.8 125.3 170.1 137.8 182.6L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7z"/>
+                </svg>
+              </span>
+          ) : ""}
+
         </div>
       </div>
 

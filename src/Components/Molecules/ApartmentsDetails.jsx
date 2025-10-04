@@ -4,11 +4,15 @@ import BookNow from "./BookNow";
 
 function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [Apr, setApr] = React.useState((window.innerWidth > 900) ? true : false);
   const unitDetails = selectedUnit;
   
   return (
     <Style className="sdyuo">
-      <div class="interface--col svelte-9mhvmf booknow_unt">
+      <div className="interface--col svelte-9mhvmf booknow_unt"
+      style={{
+        display : (Apr) ? 'block' : 'none'
+      }}>
         <div
           class="panel panel__unit-card svelte-1m6i2pp"
           style={{ maxHeight: "none" }}
@@ -30,6 +34,14 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                 >
                   <div class="unit-row svelte-1m6i2pp">
                     <div class="type f-500 svelte-1m6i2pp">Apartment Details</div>
+                    <div className="infocloseee" onClick={() => setApr(!Apr)}>                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="currentColor"
+                        >
+                          <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
+                        </svg>
+                    </div>
                   </div>
                   <div className="features">
                     <div className="feature">
@@ -100,6 +112,19 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
           </div>
         </div>
       </div>
+      <span className="Aprtbook"
+      onClick={() => setApr(!Apr)}
+      >
+        <svg
+          width="18px"
+          height="18px"
+          fill="currentColor"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 192 512"
+        >
+          <path d="M20 424.229h20V279.771H20c-11.046 0-20-8.954-20-20V212c0-11.046 8.954-20 20-20h112c11.046 0 20 8.954 20 20v212.229h20c11.046 0 20 8.954 20 20V492c0 11.046-8.954 20-20 20H20c-11.046 0-20-8.954-20-20v-47.771c0-11.046 8.954-20 20-20zM96 0C56.235 0 24 32.235 24 72s32.235 72 72 72 72-32.235 72-72S135.764 0 96 0z" />
+        </svg>
+      </span>
     </Style>
   );
 }

@@ -937,6 +937,7 @@ body{
     align-items: center;
     gap: 10px;
     min-width: 130px;
+    white-space: nowrap;
 }
 .flors_icons svg{
   color: #29a77f !important;
@@ -1061,6 +1062,7 @@ body{
     font-weight: 400;
     padding: 2px 10px;
     text-transform: capitalize;
+    white-space: nowrap;
 }
 .bred_outer:hover{
     background: #121212;
@@ -2115,7 +2117,63 @@ display: grid;
     height: calc(100vh - 80px);
     overflow-y: scroll;
   }
+.unit_status_legend{
+  left: unset !important;
+    right: 30px !important;
 }
+.unit_status_legend .body{
+  flex-direction: column !important;
+}
+.compass_coys{
+  bottom: 30px !important;
+}
+.fltrr .filters{
+  margin-top: 2rem !important;
+}
+.fltrr.left-panels{
+  z-index: 500 !important;
+}
+.icon_aerows{
+  position: absolute;
+  right: -10px;
+  background: white;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 2px;
+}
+.bread_camp.expandddd{max-width: 135px; overflow: hidden;}
+.bread_camp .icon_aerows{transform: rotate(180deg);}
+.bread_camp.expandddd .icon_aerows{transform: rotate(0deg);}
+.Aprtbook{
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    top: 120px !important;
+    right: 30px;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
+    color: white;
+    border-radius: 50%;
+    padding: 10px;
+    display: flex !important;
+    justify-content: center;
+}
+.infocloseee{display: block !important;width: 25px;
+    height: 25px;
+    padding: 3px;
+    color: white;
+    position: absolute;
+    right: -3px;
+    top: -3px;}
+    .booknow_unt{top: 100px !important;}
+    .triggers button{
+      top: 58% !important;
+    }
+}
+.icon_aerows{display: none;}
+.Aprtbook{display: none;}
+.infocloseee{display: none;}
 @media screen and (min-width: 900px) {
 .nav_outer_boxx_ui.show_desc{
   width: 200px;
@@ -2207,3 +2265,11 @@ display: grid;
     top: 65px;
     cursor: pointer;
     }
+@media screen and (max-width: 600px) {
+.infoWindow{display: block;
+    width: calc(100% - 20px);}
+    .qube-card{
+          height: auto;
+    max-height: 400px;
+    }
+}
