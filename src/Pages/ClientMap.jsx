@@ -131,43 +131,47 @@ function ClientMap(props) {
 
   return (
     <Style id="client-page-map">
-      {loading ? (
+      {loading? (
         <div className="loading">Loading...</div>
       ) : error ? (
         <div className="error">{error}</div>
       ) : (
         <div>
-          <div className="infobtnnn" onClick={() => setinfow(true)}>
-            <svg
-              viewBox="64 64 896 896"
-              focusable="false"
-              data-icon="info-circle"
-              width="1em"
-              height="1em"
-              fill="currentColor"
-              aria-hidden="true"
-            >
-              <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z" />
-              <path d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z" />
-            </svg>
-          </div>
-          <div className="infoWindow" style={{
-            display : (infow) ? 'block' : 'none'
-          }}>
-            <div className="qube-card">
-              <svg
-                className="qube-close-btn"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                onClick={() => setinfow(false)}
-              >
-                <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
-              </svg>
-              <img src={client.logo || "https://propbuilding.s3.ap-south-1.amazonaws.com/location/1758824117267-507106187.jpg"} alt="Client Logo" className="qube-logo" />
-              <p className="qube-text" dangerouslySetInnerHTML={{ __html: client.description || "" }}></p>
-            
-            </div>
-          </div>
+          {client.logo && client.description && (
+            <>
+              <div className="infobtnnn" onClick={() => setinfow(true)}>
+                <svg
+                  viewBox="64 64 896 896"
+                  focusable="false"
+                  data-icon="info-circle"
+                  width="1em"
+                  height="1em"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z" />
+                  <path d="M464 336a48 48 0 1096 0 48 48 0 10-96 0zm72 112h-48c-4.4 0-8 3.6-8 8v272c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V456c0-4.4-3.6-8-8-8z" />
+                </svg>
+              </div>
+              <div className="infoWindow" style={{
+                display : (infow) ? 'block' : 'none'
+              }}>
+                <div className="qube-card">
+                  <svg
+                    className="qube-close-btn"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    onClick={() => setinfow(false)}
+                  >
+                    <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
+                  </svg>
+                  <img src={client.logo} alt="Client Logo" className="qube-logo" />
+                  <p className="qube-text" dangerouslySetInnerHTML={{ __html: client.description || "" }}></p>
+                
+                </div>
+              </div>
+            </>
+          )}
           <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
         </div>
       )}
