@@ -1845,7 +1845,7 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
   overflow-y: auto;
   margin-bottom: 10px;
 }
-.slide_panell{width:450px !important; }
+.slide_panell{width:450px !important;background: rgb(29 29 29 / 90%); }
 .pan_view_360{z-index: 2000;}
 .btn_small{
     padding: 3px 8px;
@@ -1941,7 +1941,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
 }
 .par_textqw{
         margin-bottom: .75rem;
-        font-size: 0.75.rem;
+        font-size: 16px;
         font-weight: 400;
         color: #fff;
 }
@@ -2265,9 +2265,9 @@ display: grid;
 
     .qube-text {
       margin: 15px 0;
-      font-size: 14px;
+      font-size: 16px;
       line-height: 1.6;
-      color: #d6d6d6;
+      color: #fff;
     }
 
     .qube-highlight {
