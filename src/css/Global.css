@@ -2311,3 +2311,6 @@ display: grid;
     .nav_outer_boxx_ui{margin-left: 0px;}
     .sidebar{align-items: end !important;padding-bottom: 10px;}
 }
+@media screen and (max-height: 450px) {
+.zoom-control{top: 110px;}
+}
