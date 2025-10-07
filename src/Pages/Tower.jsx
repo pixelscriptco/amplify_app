@@ -34,6 +34,7 @@ function Tower(props) {
   const [units, setUnits] = useState([]);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showFilter, setShowFilter] = useState(false);
+  const [selectedUnitFilter, setSelectedUnitFilter] = useState(null);
 
   // Construction Updates Modal State
   const [updatesOpen, setUpdatesOpen] = useState(false);
@@ -300,6 +301,10 @@ function Tower(props) {
     setHoveredFloor(null);
   };
 
+  const handleUnitSelection = (unitDetails) => {
+    setSelectedUnitFilter(unitDetails);
+  };
+
   // Sort plans by order
   const sortedPlans = [...towerSvg].sort((a, b) => a.order - b.order);
   
@@ -378,7 +383,10 @@ function Tower(props) {
               </svg>
           </div>
 
-          <UnitTypeFilter tower={tower.toUpperCase()} />
+          <UnitTypeFilter 
+            tower={tower.toUpperCase()} 
+            onUnitSelection={handleUnitSelection}
+          />
         </CollapsiblePanel>
       </div>
       <div className="right-btn-group absolute right top">
@@ -468,11 +476,34 @@ function Tower(props) {
                       stroke = "rgba(248, 98, 98, 1)";
                       strokeWidth = "0.1";
                     } else {
-                      // Unit is available/pending - green color
-                      fill = "#5CE459";
-                      fillOpacity = "0.3";
-                      stroke = "rgba(0, 0, 0, 1)";
-                      strokeWidth = "0.1";
+                      // Check if this unit matches the selected filter criteria
+                      if (selectedUnitFilter && unit) {
+                        const matchesFilter = (
+                          unit.unit_type === selectedUnitFilter.unitType &&
+                          unit.area === selectedUnitFilter.sbu &&
+                          unit.cost === selectedUnitFilter.totalCost
+                        );
+                        
+                        if (matchesFilter) {
+                          // Highlight matching units with blue color
+                          fill = "#1976d2";
+                          fillOpacity = "0.6";
+                          stroke = "rgba(25, 118, 210, 1)";
+                          strokeWidth = "0.2";
+                        } else {
+                          // Dim non-matching units
+                          fill = "#5CE459";
+                          fillOpacity = "0.1";
+                          stroke = "rgba(0, 0, 0, 0.3)";
+                          strokeWidth = "0.05";
+                        }
+                      } else {
+                        // Default available/pending color when no filter is selected
+                        fill = "#5CE459";
+                        fillOpacity = "0.3";
+                        stroke = "rgba(0, 0, 0, 1)";
+                        strokeWidth = "0.1";
+                      }
                     }
                   }
                   const className = pathEl.getAttribute("class") || "Available";
@@ -501,7 +532,24 @@ function Tower(props) {
                           // Restore original color after hover
                           const pathElement = event.currentTarget.querySelector('path');
                           if (pathElement) {
-                            pathElement.style.fillOpacity = shouldShowColor ? "0.3" : "0";
+                            if (shouldShowColor) {
+                              // Extract unit ID from path ID to find the unit
+                              const unitId = id.replace('U-', '');
+                              const unit = units.find(u => u.unit_id.toString() === unitId);
+                              
+                              if (selectedUnitFilter && unit) {
+                                const matchesFilter = (
+                                  unit.unit_type === selectedUnitFilter.unitType &&
+                                  unit.area === selectedUnitFilter.sbu &&
+                                  unit.cost === selectedUnitFilter.totalCost
+                                );
+                                pathElement.style.fillOpacity = matchesFilter ? "0.6" : "0.1";
+                              } else {
+                                pathElement.style.fillOpacity = "0.3";
+                              }
+                            } else {
+                              pathElement.style.fillOpacity = "0";
+                            }
                           }
                         }}
                         onClick={() =>
@@ -530,7 +578,24 @@ function Tower(props) {
                                  e.target.style.fillOpacity = "0";
                                }}
                                onMouseLeave={(e) => {
-                                 e.target.style.fillOpacity = shouldShowColor ? "0.3" : "0";
+                                 if (shouldShowColor) {
+                                   // Extract unit ID from path ID to find the unit
+                                   const unitId = id.replace('U-', '');
+                                   const unit = units.find(u => u.unit_id.toString() === unitId);
+                                   
+                                   if (selectedUnitFilter && unit) {
+                                     const matchesFilter = (
+                                       unit.unit_type === selectedUnitFilter.unitType &&
+                                       unit.area === selectedUnitFilter.sbu &&
+                                       unit.cost === selectedUnitFilter.totalCost
+                                     );
+                                     e.target.style.fillOpacity = matchesFilter ? "0.6" : "0.1";
+                                   } else {
+                                     e.target.style.fillOpacity = "0.3";
+                                   }
+                                 } else {
+                                   e.target.style.fillOpacity = "0";
+                                 }
                                }}
                             />
                           </g>

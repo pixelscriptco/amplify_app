@@ -172,11 +172,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
               src={svgSrc}
               alt="QR Code"
               style={{
-                width: 68,
-                background: "#fff",
                 borderRadius: 8,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-                padding: "2px 5px",
               }}
             />
           ) : (
@@ -184,12 +180,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
               src={projectData.qr_code}
               alt="QR Code"
               style={{
-                width: 66,
-                height: 66,
-                objectFit: "contain",
-                background: "#fff",
-                borderRadius: 8,
-                boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+                borderRadius: 8
               }}
             />
           ))}

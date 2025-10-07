@@ -81,7 +81,7 @@ function ClientMap(props) {
             content: `<div class="main_popover_wrap">
                  <div class="pos_relye">
                       <div>
-                          <h4 class="cap_map">${project.title || 'Location'} </h4>
+                          <h4 class="cap_map">${project.location_title || 'Location'} </h4>
                       </div>
                       <div class="img_wrapw_map">
                           <img class="img_blockqwe" height="auto" width="204" src="${project.location_image}" alt="">

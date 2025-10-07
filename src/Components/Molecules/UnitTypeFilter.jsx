@@ -5,13 +5,14 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import axiosInstance from "../../Utility/axios";
 
-function UnitTypeFilter({ tower, floor }) {
+function UnitTypeFilter({ tower, floor, onUnitSelection }) {
   const [totalUnits, setTotalUnits] = useState(0);
   const [flatFilterPriceValues, setFlatFilterPriceValues] = useState([]);
   const [flatFilterSizeValues, setFlatFilterSizeValues] = useState([]);
   const [unitTypeFilters, setFlatFilterTypeValues] = useState([]);
   const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } = useMapFilter();
   const [unitDetails, setUnitDetails] = useState([]);
+  const [selectedUnit, setSelectedUnit] = useState(null);
 
   const isAllFiltersActive = () => activeMapFilterIds.length === unitTypeFilters.length;
 
@@ -53,7 +54,7 @@ function UnitTypeFilter({ tower, floor }) {
         );
 
         setFlatFilterTypeValues(getAllUnitTypesInTower(response.data.units));
-        setTotalUnits(response.data.units.length || 0);
+        setTotalUnits(response.data.available_units);
         setUnitDetails(response.data.units || []);
       } catch (error) {
         setUnitDetails([]);
@@ -90,7 +91,32 @@ function UnitTypeFilter({ tower, floor }) {
 
           <div className="grid_htyu">
             {filteredUnits.map((unit, index) => (
-              <div key={index} className="list_gopw">
+              <div 
+                key={index} 
+                className={`list_gopw ${selectedUnit?.unitId === unit.id ? 'selected-unit' : ''}`}
+                onClick={() => {
+                  setSelectedUnit({
+                    unitType: unit.UnitType,
+                    sbu: unit.SBU,
+                    totalCost: unit.TotalCost,
+                    unitId: unit.id,
+                    floorNumber: unit.FloorNumber,
+                    flatNumber: unit.FlatNumber
+                  });
+                  
+                  if (onUnitSelection) {
+                    onUnitSelection({
+                      unitType: unit.UnitType,
+                      sbu: unit.SBU,
+                      totalCost: unit.TotalCost,
+                      unitId: unit.id,
+                      floorNumber: unit.FloorNumber,
+                      flatNumber: unit.FlatNumber
+                    });
+                  }
+                }}
+                style={{ cursor: onUnitSelection ? 'pointer' : 'default' }}
+              >
                 <div style={{ display: "flex", justifyContent: "space-around"}} className="txt_er"><span>{unit.UnitType}</span> - <span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
               </div>
             ))}
@@ -389,5 +415,28 @@ const Style = styled.div`
   .unit-area,
   .unit-price {
     margin: 4px 0;
+  }
+
+  .list_gopw.selected-unit {
+    background-color: var(--blue-theme, #1976d2);
+    color: white;
+    border-radius: 8px;
+    transform: scale(1.02);
+    transition: all 0.2s ease;
+  }
+
+  .list_gopw.selected-unit .txt_er {
+    color: white;
+  }
+
+  .list_gopw {
+    transition: all 0.2s ease;
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .list_gopw:hover {
+    background-color: rgba(25, 118, 210, 0.1);
+    transform: scale(1.01);
   }
 `;
