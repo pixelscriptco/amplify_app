@@ -188,7 +188,7 @@ const Sidebar = () => {
   return (
     <>
       <SidebarContainer className="sidebar" >
-        <div className={`nav_outer_boxx_ui ${!fclick ? "show_desc" : ""}`}>
+        <div className={`nav_outer_boxx_ui ${!fclick ? "show_descs" : ""}`}>
           <div className="main_block_nav">
             {iconData.map(({ Icon, label }, idx) => (
               <div
@@ -261,7 +261,7 @@ const Sidebar = () => {
           )}
         </div>
       </SlidePanel>
-      <SlidePanel open={showLocation} className="slide_panell">
+      <SlidePanel open={showLocation} className="slide_panell jst_itttt">
         <div className="slide-panel-content">
           <button className="close-btn" onClick={() => setShowLocation(false)}>
             &times;
@@ -290,7 +290,7 @@ const Sidebar = () => {
                   description && (                    
                     <div
                       className="ghtyu"
-                      style={{ marginTop: 20 }}
+                      style={{ marginTop: 20, padding: "0px 20px" }}
                       dangerouslySetInnerHTML={{ __html: description }}
                     ></div>
                   )

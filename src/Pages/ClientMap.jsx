@@ -10,7 +10,7 @@ function ClientMap(props) {
   const [error, setError] = useState(null);
   const { url } = useParams();
   const mapRef = useRef(null);
-  const [infow, setinfow] = useState(true);
+  const [infow, setinfow] = useState(false);
   const [clients, setClients] = useState([]);
 
   useEffect(() => {
@@ -82,11 +82,13 @@ function ClientMap(props) {
                       <div>
                           <h4 class="cap_map">CUBIX RESIDENCES </h4>
                       </div>
-                      <div class="img_wrapw_map">
-                          <img class="img_blockqwe" height="auto" width="204" src=" https://fra1.digitaloceanspaces.com/evometa-backend-production/cubix.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=DO00G84QRB9ZBP6JJJZX%2F20250823%2Ffra1%2Fs3%2Faws4_request&X-Amz-Date=20250823T132501Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0d3ac0f240135c442b6c2962761590bf259687265a5f5ded3ef61f294b82df9b" alt="">
-                      </div>
-                      <div>
-                          <p class="par_textqw">Welcome to CUBIX Residences, an innovative development that mixes comfort with convenience. The building features a unique L shaped design that maximizes natural light, creating bright and inviting spaces throughout Experience life lived in refinement and substance.</p>
+                      <div class="infowrper">
+                        <div class="img_wrapw_map">
+                            <img class="img_blockqwe" height="auto" width="204" src=" https://fra1.digitaloceanspaces.com/evometa-backend-production/cubix.webp?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=DO00G84QRB9ZBP6JJJZX%2F20250823%2Ffra1%2Fs3%2Faws4_request&X-Amz-Date=20250823T132501Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=0d3ac0f240135c442b6c2962761590bf259687265a5f5ded3ef61f294b82df9b" alt="">
+                        </div>
+                        <div>
+                            <p class="par_textqw">Welcome to CUBIX Residences, an innovative development that mixes comfort with convenience. The building features a unique L shaped design that maximizes natural light, creating bright and inviting spaces throughout Experience life lived in refinement and substance.</p>
+                        </div>
                       </div>
                       <div>
                           <div role="button" class="button_block">
