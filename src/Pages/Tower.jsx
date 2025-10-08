@@ -384,6 +384,7 @@ function Tower(props) {
           </div>
 
           <UnitTypeFilter 
+            project={project}
             tower={tower.toUpperCase()} 
             onUnitSelection={handleUnitSelection}
           />

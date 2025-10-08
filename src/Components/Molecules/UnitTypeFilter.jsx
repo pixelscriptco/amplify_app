@@ -5,7 +5,7 @@ import Slider from "rc-slider";
 import "rc-slider/assets/index.css";
 import axiosInstance from "../../Utility/axios";
 
-function UnitTypeFilter({ tower, floor, onUnitSelection }) {
+function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
   const [totalUnits, setTotalUnits] = useState(0);
   const [flatFilterPriceValues, setFlatFilterPriceValues] = useState([]);
   const [flatFilterSizeValues, setFlatFilterSizeValues] = useState([]);
@@ -50,7 +50,7 @@ function UnitTypeFilter({ tower, floor, onUnitSelection }) {
     const fetchUnitDetails = async () => {
       try {
         const response = await axiosInstance.get(
-          `/app/units/filter?tower=${tower}${floor ? `&floor=${floor}` : ""}`
+          `/app/units/filter?project=${project}&tower=${tower}${floor ? `&floor=${floor}` : ""}`
         );
 
         setFlatFilterTypeValues(getAllUnitTypesInTower(response.data.units));
