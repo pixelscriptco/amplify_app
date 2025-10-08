@@ -156,14 +156,15 @@ function ClientMap(props) {
             display : (infow) ? 'block' : 'none'
           }}>
             <div className="qube-card">
-              <svg
-                className="qube-close-btn"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                onClick={() => setinfow(false)}
-              >
-                <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
-              </svg>
+              <span className="qube-close-btn">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  onClick={() => setinfow(false)}
+                >
+                  <path d="M18.3 5.71a1 1 0 0 0-1.41 0L12 10.59 7.11 5.7a1 1 0 0 0-1.41 1.42L10.59 12l-4.89 4.89a1 1 0 1 0 1.41 1.41L12 13.41l4.89 4.89a1 1 0 0 0 1.41-1.41L13.41 12l4.89-4.89a1 1 0 0 0 0-1.4z" />
+                </svg>
+              </span>
               <img src="https://propbuilding.s3.ap-south-1.amazonaws.com/location/1758824117267-507106187.jpg" alt="QUBE Development Logo" className="qube-logo" />
               <p className="qube-text">
                 QUBE focus is delivering high-quality residential and commercial spaces,

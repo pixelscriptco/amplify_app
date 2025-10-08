@@ -73,11 +73,11 @@ const Custom360Icon = () => (
 );
 
 const iconData = [
-  { Icon: DescriptionIcon, label: "Description" },
+  { Icon: DescriptionIcon, label: "About Project" },
   { Icon: CustomLocationIcon, label: "Location" },
   { Icon: AmenitiesIcon, label: "Amenities" },
   { Icon: ConstructionIcon, label: "Construction Updates" },
-  { Icon: Custom360Icon, label: "Project Tour" },
+  { Icon: Custom360Icon, label: "360 Walkthrough" },
 ];
 
 const Sidebar = () => {

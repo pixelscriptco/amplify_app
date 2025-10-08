@@ -1806,7 +1806,7 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
     left: unset !important;
     z-index: 2000 !important;
 }
-.jst_itttt .slide-panel-content{padding: 2rem 0px !important; }
+.jst_itttt .slide-panel-content{padding: 2rem 0px 0px !important; }
 .booknow_unt .panel__unit-card{background-color: #1d1d1d!important;}
 .booknow_unt button{background: #29a77f !important; }
 .el-showall{display: flex;gap: 10px;}
@@ -1845,7 +1845,7 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
   overflow-y: auto;
   margin-bottom: 10px;
 }
-.slide_panell{width:450px !important;background: rgb(29 29 29 / 90%); }
+.slide_panell{width:450px !important;background: rgb(29 29 29 / 90%) !important; }
 .pan_view_360{z-index: 2000;}
 .btn_small{
     padding: 3px 8px;
@@ -1944,6 +1944,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
         font-size: 16px;
         font-weight: 400;
         color: #fff;
+        line-height: 1.6;
 }
 .button_block{
     display: flex;
@@ -1961,7 +1962,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
     cursor: pointer;
     background-color: #29a77f;
     COLOR: #FFF;
-    font-weight: 600;
+    font-weight: 500;
 }
 .button_block:hover{
     background-color: #1f936e;
@@ -2246,12 +2247,16 @@ display: grid;
       width: 20px !important;
       height: 20px !important;
       cursor: pointer;
-      fill: #ffffff;
+      fill: #333;
       transition: fill 0.2s ease;
+          background: white !important;
+    border-radius: 50% !important;
+    padding: 1px;
+    opacity: 0.6;
     }
 
     .qube-close-btn:hover {
-      fill: #f9b84a; /* Highlight on hover */
+      opacity: 1;
     }
 
     .qube-logo {
@@ -2267,7 +2272,7 @@ display: grid;
       margin: 15px 0;
       font-size: 16px;
       line-height: 1.6;
-      color: #fff;
+      color: #fff !important;
     }
 
     .qube-highlight {
@@ -2313,4 +2318,10 @@ display: grid;
 }
 @media screen and (max-height: 450px) {
 .zoom-control{top: 110px;}
+}
+@media screen and (max-width: 1400px) {
+.qube-text{font-size: 14px !important;}
+.par_textqw{font-size: 14px !important;}
+.bred_outer{font-size: 12px !important;}
+.editor-paragraph{font-size: 14px !important;line-height: 24px !important;}
 }
