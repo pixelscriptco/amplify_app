@@ -1879,6 +1879,7 @@ padding: 5px;
     color: #fff;
     width: 100%;
     justify-content: center;
+    transform: unset !important;
 }
 .grid_htyu{
   margin-top: 20px;
