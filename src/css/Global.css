@@ -1001,6 +1001,7 @@ body{
     align-items: center;
     min-width: 22px;
     width: 22px;
+    display: flex;
 }
 .bread_camp{
    
@@ -2324,4 +2325,6 @@ display: grid;
 .par_textqw{font-size: 14px !important;}
 .bred_outer{font-size: 12px !important;}
 .editor-paragraph{font-size: 14px !important;line-height: 24px !important;}
+.zoom-control{bottom: 40% !important;}
+.bread_camp{gap: 4px !important;}
 }
