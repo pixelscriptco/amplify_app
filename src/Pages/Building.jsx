@@ -37,6 +37,9 @@ function Building(props) {
   // New state for menu dialog
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogContent, setDialogContent] = useState(null);
+  const [showMobileInstruction, setShowMobileInstruction] = useState(true);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [lastTapTime, setLastTapTime] = useState(0);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -56,9 +59,11 @@ function Building(props) {
         const { id, name, image_url, svg_url, floors } = response.data;
         const svgResp = await fetch(svg_url);
         const svgText = await svgResp.text();
+        
         // Parse the SVG text and extract <path> elements
         const parser = new DOMParser();
         const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+        
         const paths = Array.from(svgDoc.querySelectorAll("path"));
         setBuildingData({
           id,
@@ -75,7 +80,27 @@ function Building(props) {
     fetchBuildingData();
   }, [project]);
 
-  const handleTowerHover = async (towerId, event) => {
+  // Handle window resize for mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Hide mobile instruction after 5 seconds
+  useEffect(() => {
+    if (isMobile && showMobileInstruction) {
+      const timer = setTimeout(() => {
+        setShowMobileInstruction(false);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [isMobile, showMobileInstruction]);
+
+  const handleTowerHover = async (towerId, event) => {    
     setHoveredTower(towerId);
 
     // Calculate modal position based on mouse position
@@ -89,11 +114,12 @@ function Building(props) {
     setModalPosition({ x: modalX, y: y - 100 }); // Offset Y by half modal height
 
     // Fetch tower data if not already fetched
-    if (!towerData[towerId]) {
+    if (!towerData[towerId]) {      
       try {
         const response = await axiosInstance.get(
           `/app/${buildingData.id}/tower/${towerId}`
         );
+        
         setTowerData((prev) => ({
           ...prev,
           [towerId]: response.data,
@@ -106,6 +132,61 @@ function Building(props) {
 
   const handleTowerLeave = () => {
     setHoveredTower(null);
+  };
+
+  // Touch event handlers for mobile
+  const [touchStartTime, setTouchStartTime] = useState(0);
+  const [touchStartPos, setTouchStartPos] = useState({ x: 0, y: 0 });
+  const [currentTowerId, setCurrentTowerId] = useState(null);
+
+  const handleTowerTouchStart = async (towerId, event) => {
+    const touch = event.touches[0];
+    setTouchStartTime(Date.now());
+    setTouchStartPos({ x: touch.clientX, y: touch.clientY });
+    setCurrentTowerId(towerId);
+    
+    // Create a synthetic event with clientX and clientY for positioning
+    const syntheticEvent = {
+      ...event,
+      clientX: touch.clientX,
+      clientY: touch.clientY,
+      currentTarget: event.currentTarget
+    };
+    
+    await handleTowerHover(towerId, syntheticEvent);
+  };
+
+  const handleTowerTouchEnd = (event) => {
+    const touch = event.changedTouches[0];
+    const touchEndTime = Date.now();
+    const touchDuration = touchEndTime - touchStartTime;
+    const touchDistance = Math.sqrt(
+      Math.pow(touch.clientX - touchStartPos.x, 2) + 
+      Math.pow(touch.clientY - touchStartPos.y, 2)
+    );
+
+    // If it's a quick tap (less than 200ms) and small movement (less than 10px)
+    if (touchDuration < 200 && touchDistance < 10) {
+      const currentTime = Date.now();
+      const timeDiff = currentTime - lastTapTime;
+      
+      if (timeDiff < 300) {
+        // Double tap - navigate to tower
+        setHoveredTower(null);
+        navigate(`/${project}/tower/${towerData[currentTowerId]?.name}`);
+      } else {
+        // Single tap - show hover info for 3 seconds
+        setLastTapTime(currentTime);
+        setTimeout(() => {
+          setHoveredTower(null);
+        }, 3000);
+      }
+    } else {
+      // It's a touch/hold, show hover info
+      setTimeout(() => {
+        setHoveredTower(null);
+      }, 2000); // Show for 2 seconds on touch
+    }
   };
 
   const renderTowerDetails = (tower) => {
@@ -267,6 +348,25 @@ function Building(props) {
       />
       <Sidebar />
 
+      {/* Mobile instruction */}
+      {isMobile && showMobileInstruction && (
+        <div style={{
+          position: 'absolute',
+          top: '80px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          padding: '8px 16px',
+          borderRadius: '20px',
+          fontSize: '14px',
+          zIndex: 1000,
+          animation: 'fadeInOut 5s ease-in-out'
+        }}>
+          Tap to view details • Double-tap to navigate
+        </div>
+      )}
+
       <div className="compass-fullscreen-wrapper absolute bottom right flex row">
         <div className="col w-space flex j-end">
           <StaticIconButton
@@ -320,9 +420,17 @@ function Building(props) {
                     className="sc-bZkfAO dKrtbD"
                     onMouseEnter={(event) => handleTowerHover(id, event)}
                     onMouseLeave={handleTowerLeave}
-                    onClick={() =>
-                      navigate(`/${project}/tower/${towerData[id]?.name}`)
-                    }
+                    onTouchStart={(event) => handleTowerTouchStart(id, event)}
+                    onTouchEnd={handleTowerTouchEnd}
+                    onClick={(event) => {
+                      // On mobile, prevent navigation and let touch events handle hover
+                      if (isMobile) {
+                        event.preventDefault();
+                        return;
+                      }
+                      // On desktop, navigate normally
+                      navigate(`/${project}/tower/${towerData[id]?.name}`);
+                    }}
                   >
                     <g className="sc-hKMtZM NuQqD">
                       <g id={`${id}-tower-svg`} className="overlay-can-hide">
@@ -406,6 +514,20 @@ const Style = styled.main`
   svg {
     height: 100%;
     width: 100%;
+    touch-action: manipulation; /* Improve touch responsiveness */
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    .main_bfox_wrap {
+      touch-action: manipulation;
+    }
+    
+    /* Improve touch targets */
+    g[class*="sc-bZkfAO"] {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
   }
 
   .navigator {
@@ -473,5 +595,10 @@ const Style = styled.main`
     border-radius: 4px;
   }
 
-
+  @keyframes fadeInOut {
+    0% { opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 `;

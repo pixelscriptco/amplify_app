@@ -40,6 +40,8 @@ function Unit() {
     type:'',
     cost:'',
     image_url: '',
+    paths: [],
+    balcony_images: [],
   });
 
   const { fetchInventories } = useInventories();
@@ -48,6 +50,7 @@ function Unit() {
 
   const [showPaymentsPopup, setShowPaymentsPopup] = useState(false);
   const [showVRTour, setShowVRTour] = useState(false);
+  const [selectedBalconyImage, setSelectedBalconyImage] = useState(null);
 
   useEffect(() => {
     const fetchFloorSvg = async () => {
@@ -56,8 +59,27 @@ function Unit() {
         const response = await axiosInstance.get(`/app/unit/${project}/${tower}/${floor}/${unit_str}`);
 
         const { id, name,status } = response.data;
-        const {plan,area,type,cost} = response.data.unit_plans;
+        const {plan,area,type,cost,svg_url,balcony_images} = response.data.unit_plans;
         
+        let paths = [];
+        
+        // Fetch and parse SVG if svg_url is available
+        if (svg_url) {
+          try {
+            const svgResp = await fetch(svg_url);
+            const svgText = await svgResp.text();
+            
+            // Parse the SVG text and extract <path> elements
+            const parser = new DOMParser();
+            const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+            
+            paths = Array.from(svgDoc.querySelectorAll("path"));
+          } catch (svgError) {
+            console.error('Error fetching SVG:', svgError);
+            // Continue without SVG paths if SVG fetch fails
+          }
+        }
+
         setUnitData({
           id,
           name,
@@ -65,7 +87,9 @@ function Unit() {
           area,
           type,
           cost,
-          image_url:plan
+          image_url:plan,
+          paths,
+          balcony_images: balcony_images || []
         })
 
         setLoading(false);  
@@ -80,6 +104,34 @@ function Unit() {
     fetchFloorSvg();
   }, [project, tower,floor]);
 
+  // Reset modal state when component unmounts or route changes
+  useEffect(() => {
+    return () => {
+      setSelectedBalconyImage(null);
+    };
+  }, [project, tower, floor, unit_str]);
+
+  // Clear modal if selectedBalconyImage becomes invalid
+  useEffect(() => {
+    if (selectedBalconyImage && !selectedBalconyImage.image_url) {
+      setSelectedBalconyImage(null);
+    }
+  }, [selectedBalconyImage]);
+
+  const handlePathClick = (pathId) => {
+    // Find balcony image by name matching the path ID
+    const balconyImage = unitData.balcony_images.find(img => 
+      img.image_url
+    );
+    
+    if (balconyImage) {
+      setSelectedBalconyImage(balconyImage);
+    }
+  };
+
+  const closeImageModal = () => {
+    setSelectedBalconyImage(null);
+  };
 
   const handleBooking = async (flatId, userDetails) => {
     try {
@@ -175,14 +227,122 @@ function Unit() {
           {/* <div className="flat-number">{flatNumber}</div> */}
         {
           unitData.image_url ? (
+            <div style={{ position: 'relative', width: '100%', height: '100%' }}>
               <img src={unitData.image_url} />
-            ) : (
-              <Err msg="Couldn't find unit details" type='found' />
-            )
+              {unitData.paths && unitData.paths.length > 0 && (
+                <svg
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    pointerEvents: 'auto'
+                  }}
+                  preserveAspectRatio="xMidYMid slice"
+                  viewBox="0 0 1086 615"
+                  fill="none"
+                >
+                  {unitData.paths.map((pathEl, index) => {
+                    const id = pathEl.getAttribute("id") || `path-${index}`;
+                    const d = pathEl.getAttribute("d");
+                    const fill = pathEl.getAttribute("fill") || "#69F153";
+                    const fillOpacity = "0.3";
+                    const stroke = "rgba(0, 0, 0, 0.4)";
+                    const strokeWidth = "0.1";
+                    const className = pathEl.getAttribute("class") || "Available";
+
+                    return (
+                      <path
+                        key={id}
+                        id={id}
+                        d={d || ""}
+                        fill={fill}
+                        fillOpacity={fillOpacity}
+                        stroke={stroke}
+                        strokeWidth={strokeWidth}
+                        className={className}
+                        style={{
+                          transition: "fill-opacity 0.3s ease",
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handlePathClick(id)}
+                      />
+                    );
+                  })}
+                </svg>
+              )}
+            </div>
+          ) : (
+            <Err msg="Couldn't find unit details" type='found' />
+          )
         }
         
         </div>
       </FlatStyle>
+
+      {/* Balcony Image Modal */}
+      {selectedBalconyImage && selectedBalconyImage.image_url && (
+        <div 
+          key={selectedBalconyImage?.image_url || 'modal'}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+            cursor: 'pointer'
+          }}
+          onClick={closeImageModal}
+        >
+          <div 
+            style={{
+              position: 'relative',
+              maxWidth: '90vw',
+              maxHeight: '90vh',
+              backgroundColor: 'white',
+              borderRadius: '8px',
+              padding: '20px',
+              cursor: 'default'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              style={{
+                position: 'absolute',
+                top: '10px',
+                right: '15px',
+                background: 'none',
+                border: 'none',
+                fontSize: '24px',
+                cursor: 'pointer',
+                color: '#666'
+              }}
+              onClick={closeImageModal}
+            >
+              ×
+            </button>
+            <h3 style={{ marginTop: 0, marginBottom: '15px', color: '#333' }}>
+              {selectedBalconyImage.name}
+            </h3>
+            <img 
+              key={selectedBalconyImage.image_url}
+              src={selectedBalconyImage.image_url} 
+              alt={selectedBalconyImage.name}
+              style={{
+                maxWidth: '100%',
+                maxHeight: '70vh',
+                objectFit: 'contain'
+              }}
+            />
+          </div>
+        </div>
+      )}
     </CarouselPageStyle>
   );
 }
