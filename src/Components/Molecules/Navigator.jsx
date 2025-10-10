@@ -17,7 +17,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   const navigate = useNavigate();
   const [expand, setexpand] = useState((window.innerWidth < 900) ? true : false);
 
-  useEffect(() => {
+  useEffect(() => {    
     const fetchProjectData = async () => {
       if (!project) return;
       try {
@@ -89,7 +89,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
         }} 
         className={`bread_camp ${ expand ? "expandddd" : ""}`}
       >
-          {prevPages.map((page, index) => {
+          {prevPages.map((page, index) => {            
             return (
               <>
                 <div className="bred_outer" onClick={(e) => navigate(page.path)}>
@@ -112,7 +112,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
             );
           })}
 
-          {currentPage ? (
+          {currentPage ? (            
             <>
               <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'flex' : 'none' }}>
                 <svg

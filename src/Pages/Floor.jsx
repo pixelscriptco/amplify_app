@@ -279,7 +279,7 @@ function Floor() {
               path: `/${project}`,
             },
             {
-              title: `Tower ${tower}`,
+              title: `${tower}`,
               path: `/${project}/tower/${tower}`,
             },
           ]}

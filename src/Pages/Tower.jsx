@@ -35,6 +35,7 @@ function Tower(props) {
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showFilter, setShowFilter] = useState(false);
   const [selectedUnitFilter, setSelectedUnitFilter] = useState(null);
+  const [enableFilter, setEnableFilter] = useState(false);
 
   // Construction Updates Modal State
   const [updatesOpen, setUpdatesOpen] = useState(false);
@@ -303,6 +304,7 @@ function Tower(props) {
 
   const handleUnitSelection = (unitDetails) => {
     setSelectedUnitFilter(unitDetails);
+    setEnableFilter(true);
   };
 
   // Sort plans by order
@@ -342,7 +344,7 @@ function Tower(props) {
           },
         ]}
         currentPage={{
-          title: `Tower ${tower.toUpperCase()}`,
+          title: `${tower.toUpperCase()}`,
           path: `tower/${tower}`,
         }}
       />
@@ -468,42 +470,58 @@ function Tower(props) {
                   if (shouldShowColor) {
                     // Extract unit ID from path ID (remove "U-" prefix)
                     const unitId = id.replace('U-', '');
-                    const unit = units.find(u => u.unit_id.toString() === unitId);
-                    
-                    if (unit && unit.status === 2) {
-                      // Unit is confirmed/booked - red color
-                      fill = "#f86262";
-                      fillOpacity = "0.3";
-                      stroke = "rgba(248, 98, 98, 1)";
-                      strokeWidth = "0.1";
-                    } else {
-                      // Check if this unit matches the selected filter criteria
-                      if (selectedUnitFilter && unit) {
-                        const matchesFilter = (
-                          unit.unit_type === selectedUnitFilter.unitType &&
-                          unit.area === selectedUnitFilter.sbu &&
-                          unit.cost === selectedUnitFilter.totalCost
-                        );
+                    const unit = units.find(u => u.unit_id.toString() === unitId);                                        
+                    if(!enableFilter){
+                      if (unit && unit.status === 2) {
+                        // Unit is confirmed/booked - red color
+                        fill = "#f86262";
+                        fillOpacity = "0.3";
+                        stroke = "rgba(248, 98, 98, 1)";
+                        strokeWidth = "0.1";
+                      } else {
+                          // Default available/pending color when no filter is selected
+                          fill = "#5CE459";
+                          fillOpacity = "0.3";
+                          stroke = "rgba(0, 0, 0, 1)";
+                          strokeWidth = "0.1";
+                      }
+                    }else{
+                      if (unit && unit.status === 2) {
+                        // Unit is confirmed/booked - red color
+                        fill = "#f86262";
+                        fillOpacity = "0.1";
+                        stroke = "rgba(248, 98, 98, 1)";
+                        strokeWidth = "0.1";
+                      } else {                        
+                        console.log(selectedUnitFilter);
                         
-                        if (matchesFilter) {
-                          // Highlight matching units with blue color
-                          fill = "#1976d2";
-                          fillOpacity = "0.6";
-                          stroke = "rgba(25, 118, 210, 1)";
-                          strokeWidth = "0.2";
+                        // Check if this unit matches the selected filter criteria
+                        if (selectedUnitFilter && unit) {
+                          const matchesFilter = (
+                            unit.unit_plan.type === selectedUnitFilter.unitType &&
+                            unit.unit_plan.area === selectedUnitFilter.sbu &&
+                            unit.cost?unit.cost === selectedUnitFilter.totalCost:unit.unit_plan.cost === selectedUnitFilter.totalCost
+                          );                          
+                          if (matchesFilter) {
+                            // Highlight matching units with blue color
+                            fill = "#1976d2";
+                            fillOpacity = "0.6";
+                            stroke = "rgba(25, 118, 210, 1)";
+                            strokeWidth = "0.2";
+                          } else {
+                            // Dim non-matching units
+                            fill = "#5CE459";
+                            fillOpacity = "0.3";
+                            stroke = "rgba(0, 0, 0, 0.3)";
+                            strokeWidth = "0.05";
+                          }
                         } else {
-                          // Dim non-matching units
+                          // Default available/pending color when no filter is selected
                           fill = "#5CE459";
                           fillOpacity = "0.1";
-                          stroke = "rgba(0, 0, 0, 0.3)";
-                          strokeWidth = "0.05";
+                          stroke = "rgba(0, 0, 0, 1)";
+                          strokeWidth = "0.1";
                         }
-                      } else {
-                        // Default available/pending color when no filter is selected
-                        fill = "#5CE459";
-                        fillOpacity = "0.3";
-                        stroke = "rgba(0, 0, 0, 1)";
-                        strokeWidth = "0.1";
                       }
                     }
                   }

@@ -163,7 +163,7 @@ function Unit() {
             path: `/${project}`,
           },
           {
-            title: `Tower ${tower}`,
+            title: `${tower}`,
             path: `/${project}/tower/${tower}`,
           },
           {
@@ -172,7 +172,7 @@ function Unit() {
           },
         ]}
         currentPage={{
-          title: `Apartment ${unit_str}`,
+          title: `${unit_str}`,
           path: `/${project}/tower/${tower}/floor/${floor}/apartment/${unit_str}`,
         }}
       />
