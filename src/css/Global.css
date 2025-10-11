@@ -1558,6 +1558,22 @@ body .dzrmUF .features .feature{
     cursor: pointer;
         background: radial-gradient(circle, #066f5b 0%, #023047 100%);
 }
+.qr_icon{
+    width: 50px;
+    height: 50px;  
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    padding: 12px;
+/*    position: absolute;*/
+/*    left: 30px;*/
+    z-index: 1234;
+    align-items: center;
+/*    top: 180px;*/
+    cursor: pointer;
+    background: radial-gradient(circle, #066f5b 0%, #023047 100%);  
+}
 .filter_icon:hover{
       background-color: #1a1a1a;
     color: #fff;
@@ -1927,7 +1943,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
 }
 .cap_map{
   font-size: 20px;
-    font-weight: 600;
+    font-weight: 500;
     color: #ffffff;
     line-height: 25px;
     margin-bottom: 10px;
@@ -2118,9 +2134,9 @@ display: grid;
   .label_tip{display: none !important;}
   .qube-card{
     width: 100% !important;
-    max-width: 450px;
-    height: calc(100vh - 80px);
-    overflow-y: scroll;
+    max-width: 320px;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
   }
 .unit_status_legend{
   left: unset !important;
@@ -2317,6 +2333,7 @@ display: grid;
     .main_block_nav{flex-direction: row;}
     .nav_outer_boxx_ui{margin-left: 0px;}
     .sidebar{align-items: end !important;padding-bottom: 10px;}
+    .label_tip{top: -45px;left:auto;}
 }
 @media screen and (max-height: 450px) {
 .zoom-control{top: 110px;}
@@ -2329,3 +2346,4 @@ display: grid;
 .zoom-control{bottom: 40% !important;}
 .bread_camp{gap: 4px !important;}
 }
+.gm-style .gm-style-iw-c{padding: 0px !important;}
