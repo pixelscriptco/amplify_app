@@ -1988,7 +1988,7 @@ body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !imp
 }
 .par_textqw{font-family: system-ui !important;}
 .main_popover_wrap{
-    max-width: 350px;
+    max-width: 300px;
     max-height: 565px;
     min-width: 0px;
     background: radial-gradient(circle, #066f5b 0, #023047 100%);
@@ -2134,7 +2134,7 @@ display: grid;
   .label_tip{display: none !important;}
   .qube-card{
     width: 100% !important;
-    max-width: 320px;
+    max-width: 250px;
     max-height: calc(100vh - 80px);
     overflow-y: auto;
   }
@@ -2251,8 +2251,8 @@ display: grid;
 .qube-card {
 /*      background-color: #152624; Dark greenish background */
       color: #ffffff;
-      width: 320px;
-      padding: 25px;
+      width: 250px;
+      padding: 12px;
       border-radius: 15px;
       position: relative;
       background: radial-gradient(circle,#066f5b 0,#023047 100%);
@@ -2280,8 +2280,8 @@ display: grid;
     .qube-logo {
       display: block;
     margin-bottom: 15px;
-    width: 100%;
-    height: 100px;
+    width: 226px;
+    height: 70px;
     object-fit: cover;
     border-radius: 8px;
     }
