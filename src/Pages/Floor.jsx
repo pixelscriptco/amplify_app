@@ -43,7 +43,8 @@ function Floor() {
   const [floorData, setFloorData] = useState(null);
   const [floorSvg, setFloorSvg] = useState({});
   const [showFilter, setShowFilter] = useState(false);
-
+  const [selectedUnitFilter, setSelectedUnitFilter] = useState(null);
+  const [enableFilter, setEnableFilter] = useState(false);
 
   useEffect(() => {
     const fetchFloorSvg = async () => {
@@ -152,6 +153,11 @@ function Floor() {
 
   const handleFloorLeave = () => {
     setHoveredUnit(null);
+  };
+
+  const handleUnitSelection = (unitDetails) => {
+    setSelectedUnitFilter(unitDetails);    
+    setEnableFilter(true);
   };
 
   function formatPrice(value) {
@@ -288,19 +294,8 @@ function Floor() {
               path: `/${project}/tower/${tower}/floor/${floor}`,
           }}
         />
-        {/*<Sidebar />*/}
-        <>
-          {/* <div className="floor-selector overlay-can-fade-out">
-            <FloorSelector
-              currentFloor={currentFloor}
-              selectedFloor={selectedFloor}
-              setSelectedFloor={setSelectedFloor}
-              currentTower={currentTower}
-              selectedTower={selectedTower}
-              setSelectedTower={setSelectedTower}
-            />
-          </div> */}
 
+        <>
           <div className="svg_block_filter">
             <div className="filter_icon" onClick={() => setShowFilter((showFilter) => !showFilter)}>
               <svg
@@ -336,7 +331,7 @@ function Floor() {
                   </svg>
               </div>
 
-              <UnitTypeFilter tower={tower} floor={floor} />
+              <UnitTypeFilter project={project} tower={tower} floor={floor}  onUnitSelection={handleUnitSelection}/>
             </CollapsiblePanel>
           </div>
         </>
@@ -399,6 +394,27 @@ function Floor() {
                 const paddedId = id.toString().padStart(2, '0');
                 const unit_str = tower+'-'+floor+paddedId;
                 
+                // Find the unit data to check filter match
+                const unitData = units.find(u => u.name === unit_str);
+                
+                // Check if unit matches the selected filter
+                let matchesFilter = true;
+                let defaultOpacity = '0.6';
+                
+                if (selectedUnitFilter && unitData && enableFilter) {
+                  matchesFilter = (
+                    unitData.unit_plans?.type === selectedUnitFilter.unitType &&
+                    unitData.unit_plans?.area === selectedUnitFilter.sbu &&
+                    (unitData.cost ?? unitData.unit_plans?.cost) === selectedUnitFilter.totalCost
+                  );
+                  
+                  if (matchesFilter) {
+                    defaultOpacity = '0.8'; // Highlight matching units
+                  } else {
+                    defaultOpacity = '0.2'; // Dim non-matching units
+                  }
+                }
+                
                 // Map status values
                 const getStatusText = (status) => {
                   switch(status) {
@@ -417,6 +433,7 @@ function Floor() {
                     d={d}
                     className={className}
                     data-unit={id}
+                    style={{ fillOpacity: defaultOpacity }}
                     onClick={() => navigate(`/${project}/tower/${tower}/floor/${floor}/unit/${unit_str}`)}
                     onMouseEnter={(e) => {
                       e.target.style.fillOpacity = '0';
@@ -424,7 +441,7 @@ function Floor() {
                     }}
                     onMouseLeave={(e) => {
                       handleFloorLeave();
-                      e.target.style.fillOpacity = '0.6';
+                      e.target.style.fillOpacity = defaultOpacity;
                     }}
                   />
                 );
