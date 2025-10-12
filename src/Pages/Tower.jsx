@@ -152,7 +152,7 @@ function Tower(props) {
             </svg>
           </span>
           <span className="cap_text">
-            Tower {tower} | {floor.name}{" "}
+            {tower} | {floor.name}{" "}
           </span>
         </div>
 
@@ -492,28 +492,26 @@ function Tower(props) {
                         fillOpacity = "0.1";
                         stroke = "rgba(248, 98, 98, 1)";
                         strokeWidth = "0.1";
-                      } else {                        
-                        console.log(selectedUnitFilter);
-                        
+                      } else {                                                
                         // Check if this unit matches the selected filter criteria
                         if (selectedUnitFilter && unit) {
                           const matchesFilter = (
-                            unit.unit_plan.type === selectedUnitFilter.unitType &&
-                            unit.unit_plan.area === selectedUnitFilter.sbu &&
-                            unit.cost?unit.cost === selectedUnitFilter.totalCost:unit.unit_plan.cost === selectedUnitFilter.totalCost
+                            unit.type === selectedUnitFilter.unitType &&
+                            unit.area === selectedUnitFilter.sbu &&
+                            unit.cost === selectedUnitFilter.totalCost
                           );                          
                           if (matchesFilter) {
                             // Highlight matching units with blue color
-                            fill = "#1976d2";
-                            fillOpacity = "0.6";
-                            stroke = "rgba(25, 118, 210, 1)";
+                            fill = "#5CE459";
+                            fillOpacity = "0.3";
+                            stroke = "rgba(0, 0, 0, 0.3)";
                             strokeWidth = "0.2";
                           } else {
                             // Dim non-matching units
                             fill = "#5CE459";
-                            fillOpacity = "0.3";
+                            fillOpacity = "0.1";
                             stroke = "rgba(0, 0, 0, 0.3)";
-                            strokeWidth = "0.05";
+                            strokeWidth = "0.1";
                           }
                         } else {
                           // Default available/pending color when no filter is selected
