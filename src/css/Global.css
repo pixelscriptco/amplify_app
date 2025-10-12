@@ -2357,3 +2357,5 @@ display: grid;
 .construction_uopdated .main_tab_img_block{
   background: none !important;
 }
+.contr_prevw{width: 100%;height: 100%;}
+.contr_prevw img,.contr_prevw video{width: 100%;height: 100%;object-fit: cover;}

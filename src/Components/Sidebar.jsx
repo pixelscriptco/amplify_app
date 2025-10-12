@@ -97,26 +97,7 @@ const Sidebar = () => {
   const [location, setLocation] = useState({});
   const [do_360, set_360] = useState("");
   const [fclick, setfclick] = useState(false);
-
-  // useEffect(() => {
-  //   iconRefs.current.forEach((ref, idx) => {
-  //     if (ref) {
-  //       tippy(ref, {
-  //         content: iconData[idx].label,
-  //         placement: 'right',
-  //         animation: 'shift-away',
-  //         arrow: true,
-  //         theme: 'light',
-  //       });
-  //     }
-  //   });
-  //   // Cleanup tippy instances on unmount
-  //   return () => {
-  //     iconRefs.current.forEach(ref => {
-  //       if (ref && ref._tippy) ref._tippy.destroy();
-  //     });
-  //   };
-  // }, []);
+  const [constr, setconstr] = useState(false);
 
   useEffect(() => {
     if (!project) return;
@@ -479,7 +460,7 @@ const Sidebar = () => {
                     ) ? 'block' : 'none'
                   }}
                   className="main_tab_img_block" key={a.id || idx}>
-                    <div className="img_block_video">
+                    <div className="img_block_video" onClick={() => setconstr(a.image_url)} >
                       {a.image_url?.toLowerCase().endsWith(".mp4") ? (
                         <video
                           width="100%"
@@ -514,6 +495,50 @@ const Sidebar = () => {
           </div>
         </div>
       </SlidePanel>
+      {
+        constr && (
+          <div className="wrap_iframe_box pan_view_360" age={do_360} style={{ display: "block" }}>              
+              <div className="cose_btn" onClick={() => setconstr(false)} style={{ cursor: "pointer" }}>
+                <svg
+                  viewBox="0 0 24 24"
+                  height="24"
+                  width="24"
+                  preserveAspectRatio="xMidYMid meet"
+                  fill="none"
+                >
+                  <title>close-refreshed</title>
+                  <path
+                    d="M11.9998 13.4L7.0998 18.3C6.91647 18.4833 6.68314 18.575 6.3998 18.575C6.11647 18.575 5.88314 18.4833 5.6998 18.3C5.51647 18.1167 5.4248 17.8833 5.4248 17.6C5.4248 17.3167 5.51647 17.0833 5.6998 16.9L10.5998 12L5.6998 7.09999C5.51647 6.91665 5.4248 6.68332 5.4248 6.39999C5.4248 6.11665 5.51647 5.88332 5.6998 5.69999C5.88314 5.51665 6.11647 5.42499 6.3998 5.42499C6.68314 5.42499 6.91647 5.51665 7.0998 5.69999L11.9998 10.6L16.8998 5.69999C17.0831 5.51665 17.3165 5.42499 17.5998 5.42499C17.8831 5.42499 18.1165 5.51665 18.2998 5.69999C18.4831 5.88332 18.5748 6.11665 18.5748 6.39999C18.5748 6.68332 18.4831 6.91665 18.2998 7.09999L13.3998 12L18.2998 16.9C18.4831 17.0833 18.5748 17.3167 18.5748 17.6C18.5748 17.8833 18.4831 18.1167 18.2998 18.3C18.1165 18.4833 17.8831 18.575 17.5998 18.575C17.3165 18.575 17.0831 18.4833 16.8998 18.3L11.9998 13.4Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </div>
+              <div className="contr_prevw">
+                {constr?.toLowerCase().endsWith(".mp4") ? (
+                  <video
+                    width="100%"
+                    height="240"
+                    controls
+                    // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
+                    // style={{ cursor: a.vr_url ? "pointer" : "default" }}
+                  >
+                    <source src={constr} type="video/mp4" />
+                    <source
+                      src={constr.replace(/\.mp4$/, ".ogg")}
+                      type="video/ogg"
+                    />
+                    Your browser does not support the video tag.
+                  </video>
+                ) : (
+                  <img
+                    src={constr}
+                    // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
+                  />
+                )}
+              </div>              
+            </div>
+        )
+      }
       {
         do_360 && (
           <div className="wrap_iframe_box pan_view_360" age={do_360} style={{ display: "block" }}>              
