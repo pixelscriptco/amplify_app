@@ -11,7 +11,7 @@ function ClientMap(props) {
   const [error, setError] = useState(null);
   const { url } = useParams();
   const mapRef = useRef(null);
-  const [infow, setinfow] = useState(true);
+  const [infow, setinfow] = useState((window.innerWidth <= 1200) ? false : true);
 
   const [client, setClient] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -20,9 +20,9 @@ function ClientMap(props) {
     const fetchClientData = async () => {
       try {
         let currentOrigin = window.location.origin;
-        // if (currentOrigin.includes("localhost")) {
-        //   currentOrigin = "https://moon.proptour.live";
-        // }
+        if (currentOrigin.includes("localhost")) {
+          currentOrigin = "https://bricks.proptour.live";
+        }
         const response = await axiosInstance.get(
           `/app/user?url=${currentOrigin}`
         );
@@ -57,6 +57,7 @@ function ClientMap(props) {
         });
 
         const bounds = new window.google.maps.LatLngBounds();
+        let active_window = false;
 
         projects.forEach((project) => {
           const lat = parseFloat(project.latitude);
@@ -99,8 +100,9 @@ function ClientMap(props) {
           });
 
           marker.addListener("click", () => {
-            infoWindow.close();
+            if(active_window) active_window.close();
             infoWindow.open(map, marker);
+            active_window = infoWindow;
           });
 
           bounds.extend({ lat, lng });
