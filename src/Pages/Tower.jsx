@@ -34,7 +34,7 @@ function Tower(props) {
   const [units, setUnits] = useState([]);
   const [modalPosition, setModalPosition] = useState({ x: 0, y: 0 });
   const [showFilter, setShowFilter] = useState(false);
-  const [selectedUnitFilter, setSelectedUnitFilter] = useState(null);
+  const [selectedUnitFilter, setSelectedUnitFilter] = useState([]);
   const [enableFilter, setEnableFilter] = useState(false);
 
   // Construction Updates Modal State
@@ -302,9 +302,9 @@ function Tower(props) {
     setHoveredFloor(null);
   };
 
-  const handleUnitSelection = (unitDetails) => {
-    setSelectedUnitFilter(unitDetails);
-    setEnableFilter(true);
+  const handleUnitSelection = (unitDetailsArray) => {    
+    setSelectedUnitFilter(unitDetailsArray);    
+    setEnableFilter(unitDetailsArray.length > 0);
   };
 
   // Sort plans by order
@@ -466,12 +466,12 @@ function Tower(props) {
                   let fillOpacity = "0";
                   let stroke = "transparent";
                   let strokeWidth = "0";
-                  
+
                   if (shouldShowColor) {
                     // Extract unit ID from path ID (remove "U-" prefix)
                     const unitId = id.replace('U-', '');
                     const unit = units.find(u => u.unit_id.toString() === unitId);                                        
-                    if(!enableFilter){
+                    if(!enableFilter){                      
                       if (unit && unit.status === 2) {
                         // Unit is confirmed/booked - red color
                         fill = "#f86262";
@@ -493,13 +493,13 @@ function Tower(props) {
                         stroke = "rgba(248, 98, 98, 1)";
                         strokeWidth = "0.1";
                       } else {                                                
-                        // Check if this unit matches the selected filter criteria
-                        if (selectedUnitFilter && unit) {
-                          const matchesFilter = (
-                            unit.type === selectedUnitFilter.unitType &&
-                            unit.area === selectedUnitFilter.sbu &&
-                            unit.cost === selectedUnitFilter.totalCost
-                          );                          
+                        // Check if this unit matches any of the selected filter criteria
+                        if (selectedUnitFilter.length > 0 && unit) {                          
+                          const matchesFilter = selectedUnitFilter.some(filter => (
+                            unit.type === filter.unitType &&
+                            unit.area === filter.sbu &&
+                            unit.cost === filter.totalCost
+                          ));                          
                           if (matchesFilter) {
                             // Highlight matching units with blue color
                             fill = "#5CE459";
@@ -554,12 +554,12 @@ function Tower(props) {
                               const unitId = id.replace('U-', '');
                               const unit = units.find(u => u.unit_id.toString() === unitId);
                               
-                              if (selectedUnitFilter && unit) {
-                                const matchesFilter = (
-                                  unit.unit_type === selectedUnitFilter.unitType &&
-                                  unit.area === selectedUnitFilter.sbu &&
-                                  unit.cost === selectedUnitFilter.totalCost
-                                );
+                              if (selectedUnitFilter.length > 0 && unit) {
+                                const matchesFilter = selectedUnitFilter.some(filter => (
+                                  unit.unit_type === filter.unitType &&
+                                  unit.area === filter.sbu &&
+                                  unit.cost === filter.totalCost
+                                ));
                                 pathElement.style.fillOpacity = matchesFilter ? "0.6" : "0.1";
                               } else {
                                 pathElement.style.fillOpacity = "0.3";
@@ -600,12 +600,12 @@ function Tower(props) {
                                    const unitId = id.replace('U-', '');
                                    const unit = units.find(u => u.unit_id.toString() === unitId);
                                    
-                                   if (selectedUnitFilter && unit) {
-                                     const matchesFilter = (
-                                       unit.unit_type === selectedUnitFilter.unitType &&
-                                       unit.area === selectedUnitFilter.sbu &&
-                                       unit.cost === selectedUnitFilter.totalCost
-                                     );
+                                   if (selectedUnitFilter.length > 0 && unit) {
+                                     const matchesFilter = selectedUnitFilter.some(filter => (
+                                       unit.unit_type === filter.unitType &&
+                                       unit.area === filter.sbu &&
+                                       unit.cost === filter.totalCost
+                                     ));
                                      e.target.style.fillOpacity = matchesFilter ? "0.6" : "0.1";
                                    } else {
                                      e.target.style.fillOpacity = "0.3";

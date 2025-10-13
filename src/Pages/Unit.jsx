@@ -119,13 +119,21 @@ function Unit() {
   }, [selectedBalconyImage]);
 
   const handlePathClick = (pathId) => {
+    console.log('Path clicked:', pathId);
+    console.log('Available balcony images:', unitData.balcony_images);
+    
     // Find balcony image by name matching the path ID
     const balconyImage = unitData.balcony_images.find(img => 
-      img.image_url
+      img.name === pathId && img.image_url
     );
+    
+    console.log('Found balcony image:', balconyImage);
     
     if (balconyImage) {
       setSelectedBalconyImage(balconyImage);
+    } else {
+      console.log('No matching balcony image found for path:', pathId);
+      toast.info('No image available for this area');
     }
   };
 

@@ -173,18 +173,18 @@ const Sidebar = () => {
     return -1;
   };
 
-  const load_360_view = async (url) => {
+  const load_360_view = async (url) => {    
     set_360(url);
-    return false;
-    url = 'https://cdn.pickyassist.com/media_gallery/image/500005_1755608394_1755608391672_0.png';
-    try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const objectUrl = URL.createObjectURL(blob);
-        set_360(objectUrl);
-      } catch (error) {
-        // console.error("Error fetching image:", error);
-      }
+    // return false;
+    // url = 'https://cdn.pickyassist.com/media_gallery/image/500005_1755608394_1755608391672_0.png';
+    // try {      
+    //     const response = await fetch(url);
+    //     const blob = await response.blob();
+    //     const objectUrl = URL.createObjectURL(blob);
+    //     set_360(objectUrl);
+    //   } catch (error) {
+    //     console.error("Error fetching image:", error);
+    //   }
   }
 
   return (

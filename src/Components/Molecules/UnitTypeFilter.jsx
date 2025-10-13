@@ -11,8 +11,9 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
   const [flatFilterSizeValues, setFlatFilterSizeValues] = useState([]);
   const [unitTypeFilters, setFlatFilterTypeValues] = useState([]);
   const { activeMapFilterIds, isFilterActive, setActiveMapFilterIds } = useMapFilter();
+  const [activeMapFilterId, setActiveMapFilterId] = useState([]);
   const [unitDetails, setUnitDetails] = useState([]);
-  const [selectedUnit, setSelectedUnit] = useState(null);
+  const [selectedUnit, setSelectedUnit] = useState([]);
 
   const isAllFiltersActive = () => activeMapFilterIds.length === unitTypeFilters.length;
 
@@ -22,12 +23,22 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
     } else setActiveMapFilterIds([...unitTypeFilters.map((filter) => filter)]);
   };
 
-  const handleFilterClick = (value) => {
-    if (isFilterActive(value)) {
-      setActiveMapFilterIds((old) => old.filter((_id) => _id !== value));
-    } else {
-      setActiveMapFilterIds((old) => [...old, value]);
+  const handleFilterClick = (value) => {    
+    setActiveMapFilterId(value);
+    
+    // Clear selections when filter changes
+    // setUnitDetails([]);
+    setSelectedUnit([]);
+    
+    // Notify parent component to clear filter
+    if (onUnitSelection) {
+      onUnitSelection([]);
     }
+    
+    // if (isFilterActive(value)) {
+    // } else {
+    //   setActiveMapFilterId((old) => [...old, value]);
+    // }
   };
 
   const getAllUnitTypesInTower = (units) => [
@@ -63,9 +74,9 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
     fetchUnitDetails();
   }, [tower, floor]);
 
-  const filteredUnits = activeMapFilterIds.length
-    ? unitDetails.filter((unit) => activeMapFilterIds.includes(unit.UnitType))
-    : [];
+  const filteredUnits = activeMapFilterId
+    ? unitDetails.filter((unit) => activeMapFilterId === unit.UnitType)
+    : [];    
 
   return (
     <Style>
@@ -79,7 +90,7 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
             {unitTypeFilters.map((filter) => (
               <div
                 onClick={() => handleFilterClick(filter)}
-                className={`btn_small  ${isFilterActive(filter) ? "active_bread" : ""}`}
+                className={`btn_small  ${activeMapFilterId == filter ? "active_bread" : ""}`}
                 key={filter}
               >
                 {filter}
@@ -93,31 +104,38 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
             {filteredUnits.map((unit, index) => (
               <div 
                 key={index} 
-                className={`list_gopw ${selectedUnit?.unitId === unit.id ? 'selected-unit' : ''}`}
+                className={`list_gopw ${selectedUnit.some(s => s.unitId === unit.id) ? 'selected-unit' : ''}`}
                 onClick={() => {
-                  setSelectedUnit({
+                  const unitData = {
                     unitType: unit.UnitType,
                     sbu: unit.SBU,
                     totalCost: unit.TotalCost,
                     unitId: unit.id,
                     floorNumber: unit.FloorNumber,
                     flatNumber: unit.FlatNumber
-                  });
+                  };
+
+                  // Check if unit is already selected
+                  const isAlreadySelected = selectedUnit.some(s => s.unitId === unit.id);
                   
-                  if (onUnitSelection) {
-                    onUnitSelection({
-                      unitType: unit.UnitType,
-                      sbu: unit.SBU,
-                      totalCost: unit.TotalCost,
-                      unitId: unit.id,
-                      floorNumber: unit.FloorNumber,
-                      flatNumber: unit.FlatNumber
-                    });
+                  let updatedSelection;
+                  if (isAlreadySelected) {
+                    // Remove from selection
+                    updatedSelection = selectedUnit.filter(s => s.unitId !== unit.id);
+                  } else {
+                    // Add to selection
+                    updatedSelection = [...selectedUnit, unitData];
+                  }
+                  
+                  setSelectedUnit(updatedSelection);
+                  
+                  if (onUnitSelection) {                    
+                    onUnitSelection(updatedSelection);
                   }
                 }}
                 style={{ cursor: onUnitSelection ? 'pointer' : 'default' }}
               >
-                <div style={{ display: "flex", justifyContent: "space-around"}} className="txt_er"><span>{unit.UnitType}</span> - <span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
+                <div style={{ display: "flex", justifyContent: "space-around"}} className="txt_er"><span>{unit.SBU} Sq.Ft</span> - <span>{formatPrice(unit.TotalCost)}</span></div>
               </div>
             ))}
           </div>
