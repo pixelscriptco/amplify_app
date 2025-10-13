@@ -16,7 +16,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   const [burger, setburger] = useState(false);
   const navigate = useNavigate();
   const [expand, setexpand] = useState((window.innerWidth < 900) ? true : false);
-  const [qrr, setqrr] = useState((window.innerWidth < 768) ? false : true);
+  const [qrr, setqrr] = useState((window.innerWidth < 768 || window.innerHeight < 600) ? false : true);
 
   useEffect(() => {    
     const fetchProjectData = async () => {
@@ -201,6 +201,9 @@ function Navigator({ className, currentPage, prevPages = [] }) {
               <img
                 src={projectData.qr_code}
                 alt="QR Code"
+                onClick={() =>{
+                  setqrr(!qrr)
+                }}
                 style={{
                   borderRadius: 8,
                   display : (qrr) ? 'block' : 'none'

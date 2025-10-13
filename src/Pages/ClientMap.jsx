@@ -15,13 +15,20 @@ function ClientMap(props) {
 
   const [client, setClient] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [active_window, setactive_window] = useState(null);
+
+  const hide_that =(sts) =>{
+    setinfow(sts);
+    console.log(active_window);
+    if(active_window) active_window.close();
+  }
 
   useEffect(() => {
     const fetchClientData = async () => {
       try {
         let currentOrigin = window.location.origin;
         if (currentOrigin.includes("localhost")) {
-          currentOrigin = "https://bricks.proptour.live";
+          currentOrigin = "https://gardentech.proptour.live";
         }
         const response = await axiosInstance.get(
           `/app/user?url=${currentOrigin}`
@@ -57,7 +64,7 @@ function ClientMap(props) {
         });
 
         const bounds = new window.google.maps.LatLngBounds();
-        let active_window = false;
+        // let active_window = false;
 
         projects.forEach((project) => {
           const lat = parseFloat(project.latitude);
@@ -102,7 +109,9 @@ function ClientMap(props) {
           marker.addListener("click", () => {
             if(active_window) active_window.close();
             infoWindow.open(map, marker);
-            active_window = infoWindow;
+            // active_window = infoWindow;
+            setactive_window(infoWindow);
+            setinfow(false);
           });
 
           bounds.extend({ lat, lng });
@@ -141,7 +150,7 @@ function ClientMap(props) {
         <div>
           {client.logo && client.description && (
             <>
-              <div className="infobtnnn" onClick={() => setinfow(true)}>
+              <div className="infobtnnn" onClick={() => hide_that(true)}>
                 <svg
                   viewBox="64 64 896 896"
                   focusable="false"
