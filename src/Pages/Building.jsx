@@ -16,6 +16,7 @@ import {
   DialogContent,
 } from "@mui/material";
 import Sidebar from "../Components/Sidebar";
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
 
 function Building(props) {
   const { project } = useParams();
@@ -56,8 +57,14 @@ function Building(props) {
       if (!project) return;
       try {
         const response = await axiosInstance.get(`/app/building/${project}`);
-        const { id, name, image_url, svg_url, floors } = response.data;
-        const svgResp = await fetch(svg_url);
+        const processedData = processApiResponse(response.data);
+        const { id, name, image_url, svg_url, floors } = processedData;
+        
+        // Replace S3 URLs with CloudFront URLs
+        const cloudFrontImageUrl = replaceS3WithCloudFront(image_url);
+        const cloudFrontSvgUrl = replaceS3WithCloudFront(svg_url);
+        
+        const svgResp = await fetch(cloudFrontSvgUrl);
         const svgText = await svgResp.text();
         
         // Parse the SVG text and extract <path> elements
@@ -68,7 +75,7 @@ function Building(props) {
         setBuildingData({
           id,
           name,
-          imageUrl: image_url,
+          imageUrl: cloudFrontImageUrl,
           floors,
           paths,
         });
@@ -120,9 +127,12 @@ function Building(props) {
           `/app/${buildingData.id}/tower/${towerId}`
         );
         
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedTowerData = processApiResponse(response.data);
+        
         setTowerData((prev) => ({
           ...prev,
-          [towerId]: response.data,
+          [towerId]: processedTowerData,
         }));
       } catch (err) {
         console.error("Error fetching tower data:", err);
@@ -195,7 +205,7 @@ function Building(props) {
     const areas = Object.values(tower.stats.unit_areas)
       .map((area) => area)
       .filter(Boolean);
-
+    
     return (
       <div className="desc_wrap">
         <div className="main_wrap_title pad_btm_15px_brd">
@@ -210,7 +220,7 @@ function Building(props) {
               <path d="M192 112C183.2 112 176 119.2 176 128L176 512C176 520.8 183.2 528 192 528L272 528L272 448C272 430.3 286.3 416 304 416L336 416C353.7 416 368 430.3 368 448L368 528L448 528C456.8 528 464 520.8 464 512L464 128C464 119.2 456.8 112 448 112L192 112zM128 128C128 92.7 156.7 64 192 64L448 64C483.3 64 512 92.7 512 128L512 512C512 547.3 483.3 576 448 576L192 576C156.7 576 128 547.3 128 512L128 128zM224 176C224 167.2 231.2 160 240 160L272 160C280.8 160 288 167.2 288 176L288 208C288 216.8 280.8 224 272 224L240 224C231.2 224 224 216.8 224 208L224 176zM368 160L400 160C408.8 160 416 167.2 416 176L416 208C416 216.8 408.8 224 400 224L368 224C359.2 224 352 216.8 352 208L352 176C352 167.2 359.2 160 368 160zM224 304C224 295.2 231.2 288 240 288L272 288C280.8 288 288 295.2 288 304L288 336C288 344.8 280.8 352 272 352L240 352C231.2 352 224 344.8 224 336L224 304zM368 288L400 288C408.8 288 416 295.2 416 304L416 336C416 344.8 408.8 352 400 352L368 352C359.2 352 352 344.8 352 336L352 304C352 295.2 359.2 288 368 288z" />
             </svg>
           </span>
-          <span className="cap_text">Tower {tower.name}</span>
+          <span className="cap_text">{tower.name}</span>
         </div>
 
         <div className="main_bfox_wrap">
@@ -305,28 +315,54 @@ function Building(props) {
                   </>
                 ) : null}
 
-                {areas && areas.length ? (
-                  <>
-                    {areas.map((ut, index, array) => (
-                      <React.Fragment key={ut}>
+                {areas && areas.length > 0 ? (() => {                                    
+                  // Convert all to numbers, remove duplicates, and sort ascending
+                  // const sortedAreas = Object.fromEntries(
+                  //   Object.entries(areas).map(([key, values]) => [
+                  //     key,
+                  //     [...new Set(values.map(Number))].sort((a, b) => a - b),
+                  //   ])
+                  // )[0];
+                                    
+                  // const minArea = sortedAreas[0];
+                  // const maxArea = sortedAreas[sortedAreas.length - 1];
+                  const minMaxAreas = (() => {
+                    const allValues = Object.values(areas).flat().map(Number);
+                    const sorted = [...new Set(allValues)].sort((a, b) => a - b);
+                    return [sorted[0], sorted[sorted.length - 1]];
+                  })();
+
+                  const formatted = Object.entries(areas).map(([key, values]) => {
+                    const sorted = [...new Set(values.map(Number))].sort((a, b) => a - b);
+                    const min = sorted[0];
+                    const max = sorted[sorted.length - 1];
+                    const label = key.replace(/\s+/g, '').toLowerCase(); // "2 BHK" → "2bhk"
+                    return `${label} ${min}${min !== max ? `-${max}` : ''} sqft`;
+                  });
+
+                  // Prepare the display array
+                  // const displayAreas = minArea === maxArea ? [minArea] : [minArea, maxArea];
+
+                  return minMaxAreas.map((ut, index) => (
+                    <React.Fragment key={index}>
                       <div className="flors_icons">
-                          <span className="dd_flex">
-                            <svg
-                              width="16px"
-                              height="16px"
-                              fill="currentColor"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 640 640"
-                            >
-                              <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
-                            </svg>
-                          </span>
-                          {ut} SqFt
-                        </div>
-                      </React.Fragment>
-                    ))}
-                  </>
-                ) : null}
+                        <span className="dd_flex">
+                          <svg
+                            width="16px"
+                            height="16px"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 640 640"
+                          >
+                            <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
+                          </svg>
+                        </span>
+                        {ut} SqFt
+                      </div>
+                    </React.Fragment>
+                  ));
+                })() : null}
+
               </div>
             ) : null
           }
@@ -351,7 +387,7 @@ function Building(props) {
       {/* Mobile instruction */}
       {isMobile && showMobileInstruction && (
         <div style={{
-          position: 'absolute',
+          position: 'fixed',
           top: '80px',
           left: '50%',
           transform: 'translateX(-50%)',
@@ -360,8 +396,10 @@ function Building(props) {
           padding: '8px 16px',
           borderRadius: '20px',
           fontSize: '14px',
-          zIndex: 1000,
-          animation: 'fadeInOut 5s ease-in-out'
+          zIndex: 1001,
+          animation: 'fadeInOut 5s ease-in-out',
+          maxWidth: '90vw',
+          textAlign: 'center'
         }}>
           Tap to view details • Double-tap to navigate
         </div>
@@ -386,14 +424,17 @@ function Building(props) {
         <>
           <svg
             preserveAspectRatio="xMidYMid slice"
-            width="1086"
-            height="615"
-            viewBox="0 0 1086 615"
+            width="100%"
+            height="100%"
+            viewBox="0 0 4000 2250"
             fill="none"
+            className="base_image"
           >
             <image
-              height="100%"
-              style={{ objectFit: "contain", backdropFilter: "opacity(10%)" }}
+              x="0"
+              y="0"
+              width="4000"
+              height="2250"
               xlinkHref={buildingData?.imageUrl}
             />
 
@@ -475,17 +516,17 @@ function Building(props) {
             <Box
               sx={{
                 position: "fixed",
-                // top: modalPosition.y,
-                // left: modalPosition.x,
-                right : '30px',
-                bottom: '30px',
-                width: 300,
+                right: { xs: '10px', sm: '30px' },
+                bottom: { xs: '10px', sm: '30px' },
+                width: { xs: '280px', sm: '300px' },
+                maxWidth: '90vw',
                 bgcolor: "#ffffff",
                 borderRadius: "12px",
                 boxShadow: "0px 15px 50px 0px rgba(27, 32, 50, 0.1)",
                 p: "0px",
                 pointerEvents: "auto",
                 transition: "all 0.2s ease-in-out",
+                zIndex: 1000,
               }}
             >
               {hoveredTower &&
@@ -508,13 +549,19 @@ export default Building;
 const Style = styled.main`
   height: 100vh;
   overflow: hidden;
-  width: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
   background-position: center;
 
-  svg {
-    height: 100%;
-    width: 100%;
+  .base_image {
+    height: 100vh;
+    width: 100vw;
     touch-action: manipulation; /* Improve touch responsiveness */
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
   }
 
   /* Mobile-specific improvements */
@@ -527,6 +574,24 @@ const Style = styled.main`
     g[class*="sc-bZkfAO"] {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Ensure SVG fills screen properly on mobile */
+    .base_image {
+      height: 100vh;
+      width: 100vw;
+      max-height: 100vh;
+      max-width: 100vw;
+      object-fit: cover;
+    }
+  }
+
+  /* Tablet and desktop improvements */
+  @media (min-width: 769px) {
+    .base_image {
+      height: 100vh;
+      width: 100vw;
+      object-fit: cover;
     }
   }
 

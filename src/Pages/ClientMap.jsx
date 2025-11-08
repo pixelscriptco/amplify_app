@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../Utility/axios"; // adjust path
 import styled from "styled-components";
 import { REACT_APP_GOOGLE_MAPS_API_KEY } from '../config';
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
 
 function ClientMap(props) {
   const { project } = useParams();
@@ -33,8 +34,22 @@ function ClientMap(props) {
         const response = await axiosInstance.get(
           `/app/user?url=${currentOrigin}`
         );
-        setClient(response.data.user);
-        setProjects(response.data.projects); // API returns an array
+        
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedData = processApiResponse(response.data);
+        
+        const cloudFrontLogo = replaceS3WithCloudFront(processedData.user.logo);
+        const cloudFrontProjects = processedData.projects.map(project => ({
+          ...project,
+          location_logo: replaceS3WithCloudFront(project.location_logo),
+          location_image: replaceS3WithCloudFront(project.location_image)
+        }));
+        
+        setClient({
+          ...processedData.user,
+          logo: cloudFrontLogo
+        });
+        setProjects(cloudFrontProjects); // API returns an array
         setLoading(false);
       } catch (err) {
         console.error("Error fetching client data:", err);

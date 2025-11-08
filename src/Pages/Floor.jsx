@@ -21,6 +21,8 @@ import { COMPASS_ANGLES } from "../Utility/Constants";
 import UnitStatusLegend from "../Components/Atoms/UnitStatusLegend";
 import axiosInstance from "../Utility/axios";
 import Sidebar from '../Components/Sidebar';
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
+import Err from "../Components/Atoms/Error";
 
 function Floor() {
   const [showOverlays, setShowOverlays] = useState(true);
@@ -42,8 +44,10 @@ function Floor() {
   const [error, setError] = useState(null);
   const [floorData, setFloorData] = useState(null);
   const [floorSvg, setFloorSvg] = useState({});
+  const [svgViewBox, setSvgViewBox] = useState('0 0 4000 2250');
+  const [viewBoxSize, setViewBoxSize] = useState({ w: 4000, h: 2250 });
   const [showFilter, setShowFilter] = useState(false);
-  const [selectedUnitFilter, setSelectedUnitFilter] = useState(null);
+  const [selectedUnitFilter, setSelectedUnitFilter] = useState([]);
   const [enableFilter, setEnableFilter] = useState(false);
 
   useEffect(() => {
@@ -52,17 +56,24 @@ function Floor() {
         setLoading(true);
         const response = await axiosInstance.get(`/app/floor/${project}/${tower}/${floor}`);
 
-        const { id, name, floor_count } = response.data;
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedData = processApiResponse(response.data);
+
+        const { id, name, floor_count } = processedData;
         
         setFloorData({
           id,
           name,
           floor_count
         })
-        setUnits(response.data.units);
-        const {image_url, svg_url,unit_count} = response.data.floor_plan;
+        setUnits(processedData.units);
+        const {image_url, svg_url,unit_count} = processedData.floor_plan;
         
-        const svgResp = await fetch(svg_url);
+        // Replace S3 URLs with CloudFront URLs
+        const cloudFrontImageUrl = replaceS3WithCloudFront(image_url);
+        const cloudFrontSvgUrl = replaceS3WithCloudFront(svg_url);
+        
+        const svgResp = await fetch(cloudFrontSvgUrl);
         const svgText = await svgResp.text();
   
         // Parse the SVG text and extract <path> elements
@@ -70,12 +81,31 @@ function Floor() {
         const svgDoc = parser.parseFromString(svgText, 'image/svg+xml');
         const paths = Array.from(svgDoc.querySelectorAll('path'));
 
+        // Read viewBox from fetched SVG if present
+        const svgRoot = svgDoc.querySelector('svg');
+        const fetchedViewBox = svgRoot?.getAttribute('viewBox');
+        if (fetchedViewBox) {
+          setSvgViewBox(fetchedViewBox);
+          const parts = fetchedViewBox.split(/\s+/).map(Number);
+          if (parts.length === 4) {
+            setViewBoxSize({ w: parts[2] || 4000, h: parts[3] || 2250 });
+          }
+        } else {
+          // fallback: infer from image natural size once image loads
+          const img = new Image();
+          img.onload = () => {
+            setSvgViewBox(`0 0 ${img.naturalWidth || 4000} ${img.naturalHeight || 2250}`);
+            setViewBoxSize({ w: img.naturalWidth || 4000, h: img.naturalHeight || 2250 });
+          };
+          img.src = cloudFrontImageUrl;
+        }
+
         const floorNumber = name.split('-')[1];        
 
         paths.forEach(path => {
           const pathId = path.id; 
           
-          response.data.units.forEach(unit => {
+          processedData.units.forEach(unit => {
             // Assuming unit.name is like "A-102"
             const [towerPart, floorUnitPart] = unit.name.split('-');
             const unitNumberPart = floorUnitPart.slice(floorNumber.length);
@@ -98,9 +128,9 @@ function Floor() {
         });
                 
         setFloorSvg({
-          id : response.data.floor_plan.id,
-          name : response.data.floor_plan.name,
-          image_url,
+          id : processedData.floor_plan.id,
+          name : processedData.floor_plan.name,
+          image_url: cloudFrontImageUrl,
           unit_count,
           paths,
         });
@@ -118,7 +148,9 @@ function Floor() {
   }, [project, tower,floor]);
 
   useEffect(() => {
-    ref.current.parentElement.style.transition = "all linear 0.1s";
+    if (ref.current && ref.current.parentElement) {
+      ref.current.parentElement.style.transition = "all linear 0.1s";
+    }
     toogleHideOverlays(showOverlays);
   }, [showOverlays]);
 
@@ -141,9 +173,13 @@ function Floor() {
         const response = await axiosInstance.get(
           `/app/floor/${floorData.id}/unit/${unit_str}`
         );
+        
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedUnitData = processApiResponse(response.data);
+        
         setUnitData((prev) => ({
           ...prev,
-          [unit_str]: response.data,
+          [unit_str]: processedUnitData,
         }));
       } catch (err) {
         console.error("Error fetching floor data:", err);
@@ -155,10 +191,11 @@ function Floor() {
     setHoveredUnit(null);
   };
 
-  const handleUnitSelection = (unitDetails) => {
-    setSelectedUnitFilter(unitDetails);    
-    setEnableFilter(true);
+  const handleUnitSelection = (unitDetailsArray) => {    
+    setSelectedUnitFilter(unitDetailsArray);    
+    setEnableFilter(unitDetailsArray.length > 0);
   };
+
 
   function formatPrice(value) {
     if (!value || isNaN(value)) return "";
@@ -192,7 +229,7 @@ function Floor() {
             </svg>
           </span>
           <span className="cap_text">
-            {unit.name}{" "}
+            {unit.slug?unit.slug:unit.name}
           </span>
         </div>
 
@@ -252,7 +289,7 @@ function Floor() {
                       <path d="M160 128C160 110.3 174.3 96 192 96L456 96C469.3 96 480 106.7 480 120C480 133.3 469.3 144 456 144L379.3 144C397 163.8 409.4 188.6 414 216L456 216C469.3 216 480 226.7 480 240C480 253.3 469.3 264 456 264L414 264C403.6 326.2 353.2 374.9 290.2 382.9L434.6 486C449 496.3 452.3 516.3 442 530.6C431.7 544.9 411.7 548.3 397.4 538L173.4 378C162.1 370 157.3 355.5 161.5 342.2C165.7 328.9 178.1 320 192 320L272 320C307.8 320 338.1 296.5 348.3 264L184 264C170.7 264 160 253.3 160 240C160 226.7 170.7 216 184 216L348.3 216C338.1 183.5 307.8 160 272 160L192 160C174.3 160 160 145.7 160 128z" />
                     </svg>
               </span>
-              {formatPrice(unit.cost??(unit.unit_plans?unit.unit_plans.cost:''))}
+              {formatPrice(unit.cost?unit.cost:(unit.unit_plans?unit.unit_plans.cost:''))}
             </div>
           </div>
       </div>
@@ -362,96 +399,113 @@ function Floor() {
         </div>
       </div>
       {/* <ApartmentsDetails /> */}
-      <Zoomable>
-        <div className="zoomable-container" ref={ref}>
-          <div className="img-wrapper">
-            <img
-              src={floorSvg.image_url}
-              alt="floor"
-            />
-          </div>
-          <div className="svg-wrapper ">
-            {/* placing floor nos */}
-            <SvgStyle
-              width="1086"
-              height="760"
-              viewBox="0 0 1086 760"
-              fill="transparent"
-              onClick={(e) => {
-                if (e.target.tagName !== "path") return;
 
-                const unit = e.target.dataset.unit;
-                if (!unit) return;
-              }}
-              ref={ref}
-            >
-            <g id="units-svg">
-              {!loading && floorSvg.paths && floorSvg.paths.map((pathEl, index) => {
-                const id = pathEl.getAttribute('id') || `path-${index}`;
-                const d = pathEl.getAttribute('d');
-                const className = pathEl.getAttribute('class') || 'Available';
-                
-                const paddedId = id.toString().padStart(2, '0');
-                const unit_str = tower+'-'+floor+paddedId;
-                
-                // Find the unit data to check filter match
-                const unitData = units.find(u => u.name === unit_str);
-                
-                // Check if unit matches the selected filter
-                let matchesFilter = true;
-                let defaultOpacity = '0.6';
-                
-                if (selectedUnitFilter && unitData && enableFilter) {
-                  matchesFilter = (
-                    unitData.unit_plans?.type === selectedUnitFilter.unitType &&
-                    unitData.unit_plans?.area === selectedUnitFilter.sbu &&
-                    (unitData.cost ?? unitData.unit_plans?.cost) === selectedUnitFilter.totalCost
-                  );
+      {floorSvg.image_url ?(
+          <Zoomable>
+          <div className="zoomable-container" ref={ref}>
+            <div className="img-wrapper" style={{ display: 'none' }}>
+              <img src={floorSvg.image_url} alt="floor" />
+            </div>
+            <div className="svg-wrapper ">
+              {/* placing floor nos */}
+              <SvgStyle
+                width="100%"
+                height="100%"
+                viewBox={svgViewBox}
+                fill="transparent"
+                preserveAspectRatio="xMidYMid meet"
+                className="floor-svg"
+                style={{ pointerEvents: 'auto', touchAction: 'none' }}
+                onClick={(e) => {
+                  if (e.target.tagName !== "path") return;
+
+                  const unit = e.target.dataset.unit;
+                  if (!unit) return;
+                }}
+                ref={ref}
+              >
+              {floorSvg.image_url && (
+                <image
+                  href={floorSvg.image_url}
+                  x="0"
+                  y="0"
+                  width={viewBoxSize.w}
+                  height={viewBoxSize.h}
+                  preserveAspectRatio="xMidYMid meet"
+                  pointerEvents="none"
+                />
+              )}
+              <g id="units-svg">
+                {!loading && floorSvg.paths && floorSvg.paths.map((pathEl, index) => {
+                  const id = pathEl.getAttribute('id') || `path-${index}`;
+                  const d = pathEl.getAttribute('d');
+                  const className = pathEl.getAttribute('class') || 'Available';
                   
-                  if (matchesFilter) {
-                    defaultOpacity = '0.8'; // Highlight matching units
-                  } else {
-                    defaultOpacity = '0.2'; // Dim non-matching units
+                  const paddedId = id.toString().padStart(2, '0');
+                  const unit_str = tower+'-'+floor+paddedId;
+                  
+                  // Find the unit data to check filter match
+                  const unitData = units.find(u => u.name === unit_str);
+                  
+                  // Check if unit matches the selected filter
+                  let matchesFilter = true;
+                  let defaultOpacity = '0.6';
+                  
+                  if (selectedUnitFilter.length > 0 && unitData && enableFilter) {                  
+                    const matchesFilter = selectedUnitFilter.some(filter => (
+                      unitData.unit_plans?.type === filter.unitType &&
+                      unitData.unit_plans?.area === filter.sbu &&
+                      (unitData.cost ?unitData.cost:unitData.unit_plans?.cost) === filter.totalCost
+                    ));            
+                    
+                    if (matchesFilter) {
+                      defaultOpacity = '0.8'; // Highlight matching units
+                    } else {
+                      defaultOpacity = '0.2'; // Dim non-matching units
+                    }
                   }
-                }
-                
-                // Map status values
-                const getStatusText = (status) => {
-                  switch(status) {
-                    case '1': return 'Available';
-                    case '2': return 'Booked';
-                    case '3': return 'Hold';
-                    default: return 'Available';
-                  }
-                };
+                  
+                  // Map status values
+                  const getStatusText = (status) => {
+                    switch(status) {
+                      case '1': return 'Available';
+                      case '2': return 'Booked';
+                      case '3': return 'Hold';
+                      default: return 'Available';
+                    }
+                  };
 
-                const statusText = getStatusText(pathEl.getAttribute('status'));
-                
-                return (
-                  <path
-                    key={id}
-                    d={d}
-                    className={className}
-                    data-unit={id}
-                    style={{ fillOpacity: defaultOpacity }}
-                    onClick={() => navigate(`/${project}/tower/${tower}/floor/${floor}/unit/${unit_str}`)}
-                    onMouseEnter={(e) => {
-                      e.target.style.fillOpacity = '0';
-                      handleUnitHover(unit_str, e);
-                    }}
-                    onMouseLeave={(e) => {
-                      handleFloorLeave();
-                      e.target.style.fillOpacity = defaultOpacity;
-                    }}
-                  />
-                );
-              })}
-            </g>
-          </SvgStyle>
+                  const statusText = getStatusText(pathEl.getAttribute('status'));
+                  
+                  return (
+                    <path
+                      key={id}
+                      d={d}
+                      className={className}
+                      data-unit={id}
+                      style={{ fillOpacity: defaultOpacity }}
+                      onClick={() => navigate(`/${project}/tower/${tower}/floor/${floor}/unit/${unit_str}`)}
+                      onTouchStart={(e) => { e.preventDefault(); navigate(`/${project}/tower/${tower}/floor/${floor}/unit/${unit_str}`); }}
+                      onPointerDown={(e) => { e.preventDefault(); navigate(`/${project}/tower/${tower}/floor/${floor}/unit/${unit_str}`); }}
+                      onMouseEnter={(e) => {
+                        e.target.style.fillOpacity = '0';
+                        handleUnitHover(unit_str, e);
+                      }}
+                      onMouseLeave={(e) => {
+                        handleFloorLeave();
+                        e.target.style.fillOpacity = defaultOpacity;
+                      }}
+                    />
+                  );
+                })}
+              </g>
+            </SvgStyle>
+            </div>
           </div>
-        </div>
-      </Zoomable>
-
+          </Zoomable>
+        ):(
+          <Err msg="Couldn't find floor details" type='found' />
+        )}
       <Modal
         open={hoveredUnit !== null}
         onClose={handleFloorLeave}
@@ -495,9 +549,12 @@ export default Floor;
 
 const Style = styled.main`
   height: 100vh;
-  width: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
   /* background-image: url(${process.env.PUBLIC_URL}/dubai_map.jpg); */
   background-position: center;
+  background:rgb(24, 83, 75) !important;
 
   .unit-type-filter {
     position: absolute;
@@ -629,6 +686,36 @@ const Style = styled.main`
   .compass-fullscreen-wrapper {
     padding: 1rem;
     padding-right: 2rem;
+  }
+
+  .floor-svg {
+    height: 100%;
+    width: 100%;
+    touch-action: manipulation;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: contain;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    .floor-svg {
+      height: 100%;
+      width: 100%;
+      max-height: 100vh;
+      max-width: 100vw;
+      object-fit: contain;
+    }
+  }
+
+  /* Tablet and desktop improvements */
+  @media (min-width: 769px) {
+    .floor-svg {
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+    }
   }
 `;
 

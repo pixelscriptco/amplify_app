@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { smart_world_site_1 } from "../Data/Screen1PageSvg";
 import Err from "./Atoms/Error";
 import ReactPannellum, { getConfig } from "react-pannellum";
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
 
 // Simple SVG placeholders for Description and Construction Updates
 const DescriptionIcon = () => (
@@ -46,6 +47,19 @@ const AmenitiesIcon = () => (
   </svg>
 );
 
+// Play icon for Animated Walkthrough
+const AnimatedIcon = () => (
+  <svg
+    width="22px"
+    height="22px"
+    fill="currentColor"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 640 640"
+  >
+    <path d="M320 64C182.1 64 72 174.1 72 312C72 449.9 182.1 560 320 560C457.9 560 568 449.9 568 312C568 174.1 457.9 64 320 64zM272 216L424 312L272 408L272 216z" />
+  </svg>
+);
+
 // Custom Location icon (pin/marker)
 const CustomLocationIcon = () => (
   <svg
@@ -78,6 +92,7 @@ const iconData = [
   { Icon: AmenitiesIcon, label: "Amenities" },
   { Icon: ConstructionIcon, label: "Construction Updates" },
   { Icon: Custom360Icon, label: "360 Walkthrough" },
+  { Icon: AnimatedIcon, label: "Animated Walkthrough" },
 ];
 
 const Sidebar = () => {
@@ -89,8 +104,10 @@ const Sidebar = () => {
   const [showConstructionUpdates, setShowConstructionUpdates] = useState(false);
   const { project } = useParams();
   const [description, setDescription] = useState("");
+  const [location_description, setLocationDescription] = useState("");
   const [website_link, setWebsiteLink] = useState("");
   const [projectUrl, setProjectUrl] = useState("");
+  const [walkthroughVideo, setWalkthroughVideo] = useState("");
   const [amenities, setAmenities] = useState([]);
   const [project_updates, setProjectUpdates] = useState([]);
   const [resorcetype, setResorcetype] = useState("image");
@@ -98,29 +115,36 @@ const Sidebar = () => {
   const [do_360, set_360] = useState("");
   const [fclick, setfclick] = useState(false);
   const [constr, setconstr] = useState(false);
+  const [showAnimated, setShowAnimated] = useState(false);
 
   useEffect(() => {
     if (!project) return;
     axiosInstance
       .get(`/app/project/${project}/details`)
-      .then((response) => {
-        let { description, vr_url , amenities, project_updates, website_link } =
-          response.data;
+      .then((response) => {        
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedData = processApiResponse(response.data);
+        
+        let { description, project_url , amenities, project_updates, website_link, walkthrough_video,home_location_description } =
+          processedData;
         // project_updates = [];
+        
         setDescription(description || "");
+        setLocationDescription(home_location_description || "");
         setWebsiteLink(website_link || "");
-        setProjectUrl(vr_url  || "");
+        setProjectUrl(project_url  || "");
+        setWalkthroughVideo(walkthrough_video || "");
         setAmenities(amenities || []);
         setProjectUpdates(project_updates || []);
         // console.log(amenities);
         if (
-          response.data &&
-          response.data.latitude &&
-          response.data.longitude
+          processedData &&
+          processedData.latitude &&
+          processedData.longitude
         ) {
           setLocation({
-            lat: response.data.latitude,
-            lng: response.data.longitude,
+            lat: processedData.latitude,
+            lng: processedData.longitude,
           });
         }
       })
@@ -129,18 +153,33 @@ const Sidebar = () => {
       });
   }, [project]);
 
-  const handleIconClick = (idx) => {
+  const handleIconClick = (idx) => {    
     setShowDescription(false);
     setShowLocation(false);
     setShowAmenities(false);
     setShowTour(false);
     setShowConstructionUpdates(false);
+    setShowAnimated(false);
     setfclick(true);
     if (idx === 0) setShowDescription(true);
     if (idx === 1) setShowLocation(true);
     if (idx === 2) setShowAmenities(true);
     if (idx === 3) setShowConstructionUpdates(true);
-    if (idx === 4) setShowTour(true);
+    if (idx === 4) {
+      if(projectUrl){
+        window.open(projectUrl,'_blank')
+      }else{
+        setShowTour(true);
+      }
+    }
+    if (idx === 5) {
+      if (walkthroughVideo) {
+        window.open(walkthroughVideo,'_blank')
+        // Reuse existing overlay viewer
+      } else {
+        setShowAnimated(true);
+      }
+    }
     // Add more handlers for other icons if needed
   };
 
@@ -151,6 +190,7 @@ const Sidebar = () => {
     if (showAmenities) return 2;
     if (showConstructionUpdates) return 3;
     if (showTour) return 4;
+    if (showAnimated) return 5;
     return -1;
   };
 
@@ -246,6 +286,40 @@ const Sidebar = () => {
           )}
         </div>
       </SlidePanel>
+      <SlidePanel open={showAnimated} className="slide_panell">
+        <div className="slide-panel-content">
+          <button className="close-btn" onClick={() => setShowAnimated(false)}>
+            &times;
+          </button>
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {!walkthroughVideo ? (
+              <div className="no_data_wrap">
+                <div className="no_data_block">
+                  <img src={nothing_found} alt="no data" />
+                </div>
+                <span className="text_amentyies">No animated walkthrough available.</span>
+              </div>
+            ) : (
+              <div className="construction_uopdated" style={{ width: '100%' }}>
+                <div className="contr_prevw">
+                  <video width="100%" height="240" controls>
+                    <source src={walkthroughVideo} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </SlidePanel>
       <SlidePanel open={showLocation} className="slide_panell jst_itttt">
         <div className="slide-panel-content">
           <button className="close-btn" onClick={() => setShowLocation(false)}>
@@ -272,11 +346,11 @@ const Sidebar = () => {
             ) : (
               <div className="Mappp_cnhs">
                 {
-                  description && (                    
+                  location_description && (                    
                     <div
                       className="ghtyu"
                       style={{ marginTop: 20, padding: "0px 20px" }}
-                      dangerouslySetInnerHTML={{ __html: description }}
+                      dangerouslySetInnerHTML={{ __html: location_description }}
                     ></div>
                   )
                 }
@@ -319,7 +393,7 @@ const Sidebar = () => {
               amenities.map((a, idx) => (
                 <div
                   className="AMENITIES_OUTER"
-                  onClick={() => a.image && load_360_view(a.image)}
+                  onClick={() => window.open(a.vr_url, '_blank')}
                 >
                   <div className="img_blockqe">
                     <img src={a.image} alt={a.name} className="IMG_amenite" />
@@ -465,6 +539,7 @@ const Sidebar = () => {
                         <video
                           width="100%"
                           height="240"
+                          title={a.name}
                           controls
                           // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
                           style={{ cursor: a.vr_url ? "pointer" : "default" }}
@@ -480,12 +555,13 @@ const Sidebar = () => {
                         <img
                           src={a.image_url}
                           alt={a.name}
+                          title={a.name}
                           // onClick={() => a.vr_url && window.open(a.vr_url, "_blank")}
                         />
                       )}
                     </div>
-                    <div style={{ display: 'none' }}>
-                      <span className="main_text_blk">{a.name}</span>
+                    <div>
+                      <span className="main_text_wt">{a.name}</span>
                     </div>
                   </div>
                 ))}
@@ -572,11 +648,21 @@ const Sidebar = () => {
       >
       {
         projectUrl ? (
-        <div className="main_se_wrap_box">
-          <video width="100%" height="100%" controls>
-            <source src={projectUrl} type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
+          <div
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "#000",
+            color: "#fff",
+            cursor: "pointer",
+            borderRadius: "8px",
+          }}
+          onClick={() => window.open(projectUrl, "_blank")}
+        >
+          <span>Click to View 360° Tour</span>
         </div>) : (<Err msg="Couldn't find Project tour details." />)
       }
         <div

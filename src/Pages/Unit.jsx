@@ -17,6 +17,10 @@ import { COMPASS_ANGLES } from "../Utility/Constants";
 import axiosInstance from "../Utility/axios";
 import Sidebar from '../Components/Sidebar';
 import Err from "../Components/Atoms/Error";
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
+import { Modal, Box, Typography, Button, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 
 
 function Unit() {
@@ -36,10 +40,12 @@ function Unit() {
     id: 0,
     name: '',
     status:1,
+    slug:'',
     area:0,
     type:'',
     cost:'',
     image_url: '',
+    vr_url: '',
     paths: [],
     balcony_images: [],
   });
@@ -50,7 +56,22 @@ function Unit() {
 
   const [showPaymentsPopup, setShowPaymentsPopup] = useState(false);
   const [showVRTour, setShowVRTour] = useState(false);
+  const [vrModalOpen, setVrModalOpen] = useState(false);
   const [selectedBalconyImage, setSelectedBalconyImage] = useState(null);
+  const [svgViewBox, setSvgViewBox] = useState('0 0 4000 2250');
+  const [viewBoxSize, setViewBoxSize] = useState({ w: 4000, h: 2250 });
+
+  const handleVRModalOpen = () => {    
+    if (unitData) {
+      setVrModalOpen(true);
+    } else {
+      toast.error('VR Tour is not available for this unit');
+    }
+  };
+
+  const handleVRModalClose = () => {
+    setVrModalOpen(false);
+  };
 
   useEffect(() => {
     const fetchFloorSvg = async () => {
@@ -58,21 +79,41 @@ function Unit() {
         setLoading(true);
         const response = await axiosInstance.get(`/app/unit/${project}/${tower}/${floor}/${unit_str}`);
 
-        const { id, name,status } = response.data;
-        const {plan,area,type,cost,svg_url,balcony_images} = response.data.unit_plans;
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedData = processApiResponse(response.data);
+
+        const { id, name,slug,status } = processedData;
+        const {plan,area,type,cost,svg_url,balcony_images} = processedData.unit_plans;
+        
+        // Replace S3 URLs with CloudFront URLs
+        const cloudFrontPlan = replaceS3WithCloudFront(plan);
+        const cloudFrontSvgUrl = replaceS3WithCloudFront(svg_url);
+        const cloudFrontBalconyImages = balcony_images?.map(img => ({
+          ...img,
+          image_url: replaceS3WithCloudFront(img.image_url)
+        })) || [];
         
         let paths = [];
+        let fetchedViewBox = null;
         
         // Fetch and parse SVG if svg_url is available
-        if (svg_url) {
+        if (cloudFrontSvgUrl) {
           try {
-            const svgResp = await fetch(svg_url);
+            const svgResp = await fetch(cloudFrontSvgUrl);
             const svgText = await svgResp.text();
             
             // Parse the SVG text and extract <path> elements
             const parser = new DOMParser();
             const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-            
+            const svgRoot = svgDoc.querySelector('svg');
+            fetchedViewBox = svgRoot?.getAttribute('viewBox');
+            if (fetchedViewBox) {
+              setSvgViewBox(fetchedViewBox);
+              const parts = fetchedViewBox.split(/\s+/).map(Number);
+              if (parts.length === 4) {
+                setViewBoxSize({ w: parts[2] || 4000, h: parts[3] || 2250 });
+              }
+            }
             paths = Array.from(svgDoc.querySelectorAll("path"));
           } catch (svgError) {
             console.error('Error fetching SVG:', svgError);
@@ -83,14 +124,26 @@ function Unit() {
         setUnitData({
           id,
           name,
+          slug,
           status,
           area,
           type,
           cost,
-          image_url:plan,
+          image_url: cloudFrontPlan,
+          vr_url: processedData.unit_plans.vr_url || '',
           paths,
-          balcony_images: balcony_images || []
+          balcony_images: cloudFrontBalconyImages
         })
+
+        // Fallback: derive viewBox from image natural size if SVG had no viewBox
+        if (!fetchedViewBox && cloudFrontPlan) {
+          const img = new Image();
+          img.onload = () => {
+            setSvgViewBox(`0 0 ${img.naturalWidth || 4000} ${img.naturalHeight || 2250}`);
+            setViewBoxSize({ w: img.naturalWidth || 4000, h: img.naturalHeight || 2250 });
+          };
+          img.src = cloudFrontPlan;
+        }
 
         setLoading(false);  
       }catch(err){
@@ -118,21 +171,15 @@ function Unit() {
     }
   }, [selectedBalconyImage]);
 
-  const handlePathClick = (pathId) => {
-    console.log('Path clicked:', pathId);
-    console.log('Available balcony images:', unitData.balcony_images);
-    
+  const handlePathClick = (pathId) => {    
     // Find balcony image by name matching the path ID
     const balconyImage = unitData.balcony_images.find(img => 
       img.name === pathId && img.image_url
     );
-    
-    console.log('Found balcony image:', balconyImage);
-    
+        
     if (balconyImage) {
       setSelectedBalconyImage(balconyImage);
     } else {
-      console.log('No matching balcony image found for path:', pathId);
       toast.info('No image available for this area');
     }
   };
@@ -142,13 +189,13 @@ function Unit() {
   };
 
   const handleBooking = async (flatId, userDetails) => {
+    console.log(flatId);
+    
     try {
       setLoading(true);
       const response = await axiosInstance.post(`/app/unit/${project}/book`, userDetails);
       
-      if (response.data.success) {
-        console.log('success');
-        
+      if (response.data.success) {        
         toast.success('Booking request submitted successfully!');
       }
     } catch (err) {
@@ -180,7 +227,7 @@ function Unit() {
           },
         ]}
         currentPage={{
-          title: `${unit_str}`,
+          title: `${unitData.slug}` ? `${unitData.slug}`:`${unit_str}`,
           path: `/${project}/tower/${tower}/floor/${floor}/apartment/${unit_str}`,
         }}
       />
@@ -216,11 +263,7 @@ function Unit() {
         </div>
       </div>
       {unitData.image_url && (<ApartmentsDetails
-        onVRClick={() => {
-          // setShowVRTour(true)
-          // navigate("VR-tour");
-          window.open(window.location.href + '/VR-tour', '_blank');
-        }}
+        onVRClick={handleVRModalOpen}
         selectedUnit={unitData}
         handleBooking={handleBooking}
       />)}
@@ -236,50 +279,61 @@ function Unit() {
         {
           unitData.image_url ? (
             <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-              <img src={unitData.image_url} />
-              {unitData.paths && unitData.paths.length > 0 && (
-                <svg
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    pointerEvents: 'auto'
-                  }}
-                  preserveAspectRatio="xMidYMid slice"
-                  viewBox="0 0 1086 615"
-                  fill="none"
-                >
-                  {unitData.paths.map((pathEl, index) => {
-                    const id = pathEl.getAttribute("id") || `path-${index}`;
-                    const d = pathEl.getAttribute("d");
-                    const fill = pathEl.getAttribute("fill") || "#69F153";
-                    const fillOpacity = "0.3";
-                    const stroke = "rgba(0, 0, 0, 0.4)";
-                    const strokeWidth = "0.1";
-                    const className = pathEl.getAttribute("class") || "Available";
+              <svg
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  height: '100%',
+                  pointerEvents: 'auto'
+                }}
+                preserveAspectRatio="xMidYMid meet"
+                viewBox={svgViewBox}
+                fill="none"
+                className="unit-svg"
+              >
+                {/* Base image rendered in same coordinate space */}
+                <image
+                  href={unitData.image_url}
+                  x="0"
+                  y="0"
+                  width={viewBoxSize.w}
+                  height={viewBoxSize.h}
+                  preserveAspectRatio="xMidYMid meet"
+                />
+                {unitData.paths && unitData.paths.length > 0 && (
+                  <g>
+                    {unitData.paths.map((pathEl, index) => {
+                      const id = pathEl.getAttribute("id") || `path-${index}`;
+                      const d = pathEl.getAttribute("d");
+                      const fill = pathEl.getAttribute("fill") || "#69F153";
+                      const fillOpacity = "0.3";
+                      const stroke = "rgba(0, 0, 0, 0.4)";
+                      const strokeWidth = "0.1";
+                      const className = pathEl.getAttribute("class") || "Available";
 
-                    return (
-                      <path
-                        key={id}
-                        id={id}
-                        d={d || ""}
-                        fill={fill}
-                        fillOpacity={fillOpacity}
-                        stroke={stroke}
-                        strokeWidth={strokeWidth}
-                        className={className}
-                        style={{
-                          transition: "fill-opacity 0.3s ease",
-                          cursor: "pointer",
-                        }}
-                        onClick={() => handlePathClick(id)}
-                      />
-                    );
-                  })}
-                </svg>
-              )}
+                      return (
+                        <path
+                          key={id}
+                          id={id}
+                          d={d || ""}
+                          fill={fill}
+                          fillOpacity={fillOpacity}
+                          stroke={stroke}
+                          strokeWidth={strokeWidth}
+                          className={className}
+                          style={{
+                            transition: "fill-opacity 0.3s ease",
+                            cursor: "pointer",
+                          }}
+                          onClick={() => handlePathClick(id)}
+                        />
+                      );
+                    })}
+                  </g>
+                )}
+              </svg>
             </div>
           ) : (
             <Err msg="Couldn't find unit details" type='found' />
@@ -351,6 +405,114 @@ function Unit() {
           </div>
         </div>
       )}
+
+      {/* VR Tour Modal */}
+      <Modal
+        open={vrModalOpen}
+        onClose={handleVRModalClose}
+        aria-labelledby="vr-tour-modal"
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1300,
+          backdropFilter: 'blur(8px) saturate(120%)',
+          background: 'rgba(0, 0, 0, 0.8)',
+        }}
+      >
+        <Box
+          sx={{
+            bgcolor: 'rgba(255,255,255,0.95)',
+            borderRadius: 2,
+            boxShadow: 24,
+            p: 0,
+            width: '95vw',
+            height: '95vh',
+            maxWidth: '1400px',
+            maxHeight: '900px',
+            overflow: 'hidden',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
+          {/* Header */}
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              px: 3,
+              py: 2,
+              borderBottom: '1px solid #e0e0e0',
+              bgcolor: 'rgba(255,255,255,0.95)',
+              position: 'sticky',
+              top: 0,
+              zIndex: 2,
+            }}
+          >
+            <Typography variant="h5" sx={{ fontWeight: 600, color: '#1976d2' }}>
+              VR Tour - {unitData.name || unitData.slug}
+            </Typography>
+            <IconButton onClick={handleVRModalClose} sx={{ color: '#333' }}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+
+          {/* Content */}
+          <Box
+            sx={{
+              flex: 1,
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              bgcolor: 'rgba(255,255,255,0.97)',
+              position: 'relative',
+            }}
+          >
+            {unitData.vr_url ? (
+              <iframe
+                src={unitData.vr_url}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  border: 'none',
+                  borderRadius: '8px',
+                }}
+                title={`VR Tour - ${unitData.name || unitData.slug}`}
+                allowFullScreen
+              />
+            ) : (
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  p: 4,
+                }}
+              >
+                <ErrorOutlineIcon sx={{ fontSize: 64, color: '#f44336', mb: 2 }} />
+                <Typography variant="h5" sx={{ mb: 2, color: '#f44336' }}>
+                  VR Tour Not Available
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 3, color: '#666' }}>
+                  The VR tour for this unit is currently not available. Please check back later or contact support for more information.
+                </Typography>
+                <Button
+                  variant="contained"
+                  onClick={handleVRModalClose}
+                  sx={{ mt: 2 }}
+                >
+                  Close
+                </Button>
+              </Box>
+            )}
+          </Box>
+        </Box>
+      </Modal>
     </CarouselPageStyle>
   );
 }
@@ -390,6 +552,36 @@ const CarouselPageStyle = styled.section`
     top: 7rem;
     left: 2rem;
     /* right: 100%; */
+  }
+
+  .unit-svg {
+    height: 100%;
+    width: 100%;
+    touch-action: manipulation;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: contain;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    .unit-svg {
+      height: 100%;
+      width: 100%;
+      max-height: 100vh;
+      max-width: 100vw;
+      object-fit: contain;
+    }
+  }
+
+  /* Tablet and desktop improvements */
+  @media (min-width: 769px) {
+    .unit-svg {
+      height: 100%;
+      width: 100%;
+      object-fit: contain;
+    }
   }
 `;
 
