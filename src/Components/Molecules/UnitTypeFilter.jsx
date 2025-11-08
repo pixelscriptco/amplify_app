@@ -104,7 +104,7 @@ function UnitTypeFilter({ project,tower, floor, onUnitSelection }) {
             {filteredUnits.map((unit, index) => (
               <div 
                 key={index} 
-                className={`list_gopw ${selectedUnit.some(s => s.unitId === unit.id) ? 'selected-unit' : ''}`}
+                className={`list_gopw ${selectedUnit.some(s => s.unitId === unit.id) ? 'active_bread' : ''}`}
                 onClick={() => {
                   const unitData = {
                     unitType: unit.UnitType,
