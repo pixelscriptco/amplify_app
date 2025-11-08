@@ -45,16 +45,16 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                   </div>
                   <div className="features">
                     <div className="feature">
-                      <div className="left">Unit {unitDetails.name}</div>
+                      <div className="left">{unitDetails.slug?unitDetails.slug:unitDetails.name}</div>
                       <div className="right">{unitDetails?.type}</div>
                     </div>
 
                     <div className="feature">
                       <div className="right"> Unit Status</div>
                       <div
-                        className={`left unit-status ${unitDetails?.status}`}
+                        className={`left unit-status ${unitDetails?.status==1?'Available':(unitDetails?.status==2?'Booked':'Hold')}`}
                       >
-                        {unitDetails?.status}
+                        {unitDetails?.status==1?'Available':(unitDetails?.status==2?'Booked':'Hold')}
                       </div>
                     </div>
 
@@ -94,8 +94,9 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                       value=""
                       style={{ padding: "8px 0px", borderRadius: '6px',marginTop: '0.3rem !important' }}
                       onClick={onVRClick}
+                      disabled={unitDetails.unit_plans?.vr_url === ''}
                     >
-                      VR Tour
+                      360 Walkthrough
                     </button>
                   </div>
                 </div>

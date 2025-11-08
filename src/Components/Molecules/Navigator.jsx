@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../Utility/axios";
+import { replaceS3WithCloudFront, processApiResponse } from "../../Utility/urlReplacer";
+
 
 function Navigator({ className, currentPage, prevPages = [] }) {
   const { project } = useParams();
@@ -18,12 +20,18 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   const [expand, setexpand] = useState((window.innerWidth < 900) ? true : false);
   const [qrr, setqrr] = useState((window.innerWidth < 768 || window.innerHeight < 600) ? false : true);
 
-  useEffect(() => {    
+  useEffect(() => {   
     const fetchProjectData = async () => {
       if (!project) return;
       try {
         const response = await axiosInstance.get(`/app/project/${project}`);
-        const { id, logo, name, registration_number, qr_code } = response.data;
+        const processedData = processApiResponse(response.data);
+        const { id, logo, name, registration_number, qr_code } = processedData;
+        
+        // Replace S3 URLs with CloudFront URLs
+        const cloudFrontLogo = replaceS3WithCloudFront(logo);
+        const cloudFrontQrCode = replaceS3WithCloudFront(qr_code);
+        
         setProjectData({
           id,
           logo,
@@ -90,11 +98,11 @@ function Navigator({ className, currentPage, prevPages = [] }) {
         }} 
         className={`bread_camp ${ expand ? "expandddd" : ""}`}
       >
-          {prevPages.map((page, index) => {            
+          {prevPages.map((page, index) => {                        
             return (
               <>
                 <div className="bred_outer" onClick={(e) => navigate(page.path)}>
-                  {page.title}
+                  {index === 0 ? projectData.name:page.title}
                 </div>
                 {index < prevPages.length - 1 && (
                   <span className="arrow_qw">
@@ -126,7 +134,7 @@ function Navigator({ className, currentPage, prevPages = [] }) {
                   <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
                 </svg>
               </span>
-              <div className="bred_outer active_bread">{currentPage.title}</div>
+              <div className="bred_outer active_bread">{prevPages.length ? currentPage.title : projectData.name}</div>
             </>
           ) : ""}
 

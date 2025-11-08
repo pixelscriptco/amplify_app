@@ -1498,6 +1498,14 @@ body .dzrmUF .features .feature{
     gap: 20px;
     flex: 1;
 }
+.main_text_wt{
+  font-size: 16px;
+  font-weight: 600;
+  margin-top: 7px;
+  /* float: left; */
+  color: #fff;
+  text-align: center;
+}
 .main_text_blk {
     font-size: 16px;
     font-weight: 600;
@@ -1831,25 +1839,27 @@ body .eSdljY .zoom-control,body .flOtUU .zoom-control {
 .towers-container .tower.active{background: #dc730e !important;color: white !important;}
 .descContr{height: calc(100vh - 100px);overflow-y: auto;}
 .active_bread{
-    background-color:#29a77f;
+    background-color:unset;
+    font-weight: 700;
 }
 .view_desc{
   color: white;
   background: #29a77f;
   position: absolute;
-    bottom: 10px;
-    left: 20px;
-    width: auto;
-    padding: 8px 10px;
+  bottom: 10px;
+  left: 20px;
+  width: auto !important; 
+  padding: 9px;
 }
+ 
 .compass_coys{
-      width: 50px !important;
-    height: 50px !important;
-    padding: 9px;
-    background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
-    right: unset !important;
-    left: 30px;
-    bottom: 100px !important;
+  width: 50px !important;
+  height: 50px !important;
+  padding: 9px;
+  background: radial-gradient(circle, #066f5b 0%, #023047 100%) !important;
+  right: unset !important;
+  left: 30px;
+  bottom: 100px !important;
 }
 .Mappp_cnhs{
   width: 100%;
@@ -1912,7 +1922,7 @@ padding: 5px;
 .img-wrapper{ background:#18534b !important; }
 .booknow_unt .panel__unit-card{background: radial-gradient(circle, #066f5b 0, #023047 100%);}
 .f-500{font-weight: 500 !important;}
-.img-wrapper.untt{padding-left: 20% !important;}
+.img-wrapper.untt{padding-left: 0% !important;}
 body .sdyuo .booknow_unt .unitCard  .buttons .bhy.button{margin-top: 0.3rem !important;}
 .pnlm-container{width: 100% !important;height: 100% !important;}
 .grid_htyu::-webkit-scrollbar {
