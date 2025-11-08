@@ -20,6 +20,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import CloseIcon from "@mui/icons-material/Close";
 import PhotoLibraryIcon from "@mui/icons-material/PhotoLibrary";
 import Sidebar from "../Components/Sidebar";
+import Err from "../Components/Atoms/Error";
+import { replaceS3WithCloudFront, processApiResponse } from "../Utility/urlReplacer";
 
 function Tower(props) {
   const { project, tower } = useParams();
@@ -51,7 +53,10 @@ function Tower(props) {
       const response = await axiosInstance.get(
         `/app/project/${project}/updates`
       );
-      setUpdates(response.data.updates || []);
+      
+      // Process the response data to replace S3 URLs with CloudFront URLs
+      const processedData = processApiResponse(response.data);
+      setUpdates(processedData.updates || []);
     } catch (err) {
       setUpdatesError("Failed to load updates");
     } finally {
@@ -74,8 +79,11 @@ function Tower(props) {
           `/app/tower/${project}/${tower}`
         );
         
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedData = processApiResponse(response.data);
+        
         // Sort tower plans by order
-        const { id, name, floor_count, direction, units } = response.data;
+        const { id, name, floor_count, direction, units } = processedData;
         setTowerData({
           id,
           name,
@@ -83,13 +91,17 @@ function Tower(props) {
           direction,
         });
         setUnits(units || []);
-        const sortedPlans = response.data.tower_plans;
+        const sortedPlans = processedData.tower_plans;
 
         const updatedPaths = await Promise.all(
           // FIX: await all promises
           sortedPlans.map(async (plan) => {
             try {
-              const svgResp = await fetch(plan.svg_url);
+              // Replace S3 URLs with CloudFront URLs
+              const cloudFrontSvgUrl = replaceS3WithCloudFront(plan.svg_url);
+              const cloudFrontImageUrl = replaceS3WithCloudFront(plan.image_url);
+              
+              const svgResp = await fetch(cloudFrontSvgUrl);
               const svgText = await svgResp.text();
               const parser = new DOMParser();
               const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
@@ -97,6 +109,8 @@ function Tower(props) {
               
               return {
                 ...plan,
+                svg_url: cloudFrontSvgUrl,
+                image_url: cloudFrontImageUrl,
                 paths: paths,
               };
             } catch (error) {
@@ -129,9 +143,30 @@ function Tower(props) {
 
     const unitTypes = Object.keys(floor.stats.unit_types).join(" and ");
 
-    const areas = Object.values(floor.stats.unit_areas)
-      .map((area) => area)
-      .filter(Boolean);
+    // Flatten areas array (since unit_areas now contains arrays) and convert to numbers
+    const areasArray = Object.values(floor.stats.unit_areas)
+      .flat() // Flatten nested arrays
+      .map((area) => {
+        // Convert to number if it's a string, otherwise use as-is
+        const numArea = typeof area === 'string' ? parseFloat(area) : area;
+        return isNaN(numArea) ? null : numArea;
+      })
+      .filter(area => area !== null && area !== undefined);
+    
+    // Calculate min and max for range display
+    let areas = [];
+    if (areasArray.length > 0) {
+      if (areasArray.length === 1) {
+        // Single area - show as is
+        areas = [areasArray[0]];
+      } else {
+        // Multiple areas - show as range (min - max)
+        const minArea = Math.min(...areasArray);
+        const maxArea = Math.max(...areasArray);
+        areas = minArea === maxArea ? [minArea] : [minArea, maxArea];
+      }
+    }
+    
     let areaRange = "";
     if (areas.length > 0) {
       areaRange = areas.join(" - ") + " Sq.Ft";
@@ -237,27 +272,23 @@ function Tower(props) {
                   </>
                 ) : null}
 
-                {areas && areas.length ? (
-                  <>
-                    {areas.map((ut, index, array) => (
-                      <React.Fragment key={ut}>
-                      <div className="flors_icons">
-                          <span className="dd_flex">
-                            <svg
-                              width="16px"
-                              height="16px"
-                              fill="currentColor"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 640 640"
-                            >
-                              <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
-                            </svg>
-                          </span>
-                          {ut} SqFt
-                        </div>
-                      </React.Fragment>
-                    ))}
-                  </>
+                {areas && areas.length > 0 ? (
+                  <div className="flors_icons">
+                    <span className="dd_flex">
+                      <svg
+                        width="16px"
+                        height="16px"
+                        fill="currentColor"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
+                      </svg>
+                    </span>
+                    {areas.length === 1 
+                      ? `${areas[0]} SqFt` 
+                      : `${areas[0]} - ${areas[1]} SqFt`}
+                  </div>
                 ) : null}
               </div>
             ) : null
@@ -288,9 +319,13 @@ function Tower(props) {
         const response = await axiosInstance.get(
           `/app/tower/${towerData.id}/floor/${floorName}`
         );
+        
+        // Process the response data to replace S3 URLs with CloudFront URLs
+        const processedFloorData = processApiResponse(response.data);
+        
         setFloorData((prev) => ({
           ...prev,
-          [floorId]: response.data,
+          [floorId]: processedFloorData,
         }));
       } catch (err) {
         console.error("Error fetching floor data:", err);
@@ -344,7 +379,7 @@ function Tower(props) {
           },
         ]}
         currentPage={{
-          title: `${tower.toUpperCase()}`,
+          title: `${tower}`,
           path: `tower/${tower}`,
         }}
       />
@@ -410,7 +445,7 @@ function Tower(props) {
             sortedPlans[currentIndex]?.direction &&
             (() => {
               const currentDirection = sortedPlans[currentIndex].direction;
-              const angle = directionToAngle[currentDirection] ?? 0;
+              const angle = directionToAngle[currentDirection] ?directionToAngle[currentDirection]: 0;
               return <Compass angle={angle} />;
             })()}
         </div>
@@ -430,7 +465,9 @@ function Tower(props) {
           <div className="loading">Loading tower visualization...</div>
         ) : error ? (
           <div className="error">{error}</div>
-        ) : (
+        ) :  !sortedPlans[currentIndex].image_url ?(
+          <Err msg="Couldn't find tower details" type='found' />
+        ):(
           <div
             style={{
               position: "relative",
@@ -443,23 +480,32 @@ function Tower(props) {
               preserveAspectRatio="xMidYMid slice"
               width="100%"
               height="100%"
-              viewBox="0 0 1086 615"
+              viewBox="0 0 4000 2250"
               fill="none"
               style={{ width: "100%", height: "100%" }}
+              className="tower-svg"
             >
               <image
+                x="0"
+                y="0"
+                width="4000"
+                height="2250"
                 xlinkHref={sortedPlans[currentIndex].image_url}
-                width="100%"
-                height="100%"
-                style={{ objectFit: "contain", backdropFilter: "opacity(10%)" }}
               />
-              {sortedPlans[currentIndex].paths.map((pathEl, index) => {                
+              {sortedPlans[currentIndex].paths.map((pathEl, index) => {   
+                console.log(pathEl);
+                             
                 if (pathEl.getAttribute("id") !== tower) {
                   const id = pathEl.getAttribute("id") || `path-${index}`;                  
                   const d = pathEl.getAttribute("d");
                   
                   // Check if ID starts with "U-" (unit paths)
                   const shouldShowColor = id.startsWith('U-');
+                  
+                  // Find all paths at the same location (same 'd' attribute)
+                  const pathsAtSameLocation = sortedPlans[currentIndex].paths.filter(p => 
+                    p.getAttribute("d") === d && p.getAttribute("id") !== tower
+                  );
                   
                   // Check unit status for color determination
                   let fill = "transparent";
@@ -874,7 +920,9 @@ export default Tower;
 
 const Style = styled.div`
   height: 100vh;
-  width: 100%;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
   overflow: hidden !important;
   /* background-image: url(${process.env.PUBLIC_URL}/dubai_map.jpg); */
   background-position: center;
@@ -985,5 +1033,35 @@ const Style = styled.div`
     padding: 1rem;
     align-items: center;
     padding-right: 2rem;
+  }
+
+  .tower-svg {
+    height: 100vh;
+    width: 100vw;
+    touch-action: manipulation;
+    position: absolute;
+    top: 0;
+    left: 0;
+    object-fit: cover;
+  }
+
+  /* Mobile-specific improvements */
+  @media (max-width: 768px) {
+    .tower-svg {
+      height: 100vh;
+      width: 100vw;
+      max-height: 100vh;
+      max-width: 100vw;
+      object-fit: cover;
+    }
+  }
+
+  /* Tablet and desktop improvements */
+  @media (min-width: 769px) {
+    .tower-svg {
+      height: 100vh;
+      width: 100vw;
+      object-fit: cover;
+    }
   }
 `;
