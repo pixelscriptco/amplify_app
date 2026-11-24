@@ -5,6 +5,7 @@ import BookNow from "./BookNow";
 function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [Apr, setApr] = React.useState((window.innerWidth > 900) ? true : false);
+  const [showSuccess, setShowSuccess] = React.useState(false);
   const unitDetails = selectedUnit;
   
   return (
@@ -99,6 +100,19 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                       360 Walkthrough
                     </button>
                   </div>
+                  {showSuccess && (
+                    <div className="success-message" style={{ 
+                      color: 'rgb(40 167 127)',
+                      textAlign: 'center',
+                      fontSize: '14px',
+                      marginTop: '4px',
+                      padding: '0px',
+                      // backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                      borderRadius: '4px'
+                    }}>
+                      Success! Your request has been processed.
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -107,7 +121,16 @@ function ApartmentsDetails({ selectedUnit, handleBooking, onVRClick }) {
                 isOpen={isOpen}
                 setIsOpen={(val) => setIsOpen(val)}
                 unitDetails={selectedUnit}
-                handleBooking={handleBooking}
+                handleBooking={async (...args) => {
+                  try {
+                    await handleBooking(...args);
+                    setShowSuccess(true);                    
+                    // Hide success message after 3 seconds
+                    // setTimeout(() => setShowSuccess(false), 3000);
+                  } catch (error) {
+                    console.error('Booking failed:', error);
+                  }
+                }}
               />
             )}
           </div>
@@ -181,7 +204,7 @@ const Style = styled.div`
     }
 
     .panel__unit-card.svelte-1m6i2pp .panel.unitCard {
-      height: 230px;
+      height: 260px;
       background-color: transparent;
       padding: 0px 10px 20px 15px;
       pointer-events: all;

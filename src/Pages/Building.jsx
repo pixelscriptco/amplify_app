@@ -6,6 +6,7 @@ import { toggleFullScreen } from "../Utility/function";
 import Navigator from "../Components/Molecules/Navigator";
 import { useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../Utility/axios";
+import Err from "../Components/Atoms/Error";
 import Tippy from "@tippyjs/react";
 import {
   Modal,
@@ -57,29 +58,35 @@ function Building(props) {
       if (!project) return;
       try {
         const response = await axiosInstance.get(`/app/building/${project}`);
-        const processedData = processApiResponse(response.data);
-        const { id, name, image_url, svg_url, floors } = processedData;
+        console.log(response.data);
+        if(response.data){
+          const processedData = processApiResponse(response.data);
+          const { id, name, image_url, svg_url, floors } = processedData;
+          
+          // Replace S3 URLs with CloudFront URLs
+          const cloudFrontImageUrl = replaceS3WithCloudFront(image_url);
+          const cloudFrontSvgUrl = replaceS3WithCloudFront(svg_url);
+          
+          const svgResp = await fetch(cloudFrontSvgUrl);
+          const svgText = await svgResp.text();
+          
+          // Parse the SVG text and extract <path> elements
+          const parser = new DOMParser();
+          const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
+          
+          const paths = Array.from(svgDoc.querySelectorAll("path"));
+          setBuildingData({
+            id,
+            name,
+            imageUrl: cloudFrontImageUrl,
+            floors,
+            paths,
+          });
+          setLoading(false);
+        }else{
+          setLoading(false);
+        }
         
-        // Replace S3 URLs with CloudFront URLs
-        const cloudFrontImageUrl = replaceS3WithCloudFront(image_url);
-        const cloudFrontSvgUrl = replaceS3WithCloudFront(svg_url);
-        
-        const svgResp = await fetch(cloudFrontSvgUrl);
-        const svgText = await svgResp.text();
-        
-        // Parse the SVG text and extract <path> elements
-        const parser = new DOMParser();
-        const svgDoc = parser.parseFromString(svgText, "image/svg+xml");
-        
-        const paths = Array.from(svgDoc.querySelectorAll("path"));
-        setBuildingData({
-          id,
-          name,
-          imageUrl: cloudFrontImageUrl,
-          floors,
-          paths,
-        });
-        setLoading(false);
       } catch (err) {
         console.error("Error fetching building data:", err);
       }
@@ -289,7 +296,7 @@ function Building(props) {
               (areas && areas.length)
             ) ? (
               <div className="main_tab_block pad_btnwq grid_block">
-                {Object.keys(tower.stats.unit_types).length ? (
+                {/* {Object.keys(tower.stats.unit_types).length ? (
                   <>
                     {Object.keys(tower.stats.unit_types).map((ut, index, array) => {
                       // const [number, label] = ut.split(" ");
@@ -313,7 +320,7 @@ function Building(props) {
                       );
                     })}
                   </>
-                ) : null}
+                ) : null} */}
 
                 {areas && areas.length > 0 ? (() => {                                    
                   // Convert all to numbers, remove duplicates, and sort ascending
@@ -322,29 +329,64 @@ function Building(props) {
                   //     key,
                   //     [...new Set(values.map(Number))].sort((a, b) => a - b),
                   //   ])
-                  // )[0];
-                                    
+                  // )[0];                                    
                   // const minArea = sortedAreas[0];
                   // const maxArea = sortedAreas[sortedAreas.length - 1];
-                  const minMaxAreas = (() => {
-                    const allValues = Object.values(areas).flat().map(Number);
-                    const sorted = [...new Set(allValues)].sort((a, b) => a - b);
-                    return [sorted[0], sorted[sorted.length - 1]];
-                  })();
+                  // const minMaxAreas = (() => {
+                  //   const allValues = Object.values(areas).flat().map(Number);
+                  //   const sorted = [...new Set(allValues)].sort((a, b) => a - b);
+                  //   return [sorted[0], sorted[sorted.length - 1]];
+                  // })();
 
-                  const formatted = Object.entries(areas).map(([key, values]) => {
-                    const sorted = [...new Set(values.map(Number))].sort((a, b) => a - b);
-                    const min = sorted[0];
-                    const max = sorted[sorted.length - 1];
-                    const label = key.replace(/\s+/g, '').toLowerCase(); // "2 BHK" → "2bhk"
-                    return `${label} ${min}${min !== max ? `-${max}` : ''} sqft`;
-                  });
+                  const unitAreaKeys = Object.keys(tower.stats.unit_areas); // e.g. ["1BHK","2BHK"]
+
+                  // const formatted = Object.entries(areas).map(([key, values]) => {
+                  //   const sorted = [...new Set(values.map(Number))].sort((a, b) => a - b);
+                  //   const min = sorted[0];
+                  //   const max = sorted[sorted.length - 1];
+                  //   return `${min}${min !== max ? `-${max}` : ''} SqFt`;
+                  // });
+
+                    const areas = unitAreaKeys.map((key) => {
+                      const raw = tower.stats.unit_areas[key] || [];
+                      const values = Array.isArray(raw)
+                        ? [...new Set(raw.map(Number).filter((v) => !isNaN(v)))] // unique numbers
+                            .sort((a, b) => a - b)
+                        : [];
+                      return {
+                        key,
+                        values,
+                        min: values.length ? values[0] : null,
+                        max: values.length ? values[values.length - 1] : null,
+                      };
+                    });
+
+                    // Example: build display strings
 
                   // Prepare the display array
                   // const displayAreas = minArea === maxArea ? [minArea] : [minArea, maxArea];
 
-                  return minMaxAreas.map((ut, index) => (
+                  return areas.map((ut, index) => {
+                    const formattedAreas = 
+                      ut.min != null
+                        ? `${ut.min}${ut.min !== ut.max ? ` - ${ut.max}` : ''} SqFt`
+                        : `${ut.key}`
+                    return(
                     <React.Fragment key={index}>
+                      <div className="flors_icons">
+                        <span className="dd_flex">
+                          <svg
+                            width="16px"
+                            height="16px"
+                            fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 640 640"
+                          >
+                            <path d="M64 96C81.7 96 96 110.3 96 128L96 352L320 352L320 224C320 206.3 334.3 192 352 192L512 192C565 192 608 235 608 288L608 512C608 529.7 593.7 544 576 544C558.3 544 544 529.7 544 512L544 448L96 448L96 512C96 529.7 81.7 544 64 544C46.3 544 32 529.7 32 512L32 128C32 110.3 46.3 96 64 96zM144 256C144 220.7 172.7 192 208 192C243.3 192 272 220.7 272 256C272 291.3 243.3 320 208 320C172.7 320 144 291.3 144 256z" />
+                          </svg>
+                        </span>
+                        {ut.key}
+                      </div>
                       <div className="flors_icons">
                         <span className="dd_flex">
                           <svg
@@ -357,10 +399,10 @@ function Building(props) {
                             <path d="M512 112C520.8 112 528 119.2 528 128L528 512C528 520.8 520.8 528 512 528L128 528C119.2 528 112 520.8 112 512L112 128C112 119.2 119.2 112 128 112L512 112zM128 64C92.7 64 64 92.7 64 128L64 512C64 547.3 92.7 576 128 576L512 576C547.3 576 576 547.3 576 512L576 128C576 92.7 547.3 64 512 64L128 64z" />
                           </svg>
                         </span>
-                        {ut} SqFt
+                        {formattedAreas}
                       </div>
                     </React.Fragment>
-                  ));
+                  )});
                 })() : null}
 
               </div>
@@ -418,7 +460,7 @@ function Building(props) {
 
       {loading ? (
         <div className="loading">Loading...</div>
-      ) : error ? (
+      ) : buildingData.id == 0 ? (
         <div className="error">{error}</div>
       ) : (
         <>

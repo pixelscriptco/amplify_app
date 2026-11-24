@@ -524,6 +524,12 @@ function Tower(props) {
                         fillOpacity = "0.3";
                         stroke = "rgba(248, 98, 98, 1)";
                         strokeWidth = "0.1";
+                      }if (unit && unit.status === 3) {
+                        // Unit is confirmed/booked - red color
+                        fill = "#0b529aff";
+                        fillOpacity = "0.3";
+                        stroke = "#1976d2";
+                        strokeWidth = "0.1";
                       } else {
                           // Default available/pending color when no filter is selected
                           fill = "#5CE459";
@@ -533,6 +539,12 @@ function Tower(props) {
                       }
                     }else{
                       if (unit && unit.status === 2) {
+                        // Unit is confirmed/booked - red color
+                        fill = "#0b529aff";
+                        fillOpacity = "0.1";
+                        stroke = "#1976d2";
+                        strokeWidth = "0.1";
+                      }else if (unit && unit.status === 3) {
                         // Unit is confirmed/booked - red color
                         fill = "#f86262";
                         fillOpacity = "0.1";

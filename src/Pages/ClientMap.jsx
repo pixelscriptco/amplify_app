@@ -110,7 +110,7 @@ function ClientMap(props) {
                           <img class="img_blockqwe" height="auto" width="204" src="${project.location_image}" alt="">
                       </div>
                       <div>
-                          <p class="par_textqw">${project.location_description || 'No description available'}</p>
+                          ${project.location_description || 'No description available'}
                       </div>
                       <div>
                           <button class="button_block" onclick="window.open('${project.url}', '_blank')">
@@ -285,5 +285,10 @@ const Style = styled.main`
     border-radius: 4px;
   }
 
+  .lex-paragraph{
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.5;
+  }
 
 `;

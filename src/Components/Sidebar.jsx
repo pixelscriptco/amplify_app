@@ -120,7 +120,7 @@ const Sidebar = () => {
   const [amenityImageUrl, setAmenityImageUrl] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [amenityViewerId, setAmenityViewerId] = useState(null);
-
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!project) return;
@@ -192,14 +192,31 @@ const Sidebar = () => {
     setAmenityImageUrl('');
     setAmenityViewerId(null);
   };
-  const handleClick = (a) => {
-    if (a.image) { // Assuming a.image contains the URL of the 360 image
-      setAmenityImageUrl(a.image);
-      setIsModalOpen(true);
-      setAmenityViewerId(`amenity360-${Date.now()}`);
+  const handleClick = async (a) => {
+    if (a.image) {
+      setIsLoading(true);
+      try {
+        // Fetch S3 image as blob
+        const response = await fetch(a.image);  
+        const blob = await response.blob();
 
-    } else {
+        // Create object URL for direct use in ReactPannellum
+        const objectUrl = URL.createObjectURL(blob);
+
+        // Set the blob URL directly
+        setAmenityImageUrl(objectUrl);
+        setAmenityViewerId(`amenity360-${Date.now()}`);
+        setIsModalOpen(true);
+      } catch (err) {
+        console.error('Error loading image:', err);
+        alert('Error loading amenity image: ' + err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    } else if (a.vr_url) {
       window.open(a.vr_url, '_blank');
+    } else {
+      console.warn('No image/vr_url available for amenity', a);
     }
   };
   // Add this helper to determine which icon is active
@@ -246,7 +263,7 @@ const Sidebar = () => {
                 <div className="min_wid_35px">
                   <Icon />
                 </div>
-                <span class="label_tip"> {label}</span>
+                <span className="label_tip"> {label}</span>
               </div>
             ))}
           </div>
@@ -663,7 +680,7 @@ const Sidebar = () => {
       }{
         amenityImageUrl && (
           <div className="wrap_iframe_box pan_view_360" age={amenityImageUrl} style={{ display: "block" }}>              
-            <div className="cose_btn" onClick={() => setconstr(false)} style={{ cursor: "pointer" }}>
+            <div className="cose_btn" onClick={() => setAmenityImageUrl(null)} style={{ cursor: "pointer" }}>
                 <svg
                   viewBox="0 0 24 24"
                   height="24"
@@ -678,14 +695,27 @@ const Sidebar = () => {
                   />
                 </svg>
               </div>
-              <div className="contr_prevw">
-                <ReactPannellum
-                  id={amenityViewerId}
-                  sceneId="firstScene"
-                  imageSource={amenityImageUrl}
-                  config={{autoLoad: true }}
-                />      
-              </div>              
+              <div className="contr_prevw" style={{ width: '100%', height: 420 }}>
+                {isLoading ? (
+                  <div style={{ 
+                    display: 'flex', 
+                    justifyContent: 'center', 
+                    alignItems: 'center', 
+                    height: '100%',
+                    color: '#fff'
+                  }}>
+                    <span>Loading 360 view...</span>
+                  </div>
+                ) : (
+                  <ReactPannellum
+                    id={amenityViewerId}
+                    sceneId={`scene-${amenityViewerId}`}
+                    imageSource={amenityImageUrl}
+                    config={{ autoLoad: true }}
+                    style={{ width: '100%', height: '100%' }}
+                  />
+                )}
+              </div>
             </div>
         )
       }

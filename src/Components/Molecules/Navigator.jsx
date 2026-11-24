@@ -70,157 +70,162 @@ function Navigator({ className, currentPage, prevPages = [] }) {
   // console.log(currentPage,prevPages);
 
   return (
-    <>
-      <div className="hdr_log_main">
-        <div>
-          <span
-            className={`burger_menu`.trim()}
-            role="button"
-            onClick={() => setburger(!burger)}
-
+  <>
+    <div className="hdr_log_main">
+      {projectData.id !== 0 && (
+      <div>
+        <span
+          className={`burger_menu`.trim()}
+          role="button"
+          onClick={() => setburger(!burger)}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 448 512"
+            focusable="false"
+            aria-hidden="true"
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 448 512"
-              focusable="false"
-              aria-hidden="true"
-            >
-              <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/>
-            </svg>
-          </span>
-        </div>
-        <div className="logo_outer">
-          <img width="35" src={`${projectData.logo}`} alt="Project Logo" />
-        </div>
-        <div
+            <path d="M16 132h416c8.837 0 16-7.163 16-16V76c0-8.837-7.163-16-16-16H16C7.163 60 0 67.163 0 76v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16zm0 160h416c8.837 0 16-7.163 16-16v-40c0-8.837-7.163-16-16-16H16c-8.837 0-16 7.163-16 16v40c0 8.837 7.163 16 16 16z"/>
+          </svg>
+        </span>
+      </div>
+      )}
+     {projectData.id !== 0 && (
+       <div className="logo_outer">
+         <img width="35" src={`${projectData.logo}`} alt="Project Logo" />
+       </div>
+     )}
+
+      <div
         style={{
           display : (burger || window.innerWidth > 600) ? 'flex' : 'none'
         }} 
         className={`bread_camp ${ expand ? "expandddd" : ""}`}
       >
-          {prevPages.map((page, index) => {                        
-            return (
-              <>
-                <div className="bred_outer" onClick={(e) => navigate(page.path)}>
-                  {index === 0 ? projectData.name:page.title}
-                </div>
-                {index < prevPages.length - 1 && (
-                  <span className="arrow_qw">
-                    <svg
-                      fill="currentColor"
-                      width="16px"
-                      height="16px"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
-                    >
-                      <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
-                    </svg>
-                  </span>
-                )}
-              </>
-            );
-          })}
-
-          {currentPage ? (            
+        {prevPages.map((page, index) => {                        
+          return (
             <>
-              <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'flex' : 'none' }}>
-                <svg
-                  fill="currentColor"
-                  width="16px"
-                  height="16px"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                >
-                  <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
-                </svg>
-              </span>
-              <div className="bred_outer active_bread">{prevPages.length ? currentPage.title : projectData.name}</div>
+              <div className="bred_outer" onClick={(e) => navigate(page.path)}>
+                {index === 0 ? projectData.name:page.title}
+              </div>
+              {index < prevPages.length - 1 && (
+                <span className="arrow_qw">
+                  <svg
+                    fill="currentColor"
+                    width="16px"
+                    height="16px"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 640 640"
+                  >
+                    <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+                  </svg>
+                </span>
+              )}
             </>
-          ) : ""}
+          );
+        })}
 
-          {(prevPages && prevPages.length) ? (
-              <span 
-                className="icon_aerows"
-                onClick={() => setexpand(!expand)}
+        {currentPage ? (            
+          <>
+            <span className="arrow_qw"  style={{ display: (prevPages.length) ? 'flex' : 'none' }}>
+              <svg
+                fill="currentColor"
+                width="16px"
+                height="16px"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                  width="18"
-                  height="18"
-                  fill="currentColor"
-                >
-                  <path d="M535.1 342.6C547.6 330.1 547.6 309.8 535.1 297.3L375.1 137.3C362.6 124.8 342.3 124.8 329.8 137.3C317.3 149.8 317.3 170.1 329.8 182.6L467.2 320L329.9 457.4C317.4 469.9 317.4 490.2 329.9 502.7C342.4 515.2 362.7 515.2 375.2 502.7L535.2 342.7zM183.1 502.6L343.1 342.6C355.6 330.1 355.6 309.8 343.1 297.3L183.1 137.3C170.6 124.8 150.3 124.8 137.8 137.3C125.3 149.8 125.3 170.1 137.8 182.6L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7z"/>
-                </svg>
-              </span>
-          ) : ""}
+                <path d="M439.1 297.4C451.6 309.9 451.6 330.2 439.1 342.7L279.1 502.7C266.6 515.2 246.3 515.2 233.8 502.7C221.3 490.2 221.3 469.9 233.8 457.4L371.2 320L233.9 182.6C221.4 170.1 221.4 149.8 233.9 137.3C246.4 124.8 266.7 124.8 279.2 137.3L439.2 297.3z" />
+              </svg>
+            </span>
+            <div className="bred_outer active_bread">{prevPages.length ? currentPage.title : projectData.name}</div>
+          </>
+        ) : ""}
 
+        {(prevPages && prevPages.length) ? (
+            <span 
+              className="icon_aerows"
+              onClick={() => setexpand(!expand)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 640 640"
+                width="18"
+                height="18"
+                fill="currentColor"
+              >
+                <path d="M535.1 342.6C547.6 330.1 547.6 309.8 535.1 297.3L375.1 137.3C362.6 124.8 342.3 124.8 329.8 137.3C317.3 149.8 317.3 170.1 329.8 182.6L467.2 320L329.9 457.4C317.4 469.9 317.4 490.2 329.9 502.7C342.4 515.2 362.7 515.2 375.2 502.7L535.2 342.7zM183.1 502.6L343.1 342.6C355.6 330.1 355.6 309.8 343.1 297.3L183.1 137.3C170.6 124.8 150.3 124.8 137.8 137.3C125.3 149.8 125.3 170.1 137.8 182.6L275.2 320L137.9 457.4C125.4 469.9 125.4 490.2 137.9 502.7C150.4 515.2 170.7 515.2 183.2 502.7z"/>
+              </svg>
+            </span>
+        ) : ""}
+      </div>
+      
+    </div>
+
+    <div className="qrcode_sec">
+     {projectData.id !== 0 && projectData.registration_number && (
+        <div
+          style={{
+            background: "radial-gradient(circle, #066f5b 0%, #023047 100%)",
+            borderRadius: 6,
+            padding: "6px 16px",
+            fontWeight: 500,
+            fontSize: 15,
+            color: "#fff",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+            display: 'none'
+          }}
+        >
+          {projectData.registration_number}
         </div>
-      </div>
+      )}
 
-      <div className="qrcode_sec">
-        {projectData.registration_number && (
-          <div
-            style={{
-              background: "radial-gradient(circle, #066f5b 0%, #023047 100%)",
-              borderRadius: 6,
-              padding: "6px 16px",
-              fontWeight: 500,
-              fontSize: 15,
-              color: "#fff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-              display: 'none'
-            }}
-          >
-            {projectData.registration_number}
-          </div>
-        )}
-        {projectData.qr_code &&
-          (projectData.qr_code.endsWith(".svg") ? (
-            <>
-              <div className="qr_icon">
-                <svg width="20px" height="20px" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"></path></svg>
-              </div>
-              <img
-                src={svgSrc}
-                alt="QR Code"
-                style={{
-                  borderRadius: 8,
-                }}
-              />
-            </>
-          ) : (
-            <>
-              <div 
-                className="qr_icon" 
-                style={{ display : (!qrr) ? 'flex' : 'none' }} 
-                onClick={() => setqrr(!qrr)}
+     {projectData.id !== 0 && projectData.qr_code &&
+        (projectData.qr_code.endsWith(".svg") ? (
+          <>
+            <div className="qr_icon">
+              <svg width="20px" height="20px" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M96 128C83.1 128 71.4 135.8 66.4 147.8C61.4 159.8 64.2 173.5 73.4 182.6L256 365.3L256 480C256 488.5 259.4 496.6 265.4 502.6L329.4 566.6C338.6 575.8 352.3 578.5 364.3 573.5C376.3 568.5 384 556.9 384 544L384 365.3L566.6 182.7C575.8 173.5 578.5 159.8 573.5 147.8C568.5 135.8 556.9 128 544 128L96 128z"></path></svg>
+            </div>
+            <img
+              src={svgSrc}
+              alt="QR Code"
+              style={{
+                borderRadius: 8,
+              }}
+            />
+          </>
+        ) : (
+          <>
+            <div 
+              className="qr_icon" 
+              style={{ display : (!qrr) ? 'flex' : 'none' }} 
+              onClick={() => setqrr(!qrr)}
+            >
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 448 512"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 448 512"
-                >
-                  <path d="M0 224h192V32H0v192zM64 96h64v64H64V96zm192-64v192h192V32H256zm128 128h-64V96h64v64zM0 480h192V288H0v192zm64-128h64v64H64v-64zm352-64h32v128h-96v-32h-32v96h-64V288h96v32h64v-32zm0 160h32v32h-32v-32zm-64 0h32v32h-32v-32z" />
-                </svg>
-              </div>
-              <img
-                src={projectData.qr_code}
-                alt="QR Code"
-                onClick={() =>{
-                  setqrr(!qrr)
-                }}
-                style={{
-                  borderRadius: 8,
-                  display : (qrr) ? 'block' : 'none'
-                }}
-              />
-            </>
-          ))}
-      </div>
-    </>
+                <path d="M0 224h192V32H0v192zM64 96h64v64H64V96zm192-64v192h192V32H256zm128 128h-64V96h64v64zM0 480h192V288H0v192zm64-128h64v64H64v-64zm352-64h32v128h-96v-32h-32v96h-64V288h96v32h64v-32zm0 160h32v32h-32v-32zm-64 0h32v32h-32v-32z" />
+              </svg>
+            </div>
+            <img
+              src={projectData.qr_code}
+              alt="QR Code"
+              onClick={() =>{
+                setqrr(!qrr)
+              }}
+              style={{
+                borderRadius: 8,
+                display : (qrr) ? 'block' : 'none'
+              }}
+            />
+          </>
+        ))}
+    </div>
+  </>
   );
 }
 

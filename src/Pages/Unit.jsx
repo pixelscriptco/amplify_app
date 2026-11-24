@@ -188,14 +188,13 @@ function Unit() {
     setSelectedBalconyImage(null);
   };
 
-  const handleBooking = async (flatId, userDetails) => {
-    console.log(flatId);
-    
+  const handleBooking = async (flatId, userDetails) => {    
     try {
       setLoading(true);
       const response = await axiosInstance.post(`/app/unit/${project}/book`, userDetails);
+      console.log(response);
       
-      if (response.data.success) {        
+      if (response.data.message == 'Booking successful') {                
         toast.success('Booking request submitted successfully!');
       }
     } catch (err) {
@@ -307,8 +306,8 @@ function Unit() {
                     {unitData.paths.map((pathEl, index) => {
                       const id = pathEl.getAttribute("id") || `path-${index}`;
                       const d = pathEl.getAttribute("d");
-                      const fill = pathEl.getAttribute("fill") || "#69F153";
-                      const fillOpacity = "0.3";
+                      const fill =  "#53fa537a";
+                      const fillOpacity = "0.6";
                       const stroke = "rgba(0, 0, 0, 0.4)";
                       const strokeWidth = "0.1";
                       const className = pathEl.getAttribute("class") || "Available";
